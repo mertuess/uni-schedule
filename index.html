@@ -1,13 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание - МАУ</title>
     <link rel="stylesheet" href="css/style.css">
-    <title>TEST</title>
 </head>
 <body>
-        <h1>ТЕСТИК</h1>
-        <script src="js/main.js"></script>
+    <header>
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="templates/rings.html">Расписание звонков</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">Главная</a>
+                <span class="separator">/</span>
+                <a href="#">Студенту</a>
+                <span class="separator">/</span>
+                <span>Расписание занятий</span>
+            </div>
+
+            <div class="main-content">
+                <h1>Расписания учебных занятий</h1>
+                
+                <div class="link-blocks">
+                    <div class="link-block">
+                        <h4>ФГАОУ ВО «МАУ»</h4>
+                        <ul class="links-list">
+                            <li><a href="templates/rings.html">Расписание звонков</a></li>
+                            <li><a href="#">Календарные учебные графики</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-block">
+                        <h4>Другие подразделения</h4>
+                        <ul class="links-list">
+                            <li><a href="#">Аспирантура</a></li>
+                            <li><a href="#">Колледж ФГАОУ ВО «МАУ»</a></li>
+                            <li><a href="#">Мурманский морской рыбопромышленный колледж</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-block">
+                    <p><strong>18 марта 2026, среда (четная неделя)</strong></p>
+                    <p>Время обновления: 2026-03-18 13:12:08</p>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="group-select">По группам</label>
+                            <select id="group-select">
+                                <option value="">Выберите группу</option>
+                                <option value="BIVT-23">БИВТ-23</option>
+                                <option value="ATPP-23">АТПП-23</option>
+                                <option value="BPMI-23">БПМИ-23</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="teacher-select">По преподавателям</label>
+                            <select id="teacher-select">
+                                <option value="">Выберите преподавателя</option>
+                                <option value="bogomolov">Богомолов Р.А.</option>
+                                <option value="skotarenko">Скотаренко О.В.</option>
+                                <option value="zolotov">Золотов О.В.</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="classroom-select">По аудиториям</label>
+                            <select id="classroom-select">
+                                <option value="">Выберите аудиторию</option>
+                                <option value="310">310 (Ленина, 57)</option>
+                                <option value="311">311 (Егорова, 16)</option>
+                                <option value="316">316 (Ленина, 57)</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn">Показать</button>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <select>
+                            <option>16.03.2026 - 22.03.2026 (ч/н)</option>
+                            <option>23.03.2026 - 29.03.2026 (н/ч)</option>
+                        </select>
+                        
+                        <select style="margin-left: 10px;">
+                            <option>Выберите институт/факультет</option>
+                        </select>
+                        
+                        <select style="margin-left: 10px;">
+                            <option>Выберите курс</option>
+                            <option>3 курс</option>
+                            <option>4 курс</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h2>По группам</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Группа</th>
+                                <th>Наименование направления подготовки</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><a href="#">АТПП6233-1</a></td>
+                                <td>15.03.04 Автоматизация технологических процессов и производств</td>
+                            </tr>
+                            <tr>
+                                <td><a href="#">АТПП6233-1иу</a></td>
+                                <td>15.03.04 Автоматизация технологических процессов и производств</td>
+                            </tr>
+                            <tr>
+                                <td><a href="#">БИВТ-ВП-23</a></td>
+                                <td>09.03.01 Информатика и вычислительная техника. Профиль: Технологии разработки веб-приложений</td>
+                            </tr>
+                            <tr>
+                                <td><a href="#">БПМИ-ПТ-23</a></td>
+                                <td>01.03.02 Прикладная математика и информатика. Профиль: Системное программирование и компьютерные технологии</td>
+                            </tr>
+                            <tr>
+                                <td><a href="#">БПО-МИ-23</a></td>
+                                <td>44.03.05 Педагогическое образование (с двумя профилями подготовки). Профиль: Математика. Информатика</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div>
+                <img src="resources/images/logo-header.svg" alt="МАУ" class="logo">
+                <div class="social">
+                    <a href="#"><img src="resources/images/vk.svg" alt="VK"></a>
+                    <a href="#"><img src="resources/images/telegram.svg" alt="Telegram"></a>
+                    <a href="#"><img src="resources/images/ok.svg" alt="OK"></a>
+                </div>
+            </div>
+            
+            <div>
+                <p>ФГАОУ ВО «Мурманский арктический университет»</p>
+                <p>183038, г. Мурманск, ул. Егорова, 16</p>
+                <p>Телефон: 8 (8152) 21-39-27</p>
+                <p>Email: rector@mstu.edu.ru</p>
+            </div>
+            
+            <div class="feedback-links">
+                <a href="#">Отправить замечание по содержанию</a>
+                <a href="#">Сообщить о технической проблеме</a>
+                <p class="copy">© 2026 Мурманский арктический университет</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

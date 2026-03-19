@@ -53,6 +53,7 @@ h2 { font-size: 32px; margin: 30px 0 20px; border-bottom: 2px solid var(--blue);
 /* Шапка */
 header {
     background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+    height: 150px;
 }
 
 header ul {

@@ -1,0 +1,6 @@
+@uni_schedule_HostAddress = http://localhost:5243
+
+GET {{uni_schedule_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

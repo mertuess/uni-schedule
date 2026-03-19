@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("uni-schedule")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c0a5f11bbd5e0e9a9ca7cb3cedc4c9e9cd940abc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce44c221fd776d7270e5dad6ed932bd38e72a918")]
 [assembly: System.Reflection.AssemblyProductAttribute("uni-schedule")]
 [assembly: System.Reflection.AssemblyTitleAttribute("uni-schedule")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

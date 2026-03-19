@@ -32,3 +32,17 @@
 /home/g3m/git/uni-schedule/obj/Debug/net10.0/uni-schedule.pdb
 /home/g3m/git/uni-schedule/obj/Debug/net10.0/uni-schedule.genruntimeconfig.cache
 /home/g3m/git/uni-schedule/obj/Debug/net10.0/ref/uni-schedule.dll
+/home/g3m/git/uni-schedule/bin/Debug/net10.0/uni-schedule.staticwebassets.runtime.json
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/mjijca9uhv-{0}-5xnppwer6q-5xnppwer6q.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/r078om8vim-{0}-cqq1hc917d-cqq1hc917d.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/d4fo7ckpea-{0}-1u4hjzni53-1u4hjzni53.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/915h25vo2u-{0}-em3qgg1se5-em3qgg1se5.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/gz4kd71s5t-{0}-d2fk3riqnb-d2fk3riqnb.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/b9vujfiq2s-{0}-pqhaud9x27-pqhaud9x27.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/sa676ul8ms-{0}-88u2dvoq7n-88u2dvoq7n.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/jglhdb3315-{0}-pl51bistch-pl51bistch.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/r2phgs50q8-{0}-t1e05prsym-t1e05prsym.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/e97ics3c1b-{0}-mcp6fygw69-mcp6fygw69.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/xdqh4l23ng-{0}-qjszov5zwf-qjszov5zwf.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/7zg643tcg5-{0}-80da6dcm0c-80da6dcm0c.gz
+/home/g3m/git/uni-schedule/obj/Debug/net10.0/compressed/mmai6s2eoz-{0}-xnc8u5nzyq-xnc8u5nzyq.gz

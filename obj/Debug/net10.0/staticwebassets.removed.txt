@@ -1,3 +1,0 @@
-C:\Users\Dimasyyya\source\repos\uni-schedule\wwwroot\images\favicon.ico
-C:\Users\Dimasyyya\source\repos\uni-schedule\wwwroot\images\logo-bottom.svg
-C:\Users\Dimasyyya\source\repos\uni-schedule\wwwroot\js\config.js

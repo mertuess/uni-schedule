@@ -1,4 +1,5 @@
 using UniSchedule;
+using System.Data.SQLite;
 
 var builder = WebApplication.CreateBuilder(args);
 

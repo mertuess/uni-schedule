@@ -21,17 +21,12 @@ app.MapGet("/", async context =>
 {
     string data = "";
 
-    
-
     using (StreamReader reader = new StreamReader(@"./wwwroot/index.html"))
     {
         string? line;
         while ((line = await reader.ReadLineAsync()) != null)
         {
             data += line;
-            if(line.Contains("data-type=\"group\"")){
-                
-            }
         }
     }
     context.Response.ContentType = "text/html";

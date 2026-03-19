@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "ZN1zLnCbeWU=",
+  "dgSpecHash": "VclZ3gO1aJE=",
   "success": true,
   "projectFilePath": "/home/g3m/git/uni-schedule/uni-schedule.csproj",
   "expectedPackageFiles": [
     "/home/g3m/.nuget/packages/microsoft.aspnetcore.openapi/10.0.4/microsoft.aspnetcore.openapi.10.0.4.nupkg.sha512",
     "/home/g3m/.nuget/packages/microsoft.openapi/2.0.0/microsoft.openapi.2.0.0.nupkg.sha512",
+    "/home/g3m/.nuget/packages/sqlite/3.13.0/sqlite.3.13.0.nupkg.sha512",
+    "/home/g3m/.nuget/packages/system.data.sqlite/2.0.3/system.data.sqlite.2.0.3.nupkg.sha512",
     "/home/g3m/.nuget/packages/microsoft.aspnetcore.app.ref/10.0.4/microsoft.aspnetcore.app.ref.10.0.4.nupkg.sha512"
   ],
   "logs": []

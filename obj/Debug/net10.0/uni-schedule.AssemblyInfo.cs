@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("uni-schedule")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3bc6e3fd5d492a2e55d22c3b06d6b27807a41908")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+821591c78894420c4e4df4bb3e8f78129c950cf9")]
 [assembly: System.Reflection.AssemblyProductAttribute("uni-schedule")]
 [assembly: System.Reflection.AssemblyTitleAttribute("uni-schedule")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

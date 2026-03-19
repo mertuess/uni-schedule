@@ -71,9 +71,6 @@ C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\rjsmrazor.dswa.ca
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\scopedcss\bundle\uni-schedule.styles.css
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\mjijca9uhv-{0}-ohx0fn2825-ohx0fn2825.gz
-C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\7zg643tcg5-{0}-80da6dcm0c-80da6dcm0c.gz
-C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\mmai6s2eoz-{0}-n1ybvg521d-n1ybvg521d.gz
-C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\d4fo7ckpea-{0}-79sdihn8ue-79sdihn8ue.gz
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\gz4kd71s5t-{0}-jiuzetsebn-jiuzetsebn.gz
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\b9vujfiq2s-{0}-hov5zdwpzi-hov5zdwpzi.gz
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\sa676ul8ms-{0}-mbo0132dnn-mbo0132dnn.gz
@@ -93,5 +90,7 @@ C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\refint\uni-schedu
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\uni-schedule.pdb
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\uni-schedule.genruntimeconfig.cache
 C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\ref\uni-schedule.dll
-C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\915h25vo2u-{0}-davvw5sh9r-davvw5sh9r.gz
-C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\r078om8vim-{0}-dnj01ftnn7-dnj01ftnn7.gz
+C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\915h25vo2u-{0}-d5wcshqjuf-d5wcshqjuf.gz
+C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\cj8km5pvcy-{0}-80da6dcm0c-80da6dcm0c.gz
+C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\zz0qi9rstd-{0}-n1ybvg521d-n1ybvg521d.gz
+C:\Users\Dimasyyya\source\repos\uni-schedule\obj\Debug\net10.0\compressed\r078om8vim-{0}-ikipxvy5q9-ikipxvy5q9.gz

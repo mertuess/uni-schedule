@@ -1,5 +1,4 @@
 using UniSchedule;
-using System.Data.SQLite;
 using uni_schedule.src;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,31 +10,9 @@ builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSet
 var app = builder.Build();
 
 //Объявление БД
-var db = new DBManager();
+var db = new DBManager("schedule.db");
 
-
-db.AddTestUsers();
-
-// Все пользователи в бд
-Console.WriteLine("\nВсе пользователи в БД:");
-var users = db.GetAllUsers();
-foreach (var user in users)
-{
-    Console.WriteLine($"ID: {user.Id}, Почта: {user.Mail}, Роль: {user.Role}");
-}
-
-// Проверяем вход
-Console.WriteLine("\nПроверка входа:");
-Console.WriteLine($"admin@mauniver.ru / admin123: {db.CheckPassword("admin@mauniver.ru", "admin123")}");
-Console.WriteLine($"admin@mauniver.ru / wrong: {db.CheckPassword("admin@mauniver.ru", "wrong")}");
-Console.WriteLine($"user@mauniver.ru / user123: {db.CheckPassword("user@mauniver.ru", "user123")}");
-
-// Ищем пользователя
-var user1 = db.FindUser("admin@mauniver.ru");
-if (user1 != null)
-{
-    Console.WriteLine($"\nНайден пользователь: {user1.Mail} (роль: {user1.Role})");
-}
+db.TryAddUser("test@yandex.ru", "test123", "user");
 
 if (app.Environment.IsDevelopment())
 {

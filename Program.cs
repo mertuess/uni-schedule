@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.Data;
 using System.Data.SQLite;
+using UniSchedule;
 using uni_schedule.src;
 using UniSchedule;
 
@@ -11,6 +12,7 @@ builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSet
 builder.Services.AddSingleton<DBManager>();
 
 var app = builder.Build();
+
 
 // Получаем DBManager
 var db = app.Services.GetRequiredService<DBManager>();
@@ -24,6 +26,11 @@ foreach (var user in users)
 {
     Console.WriteLine($"ID: {user.Id}, Почта: {user.Mail}, Роль: {user.Role}");
 }
+
+//Объявление БД
+var db = new DBManager("schedule.db");
+
+db.TryAddUser("test@yandex.ru", "test123", "user");
 
 if (app.Environment.IsDevelopment())
 {

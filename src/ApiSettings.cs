@@ -1,5 +1,5 @@
 namespace UniSchedule{
   public class ApiSettings{
-    public string Token { get; set; }
+    public string Token { get; set; } = "";
   }
 }

@@ -1,18 +1,19 @@
-using UniSchedule;
+using Microsoft.AspNetCore.Identity.Data;
 using System.Data.SQLite;
 using uni_schedule.src;
+using UniSchedule;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+builder.Services.AddSingleton<DBManager>();
 
 var app = builder.Build();
 
-//Объявление БД
-var db = new DBManager();
-
+// Получаем DBManager
+var db = app.Services.GetRequiredService<DBManager>();
 
 db.AddTestUsers();
 
@@ -22,19 +23,6 @@ var users = db.GetAllUsers();
 foreach (var user in users)
 {
     Console.WriteLine($"ID: {user.Id}, Почта: {user.Mail}, Роль: {user.Role}");
-}
-
-// Проверяем вход
-Console.WriteLine("\nПроверка входа:");
-Console.WriteLine($"admin@mauniver.ru / admin123: {db.CheckPassword("admin@mauniver.ru", "admin123")}");
-Console.WriteLine($"admin@mauniver.ru / wrong: {db.CheckPassword("admin@mauniver.ru", "wrong")}");
-Console.WriteLine($"user@mauniver.ru / user123: {db.CheckPassword("user@mauniver.ru", "user123")}");
-
-// Ищем пользователя
-var user1 = db.FindUser("admin@mauniver.ru");
-if (user1 != null)
-{
-    Console.WriteLine($"\nНайден пользователь: {user1.Mail} (роль: {user1.Role})");
 }
 
 if (app.Environment.IsDevelopment())
@@ -62,4 +50,28 @@ app.MapGet("/", async context =>
     await context.Response.WriteAsync(data);
 });
 
+// API для логина
+app.MapPost("/api/login", async (HttpContext httpContext) =>
+{
+    var request = await httpContext.Request.ReadFromJsonAsync<LoginRequest>();
+    if (request == null) return Results.BadRequest();
+
+    var db = httpContext.RequestServices.GetRequiredService<DBManager>();
+    var isValid = db.CheckPassword(request.Mail, request.Password);
+
+    if (isValid)
+    {
+        var user = db.FindUser(request.Mail);
+        return Results.Ok(new { user?.Mail, user?.Role });
+    }
+
+    return Results.Unauthorized();
+});
+
 app.Run();
+
+public class LoginRequest
+{
+    public string Mail { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}

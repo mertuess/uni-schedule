@@ -84,14 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-<<<<<<< HEAD
-    
-    // Инициализация - показываем фильтры по группам
-    renderGroupFilters();
-});
-=======
 
+    // Инициализация - показываем фильтры по группам
     const activeType = document.querySelector('.search-btn.active')?.dataset.type || 'group';
     switchFilter(activeType);
 });
->>>>>>> d930dba029c082d9c02c68ae874e3fcb5b4e2ed5

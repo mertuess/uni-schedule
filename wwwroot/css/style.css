@@ -207,6 +207,80 @@ header a:hover {
     box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
 }
 
+/* Стили для страницы логина */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.login-container h2 {
+    margin-top: 0;
+    color: var(--blue-dark);
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--blue-dark);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid transparent;
+    border-radius: calc(var(--radius)/2);
+    font-family: "Bahnschrift", sans-serif;
+    font-size: 14px;
+    background: var(--bg);
+    transition: 0.2s;
+}
+
+.form-group input:hover,
+.form-group input:focus {
+    border-color: var(--blue);
+    outline: none;
+    background: var(--white);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    border-radius: 30px;
+    font-family: "Bahnschrift", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(11, 91, 211, 0.25);
+}
+
+.login-btn:hover {
+    background: var(--blue-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(10, 58, 155, 0.35);
+}
+
+.error {
+    color: #e74c3c;
+    margin-top: 15px;
+    text-align: center;
+    display: none;
+    font-weight: 500;
+}
+
 /* Таблицы */
 .table-container {
     overflow-x: auto;
@@ -320,5 +394,9 @@ footer .logo {
     .feedback-links a {
         display: block;
         margin: 0 0 10px;
+    }
+    
+    .login-container {
+        margin: 30px 20px;
     }
 }

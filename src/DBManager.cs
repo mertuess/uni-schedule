@@ -1,7 +1,7 @@
 ﻿using SQLite;
 using System.Security.Cryptography;
 using System.Text;
-using uni_schedule.Models;
+using uni_schedule.src.Models;
 
 namespace uni_schedule.src
 {

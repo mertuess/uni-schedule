@@ -26,8 +26,8 @@ app.UseStaticFiles();
 
 app.MapGet("/", async context =>
 {
-    string faculties_json = await o_api.GetFacultiesAsync();
-    List<Facult> faculties = JsonConvert.DeserializeObject<List<Facult>>(faculties_json)?? throw new Exception("");
+    await UniSchedule.DataManager.LoadAll(o_api);
+    // await UniSchedule.DataManager.UpdateDates(o_api, DataManager.Groups?.Where(x => x.group_id==1).First());
     string data = "";
 
     using (StreamReader reader = new StreamReader(@"./wwwroot/index.html"))
@@ -36,8 +36,18 @@ app.MapGet("/", async context =>
         while ((line = await reader.ReadLineAsync()) != null)
         {
             if(line.Contains("UI_INST")){
-                faculties.ForEach(x => {data += $"<option value=\"{x.fac_id}\">{x.facultee}</option>";});
+                DataManager.Facultes?.ForEach(x => {data += $"<option value=\"{x.fac_id}\">{x.facultee}</option>";});
             }
+            if(line.Contains("UI_COURSE")){
+                DataManager.Courses?.ForEach(x => {data += $"<option value=\"{x.course_id}\">{x.course}</option>";});
+            }
+            if(line.Contains("UI_GROUP")){
+                DataManager.Groups?.ForEach(x => {data += $"<option value=\"{x.group_id}\">{x.group}</option>";});
+            }
+            if(line.Contains("UI_WEEK")){
+                DataManager.CurrentDates?.ForEach(x => {data += $"<option value=\"{x}\">{x}</option>";});
+            }
+
             data += line;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using SQLite;
 using uni_schedule.src.Models;
 
-namespace uni_schedule.src
+namespace UniSchedule
 {
     public class DBManager
     {

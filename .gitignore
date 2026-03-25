@@ -1,3 +1,5 @@
 .vs/
 bin/
 obj/
+schedule.db
+token.uni.s

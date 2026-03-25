@@ -1,91 +1,94 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Вход - МАУ</title>
-				<link rel="stylesheet" href="/css/style.css">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Вход - МАУ</title>
+	<link rel="stylesheet" href="/css/style.css">
 </head>
-	<body>
-		<header>
-			<a href="https://mauniver.ru">
-				<img src="resources/images/logo-bottom.svg" alt="на университет">
-        </a>
-			<nav>
-				<div class="container">
-					<ul>
-						<li>
-							<a href="/index.html">Главная</a>
-						</li>
-						<li>
-							<a href="rings.html">Расписание звонков</a>
-						</li>
-						<li>
-							<a href="schedule.html">Расписание занятий</a>
-						</li>
-						<li>
-							<a href="login.html">Вход</a>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		</header>
 
-		<main>
+<body>
+	<header>
+		<a href="https://mauniver.ru">
+			<img src="resources/images/logo-bottom.svg" alt="на университет">
+		</a>
+		<nav>
 			<div class="container">
-				<div class="login-container">
-					<h2>Вход в систему</h2>
+				<ul>
+					<li>
+						<a href="/index.html">Главная</a>
+					</li>
+					<li>
+						<a href="rings.html">Расписание звонков</a>
+					</li>
+					<li>
+						<a href="schedule.html">Расписание занятий</a>
+					</li>
+					<li>
+						<a href="login.html">Вход</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
 
-					<div class="form-group">
-						<label for="email">Email</label>
-						<input type="email" id="email" placeholder="Введите email">
-                </div>
+	<main>
+		<div class="container">
+			<div class="login-container">
+				<h2>Вход в систему</h2>
 
-					<div class="form-group">
-						<label for="password">Пароль</label>
-						<input type="password" id="password" placeholder="Введите пароль">
-                </div>
+				<div class="form-group">
+					<label for="email">Email</label>
+					<input type="email" id="email" placeholder="Введите email">
+				</div>
 
-					<button class="login-btn" onclick="login()">Войти</button>
+				<div class="form-group">
+					<label for="password">Пароль</label>
+					<input type="password" id="password" placeholder="Введите пароль">
+				</div>
 
-					<div class="error" id="errorMessage">Неверный email или пароль</div>
+				<button class="login-btn" onclick="login()">Войти</button>
 
+				<div class="error" id="errorMessage">Неверный email или пароль</div>
+
+			</div>
+		</div>
+	</main>
+
+	<footer>
+		<div class="container">
+			<div>
+				<img src="/resources/images/logo-header.svg" alt="МАУ" class="logo">
+				<div class="social">
+					<a href="#">
+						<img src="/resources/images/vk.svg" alt="VK">
+					</a>
+					<a href="#">
+						<img src="/resources/images/telegram.svg" alt="Telegram">
+					</a>
+					<a href="#">
+						<img src="/resources/images/ok.svg" alt="OK">
+					</a>
 				</div>
 			</div>
-		</main>
 
-		<footer>
-			<div class="container">
-				<div>
-					<img src="/resources/images/logo-header.svg" alt="МАУ" class="logo">
-						<div class="social">
-							<a href="#">
-								<img src="/resources/images/vk.svg" alt="VK">
-							</a>
-							<a href="#">
-								<img src="/resources/images/telegram.svg" alt="Telegram">
-							</a>
-							<a href="#">
-								<img src="/resources/images/ok.svg" alt="OK">
-							</a>
-						</div>
-					</div>
-
-				<div>
-					<p>ФГАОУ ВО «Мурманский арктический университет»</p>
-					<p>ул. Егорова, 16, Мурманск</p>
-					<p>Тел.: 8 (8152) 21-39-27</p>
-					<p>Email: rector@mstu.edu.ru</p>
-				</div>
-
-				<div class="feedback-links">
-					<a href="#">Сообщить о проблеме</a>
-					<a href="#">Замечания по сайту</a>
-					<p class="copy">© 2026 Мурманский арктический университет</p>
-				</div>
+			<div>
+				<p>ФГАОУ ВО «Мурманский арктический университет»</p>
+				<p>ул. Егорова, 16, Мурманск</p>
+				<p>Тел.: 8 (8152) 21-39-27</p>
+				<p>Email: rector@mstu.edu.ru</p>
 			</div>
-		</footer>
 
-		<script src="/js/login.js"></script>
-	</body>
+			<div class="feedback-links">
+				<a href="#">Сообщить о проблеме</a>
+				<a href="#">Замечания по сайту</a>
+				<p class="copy">© 2026 Мурманский арктический университет</p>
+			</div>
+		</div>
+	</footer>
+
+	<script src="/js/login.js"></script>
+</body>
+
 </html>

@@ -11,5 +11,13 @@ namespace UniSchedule{
       byte[] hash = MD5Hash.ComputeHash(inputBytes);
       return Convert.ToHexString(hash); 
     }
+
+    static public string Encrypt(string data){
+      return "";
+    }
+
+    static public string Decrypt(string enctryptedData){
+      return "";
+    }
   }
 }

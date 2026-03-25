@@ -4,6 +4,7 @@ using System.Text;
 namespace UniSchedule{
   static class Crypto{
     private static readonly byte[] Salt = new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 };
+    private static readonly string allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890%$#@&";
 
     static public string MD5HashCreate(string input){
       MD5 MD5Hash = MD5.Create();
@@ -18,6 +19,15 @@ namespace UniSchedule{
 
     static public string Decrypt(string enctryptedData){
       return "";
+    }
+
+    static public string GeneratePassword(int lenght){
+      string pass = "";
+      var generator = new Random();
+      for(int i = 0; i < lenght; i++){
+        pass += (allowed_chars[generator.Next(0, allowed_chars.Length)]);
+      }
+      return pass;
     }
   }
 }

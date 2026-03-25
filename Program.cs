@@ -31,8 +31,8 @@ app.MapGet("/", async context =>
         {
             data += line;
         }
-    }
     context.Response.ContentType = "text/html";
+    }
     await context.Response.WriteAsync(data);
 });
 

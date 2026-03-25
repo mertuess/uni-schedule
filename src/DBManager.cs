@@ -6,16 +6,22 @@ namespace UniSchedule
     public class DBManager
     {
         private SQLiteConnection _db;
+        private readonly string _dbPath;
 
-        public DBManager(string dbPath)
+        public DBManager(IConfiguration configuration)
         {
-            bool exist = File.Exists(dbPath);
-            _db = new SQLiteConnection(dbPath);
+            _dbPath = configuration.GetConnectionString("DefaultConnection")?? throw new Exception("Database path not found!");
+            bool exist = File.Exists(_dbPath);
+            _db = new SQLiteConnection(_dbPath);
             if(!exist){
-                Console.WriteLine($"Database {dbPath} is not exist!\nCreate new DB with new table 'Users'");
+                Console.WriteLine($"Database {_dbPath} is not exist!\nCreate new DB with new table 'Users'");
                 _db.CreateTable<User>();
+                string g_pass = UniSchedule.Crypto.GeneratePassword(12);
+                if(this.TryAddUser("operator@mauniver.ru", g_pass, "operator")){
+                    Console.WriteLine($"New user generated: email: operator@mauniver.ru password: {g_pass}");
+                }
             }
-            Console.WriteLine($"Database connection is active: {dbPath}");
+            Console.WriteLine($"Database connection is active: {_dbPath}");
             Console.WriteLine($"Registered users: {this.GetAllUsers().Count}");
         }
 

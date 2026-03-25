@@ -21,8 +21,9 @@
 						<li>
 							<a href="templates/rings.html">Расписание звонков</a>
 						</li>
+						</li>
 						<li>
-							<a href="templates/schedule.html">Расписание занятий</a>
+							<a href="templates/dashboard.html">Панель администратора</a>
 						</li>
 						<li>
 							<a href="templates/login.html">Вход</a>
@@ -62,12 +63,6 @@
 									</select>
 								</div>
 
-								<div class="filter-item">
-									<label>Группа</label>
-									<select>
-										UI_GROUP
-									</select>
-								</div>
 
 								<div class="filter-item">
 									<label>Институт/Факультет</label>
@@ -135,36 +130,24 @@
 						</div>
 					</div>
 
-					<h2>Результаты поиска</h2>
-					<div class="table-container">
-						<table>
-							<thead>
-								<tr>
-									<th>Группа</th>
-									<th>Направление подготовки</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<a href="templates/group-schedule.html?group=АТПП6233-1">АТПП6233-1</a>
-									</td>
-									<td>Автоматизация технологических процессов</td>
-								</tr>
-								<tr>
-									<td>
-										<a href="templates/group-schedule.html?group=БИВТ-ВП-23">БИВТ-ВП-23</a>
-									</td>
-									<td>Информатика и вычислительная техника</td>
-								</tr>
-								<tr>
-									<td>
-										<a href="templates/group-schedule.html?group=БПМИ-ПТ-23">БПМИ-ПТ-23</a>
-									</td>
-									<td>Прикладная математика и информатика</td>
-								</tr>
-							</tbody>
-						</table>
+					<div id="results-container" style="display: none;">
+						<h2>Результаты поиска</h2>
+						<div class="table-container">
+							<table id="results-table">
+								<thead>
+									<tr>
+										<th>Группа</th>
+										<th>Направление подготовки</th>
+									</tr>
+								</thead>
+								<tbody id="results-body">
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div id="message-container" style="display: none; text-align: center; padding: 20px; background: var(--bg); border-radius: var(--radius); margin-top: 20px;">
+						<p id="message-text"></p>
 					</div>
 				</div>
 			</div>

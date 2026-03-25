@@ -1,5 +1,5 @@
 ﻿using SQLite;
-using uni_schedule.src.Models;
+using UniSchedule.Models;
 
 namespace UniSchedule
 {

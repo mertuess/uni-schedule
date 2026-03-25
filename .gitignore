@@ -3,3 +3,4 @@ bin/
 obj/
 schedule.db
 token.uni.s
+uni-schedule.csproj.user

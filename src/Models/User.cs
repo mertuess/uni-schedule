@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace uni_schedule.src.Models
+namespace UniSchedule.Models
 {
     public class User
     {

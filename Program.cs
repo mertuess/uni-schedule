@@ -1,4 +1,4 @@
-using uni_schedule.src;
+using UniSchedule;
 
 var builder = WebApplication.CreateBuilder(args);
 

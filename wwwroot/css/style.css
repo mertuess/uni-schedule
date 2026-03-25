@@ -3,10 +3,12 @@
     --text: #0b1b33;
     --white: #ffffff;
     --blue: #0b5bd3;
+    --red: #c81414;
     --blue-dark: #0a3a9b;
     --radius: 18px;
     --shadow: 0 10px 30px rgba(11, 27, 51, .1);
 }
+
 
 /* Шрифты */
 @font-face {
@@ -39,6 +41,16 @@ a {
     color: var(--text);
 }
 
+ul li a {
+    margin-top: -13px;
+    font-size: 20px;
+}
+
+img {
+    margin-top: 5px;
+    width: 300px;
+}
+
 /* Заголовки */
 h1, h2, h3 {
     font-family: "Bebas-Neue", sans-serif;
@@ -53,7 +65,7 @@ h2 { font-size: 32px; margin: 30px 0 20px; border-bottom: 2px solid var(--blue);
 /* Шапка */
 header {
     background: linear-gradient(135deg, var(--blue-dark), var(--blue));
-    height: 150px;
+    height: 130px;
 }
 
 header ul {
@@ -70,10 +82,11 @@ header a {
     padding: 8px 16px;
     border-radius: 30px;
     transition: 0.3s;
+    display: grid;
+    justify-content: center;
 }
 
 header a:hover {
-    background: rgba(255,255,255,0.15);
     transform: translateY(-2px);
 }
 
@@ -207,6 +220,28 @@ header a:hover {
     box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
 }
 
+.custom-select {
+    width: 15%;
+    padding: 12px 15px;
+    border: 2px solid transparent;
+    border-radius: calc(var(--radius)/2);
+    font-family: "Bahnschrift", sans-serif;
+    font-size: 14px;
+    background: var(--white);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+    .custom-select:hover {
+        border-color: var(--blue);
+    }
+
+    .custom-select:focus {
+        outline: none;
+        border-color: var(--blue-dark);
+        box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
+    }
+
 /* Стили для страницы логина */
 .login-container {
     max-width: 400px;
@@ -265,6 +300,33 @@ header a:hover {
     cursor: pointer;
     transition: 0.3s;
     box-shadow: 0 4px 12px rgba(11, 91, 211, 0.25);
+}
+
+.delete-btn {
+    width: 100%;
+    background: var(--red);
+    color: var(--white);
+    padding: 14px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 30px;
+    font-family: "Bahnschrift", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.delete-btn:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.35);
 }
 
 .login-btn:hover {
@@ -343,6 +405,7 @@ footer .logo {
 .social img {
     width: 24px;
     height: 24px;
+    margin-top: 8px;
     margin-right: 8px;
     opacity: 0.8;
 }

@@ -436,6 +436,7 @@ footer .logo {
 @media (max-width: 768px) {
     .filter-row-dynamic {
         flex-direction: column;
+
     }
     
     .filter-item {

@@ -25,7 +25,10 @@ app.UseStaticFiles();
 app.MapGet("/", async context =>
 {
     await UniSchedule.DataManager.LoadAll(o_api);
-    await UniSchedule.DataManager.UpdateDates(o_api, DataManager.Groups.Where(x => x.group_id==1).First());
+    await UniSchedule.DataManager.UpdateGroups(o_api,
+            DataManager.Facultes.Where(x=>x.fac_id==3).First(),
+            DataManager.Courses.Where(x=>x.course_id == 3).First());
+    await UniSchedule.DataManager.UpdateDates(o_api, DataManager.Groups.First());
     string data = "";
 
     using (StreamReader reader = new StreamReader(@"./wwwroot/index.html"))

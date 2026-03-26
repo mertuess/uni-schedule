@@ -53,9 +53,51 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-// Главная страница
+app.MapGet("/index.html", async context =>
+{
+    await UniSchedule.DataManager.LoadAll(o_api);
+    await UniSchedule.DataManager.UpdateGroups(o_api,
+            DataManager.Facultes.Where(x => x.fac_id == 3).First(),
+            DataManager.Courses.Where(x => x.course_id == 3).First());
+    await UniSchedule.DataManager.UpdateDates(o_api, DataManager.Groups.First());
+    string data = "";
+
+    using (StreamReader reader = new StreamReader(@"./wwwroot/index.html"))
+    {
+        string? line;
+        while ((line = await reader.ReadLineAsync()) != null)
+        {
+            if (line.Contains("UI_INST"))
+            {
+                DataManager.Facultes.ForEach(x => { data += $"<option value=\"{x.fac_id}\">{x.facultee}</option>"; });
+            }
+            if (line.Contains("UI_COURSE"))
+            {
+                DataManager.Courses.ForEach(x => { data += $"<option value=\"{x.course_id}\">{x.course}</option>"; });
+            }
+            if (line.Contains("UI_GROUP"))
+            {
+                DataManager.Groups.ForEach(x => { data += $"<option value=\"{x.group_id}\">{x.group}</option>"; });
+            }
+            if (line.Contains("UI_WEEK"))
+            {
+                DataManager.CurrentDates.ForEach(x => { data += $"<option value=\"{x}\">{x}</option>"; });
+            }
+
+            data += line;
+        }
+        context.Response.ContentType = "text/html";
+    }
+    await context.Response.WriteAsync(data);
+});
+
 app.MapGet("/", async context =>
 {
+    await UniSchedule.DataManager.LoadAll(o_api);
+    await UniSchedule.DataManager.UpdateGroups(o_api,
+            DataManager.Facultes.Where(x => x.fac_id == 3).First(),
+            DataManager.Courses.Where(x => x.course_id == 3).First());
+    await UniSchedule.DataManager.UpdateDates(o_api, DataManager.Groups.First());
     string data = "";
     using (StreamReader reader = new StreamReader(@"./wwwroot/index.html"))
     {
@@ -64,27 +106,19 @@ app.MapGet("/", async context =>
         {
             if (line.Contains("UI_INST"))
             {
-                foreach (var f in DataManager.Facultes)
-                    data += $"<option value=\"{f.fac_id}\">{f.facultee}</option>";
+                DataManager.Facultes.ForEach(x => { data += $"<option value=\"{x.fac_id}\">{x.facultee}</option>"; });
             }
-            else if (line.Contains("UI_COURSE"))
+            if (line.Contains("UI_COURSE"))
             {
-                foreach (var c in DataManager.Courses)
-                    data += $"<option value=\"{c.course_id}\">{c.course}</option>";
+                DataManager.Courses.ForEach(x => { data += $"<option value=\"{x.course_id}\">{x.course}</option>"; });
             }
-            else if (line.Contains("UI_GROUP"))
+            if (line.Contains("UI_GROUP"))
             {
-                foreach (var g in DataManager.Groups)
-                    data += $"<option value=\"{g.group_id}\">{g.group}</option>";
+                DataManager.Groups.ForEach(x => { data += $"<option value=\"{x.group_id}\">{x.group}</option>"; });
             }
-            else if (line.Contains("UI_WEEK"))
+            if (line.Contains("UI_WEEK"))
             {
-                foreach (var w in DataManager.CurrentDates)
-                    data += $"<option value=\"{w}\">{w}</option>";
-            }
-            else
-            {
-                data += line;
+                DataManager.CurrentDates.ForEach(x => { data += $"<option value=\"{x}\">{x}</option>"; });
             }
         }
     }

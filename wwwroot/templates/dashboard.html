@@ -11,10 +11,22 @@
 		<header>
 			<a href="https://mauniver.ru" class="logo">
 				<img src="../resources/images/logo-bottom.svg" alt="на университет">
-		</a>
+        </a>
+			<nav>
+				<div class="container">
+					<ul>
+						<li>
+							<a href="../index.html">Главная</a>
+						</li>
+						<li>
+							<a href="rings.html">Расписание звонков</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
 		</header>
+
 		<main>
-			
 			<div class="container">
 				<div class="main-content">
 					<a href="../index.html" class="back-button">
@@ -28,9 +40,13 @@
 
 					<div class="info-block">
 						<p>
-							<strong>Всего пользователей: 5</strong>
+							<strong>
+								Всего пользователей: <span id="user-count">0</span>
+							</strong>
 						</p>
-						<p>Обновлено: 18.03.2026 14:30</p>
+						<p>
+							Обновлено: <span id="update-time"></span>
+						</p>
 					</div>
 
 					<div class="table-container">
@@ -43,35 +59,14 @@
 									<th>Действие</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody id="users-tbody">
 								<tr>
-									<td>1</td>
-									<td>ivanov@mauniver.ru</td>
-									<td>Студент</td>
-									<td>
-										<a href="user_action.html?id=1" class="btn" style="padding: 6px 16px;">Действие</a>
-									</td>
-								</tr>
-								<tr>
-									<td>2</td>
-									<td>petrova@mauniver.ru</td>
-									<td>Преподаватель</td>
-									<td>
-										<a href="user_action.html?id=2" class="btn" style="padding: 6px 16px;">Действие</a>
-									</td>
-								</tr>
-								<tr>
-									<td>3</td>
-									<td>operator@mauniver.ru</td>
-									<td>Оператор</td>
-									<td>
-										<a href="user_action.html?id=3" class="btn" style="padding: 6px 16px;">Действие</a>
-									</td>
+									<td colspan="4" style="text-align:center;">Загрузка...</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
-					<a href="user_create.html" class="btn">Создать пользователя</a>
+					<a href="user_create.html" class="btn" style="display: inline-block; margin-top: 20px; text-align: center;">Создать пользователя</a>
 				</div>
 			</div>
 		</main>
@@ -107,5 +102,7 @@
 		</footer>
 
 		<script src="../js/main.js"></script>
+		<script src="../js/users.js"></script>
+		<script src="../js/dashboard.js"></script>
 	</body>
 </html>

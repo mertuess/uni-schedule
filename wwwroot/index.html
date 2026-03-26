@@ -11,7 +11,7 @@
 		<header>
 			<a href="https://mauniver.ru">
 				<img src="resources/images/logo-bottom.svg" alt="на университет">
-        </a>
+			</a>
 			<nav>
 				<div class="container">
 					<ul>
@@ -49,6 +49,7 @@
 						<button class="search-btn active" data-type="group">По группам</button>
 						<button class="search-btn" data-type="teacher">По преподавателям</button>
 						<button class="search-btn" data-type="classroom">По аудиториям</button>
+						<a href="templates/classroom_schedule.html" class="search-btn">Занятость аудиторий</a>
 					</div>
 
 					<div class="filters">
@@ -84,21 +85,23 @@
 						<!-- Фильтры для поиска по преподавателям (скрыты по умолчанию) -->
 						<div class="filter-group" data-filter-type="teacher" style="display: none;">
 							<div class="filter-row-dynamic">
-
 								<div class="filter-item">
 									<label>Неделя</label>
-									<select>
+									<select id="teacher-week">
 										UI_WEEK
 									</select>
 								</div>
 
 								<div class="filter-item" style="flex: 2">
-									<label>Преподаватель</label>
-									<input type="text" placeholder="Введите ФИО преподавателя">
-										
+									<label>Преподаватели</label>
+									<div class="teacher-search-container">
+										<input type="text" id="teacher-search-input" placeholder="Введите ФИО преподавателя" autocomplete="off">
+										<div id="teacher-suggestions" class="suggestions-list"></div>
 									</div>
+									<div id="selected-teachers" class="selected-teachers"></div>
+								</div>
 							</div>
-							<button class="filter-show-btn">Показать</button>
+							<button class="filter-show-btn" id="show-teachers-schedule">Показать</button>
 						</div>
 
 						<!-- Фильтры для поиска по аудиториям (скрыты по умолчанию) -->
@@ -134,12 +137,6 @@
 						<h2>Результаты поиска</h2>
 						<div class="table-container">
 							<table id="results-table">
-								<thead>
-									<tr>
-										<th>Группа</th>
-										<th>Направление подготовки</th>
-									</tr>
-								</thead>
 								<tbody id="results-body">
 								</tbody>
 							</table>
@@ -157,18 +154,18 @@
 			<div class="container">
 				<div>
 					<img src="resources/images/logo-header.svg" alt="МАУ" class="logo">
-						<div class="social">
-							<a href="#">
-								<img src="resources/images/vk.svg" alt="VK">
-							</a>
-							<a href="#">
-								<img src="resources/images/telegram.svg" alt="Telegram">
-							</a>
-							<a href="#">
-								<img src="resources/images/ok.svg" alt="OK">
-							</a>
-						</div>
+					<div class="social">
+						<a href="#">
+							<img src="resources/images/vk.svg" alt="VK">
+						</a>
+						<a href="#">
+							<img src="resources/images/telegram.svg" alt="Telegram">
+						</a>
+						<a href="#">
+							<img src="resources/images/ok.svg" alt="OK">
+						</a>
 					</div>
+				</div>
 
 				<div>
 					<p>ФГАОУ ВО «Мурманский арктический университет»</p>
@@ -186,5 +183,6 @@
 		</footer>
 
 		<script src="js/main.js"></script>
+		<script src="js/teachers.js"></script>
 	</body>
 </html>

@@ -25,8 +25,13 @@ namespace UniSchedule
         }
 
         static public async Task LoadAll(OutAPI o_api){
+            if(Courses.Count > 0) return;
+
+            Console.WriteLine("Get faculties list");
             string faculties_json = await o_api.GetFacultiesAsync();
+            Console.WriteLine("Get courses list");
             string courses_json = await o_api.GetCoursesAsync();
+            Console.WriteLine("Get teachers list");
             string teachers_json = await o_api.GetTeachersAsync();
             Facultes = JsonConvert.DeserializeObject<List<UniSchedule.Models.Facult>>(faculties_json)?? throw new Exception("");
             Courses = JsonConvert.DeserializeObject<List<UniSchedule.Models.Course>>(courses_json)?? throw new Exception("");

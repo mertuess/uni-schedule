@@ -20,10 +20,15 @@ namespace UniSchedule.API{
     {
         return await getAsync("faculties");
     }
+
+    public async Task<string> GetTeachersAsync()
+    {
+        return await getAsync("teachers");
+    }
     
     public async Task<string> GetAllGroupsAsync(int fac_ID)
     {
-        return await getAsync($"{fac_ID}/groups");
+        return await getAsync($"faculties/{fac_ID}/groups");
     }
 
     public async Task<string> GetDatesAsync(string groupUID)
@@ -37,7 +42,6 @@ namespace UniSchedule.API{
         response.EnsureSuccessStatusCode();
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(jsonResponse);
         return jsonResponse;
     }
   }

@@ -71,11 +71,6 @@ namespace UniSchedule.API{
        return await getAsync($"grous/{UID}/schedule/{start}/{end}");
     }
 
-    public async Task<string> GetTeachersAsync()
-    {
-       return await getAsync($"/teachers");
-    }
-
     public async Task<string> GetTeachersSearchAsync(string name)
     {
        return await getAsync($"/teachers/search");

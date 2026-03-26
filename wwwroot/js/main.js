@@ -1,47 +1,37 @@
-// ============================================
-// ГЛАВНЫЙ ФАЙЛ - основная логика главной страницы
-// Отвечает за:
-// - Фильтрацию расписания (группы, преподаватели, аудитории)
-// - Отображение результатов поиска
-// - Управление навигацией (меню, выход, отображение email)
-// ============================================
-
 document.addEventListener('DOMContentLoaded', function() {
    
-    // Обновляем навигацию и информацию о пользователе при загрузке страницы
-    updateUserHeader();
-    updateNavigation();
-   
-    // Элементы DOM для работы с фильтрами и результатами
+    // Переключение между типами поиска
     const searchBtns = document.querySelectorAll('.search-btn');
     const filterBlocks = document.querySelectorAll('.filter-group');
+    
+    // Элементы для сообщений и результатов
     const resultsContainer = document.getElementById('results-container');
     const messageContainer = document.getElementById('message-container');
     const messageText = document.getElementById('message-text');
     const resultsBody = document.getElementById('results-body');
     
-    // Скрыть блоки результатов и сообщений
+    // Функция скрыть всё
     function hideAll() {
         if (resultsContainer) resultsContainer.style.display = 'none';
         if (messageContainer) messageContainer.style.display = 'none';
     }
     
-    // Показать сообщение (например, ошибку или подсказку)
+    // Функция показать сообщение
     function showMessage(msg) {
         hideAll();
         if (messageText) messageText.textContent = msg;
         if (messageContainer) messageContainer.style.display = 'block';
     }
     
-    // Показать результаты поиска
+    // Функция показать результаты
     function showResults() {
         hideAll();
         if (resultsContainer) resultsContainer.style.display = 'block';
     }
     
-    // Переключение типа поиска (группы/преподаватели/аудитории)
+    // Функция переключения фильтров
     function switchFilter(type) {
-        searchBtns.forEach(function(btn) {
+        searchBtns.forEach(btn => {
             if (btn.dataset.type === type) {
                 btn.classList.add('active');
             } else {
@@ -49,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        filterBlocks.forEach(function(block) {
+        filterBlocks.forEach(block => {
             if (block.dataset.filterType === type) {
                 block.style.display = 'block';
             } else {
@@ -57,22 +47,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // При смене типа скрываем всё
         hideAll();
     }
     
-    // Проверка, выбраны ли какие-то фильтры
+    // Проверка выбраны ли фильтры
     function hasSelectedFilters(filterBlock) {
         const selects = filterBlock.querySelectorAll('select');
         const inputs = filterBlock.querySelectorAll('input');
         
-        for (let i = 0; i < selects.length; i++) {
-            if (selects[i].value && selects[i].value !== '') {
+        for (let select of selects) {
+            if (select.value && select.value !== '') {
                 return true;
             }
         }
         
-        for (let i = 0; i < inputs.length; i++) {
-            if (inputs[i].value && inputs[i].value.trim() !== '') {
+        for (let input of inputs) {
+            if (input.value && input.value.trim() !== '') {
                 return true;
             }
         }
@@ -80,21 +71,33 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
     
-    // Запрос к API для получения данных расписания
+    // Получить данные (имитация API)
     async function getData(filterType, filters) {
-        try {
-            const response = await fetch('/api/schedule?type=' + filterType + '&' + new URLSearchParams(filters));
-            if (response.ok) {
-                return await response.json();
-            }
-            return [];
-        } catch (error) {
-            console.error('Ошибка:', error);
-            return [];
-        }
+        // Здесь будет реальный запрос к API
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                if (filterType === 'group') {
+                    resolve([
+                        { name: 'АТПП6233-1', specialty: 'Автоматизация технологических процессов' },
+                        { name: 'БИВТ-ВП-23', specialty: 'Информатика и вычислительная техника' },
+                        { name: 'БПМИ-ПТ-23', specialty: 'Прикладная математика и информатика' }
+                    ]);
+                } else if (filterType === 'teacher') {
+                    resolve([
+                        { name: 'Богомолов Р.А.', specialty: 'Кафедра математики' },
+                        { name: 'Иванов И.И.', specialty: 'Кафедра информатики' }
+                    ]);
+                } else {
+                    resolve([
+                        { name: '310 (Ленина, 57)', specialty: 'Лекционная аудитория' },
+                        { name: '205 (Егорова, 16)', specialty: 'Компьютерный класс' }
+                    ]);
+                }
+            }, 500);
+        });
     }
     
-    // Обновление таблицы с результатами поиска
+    // Обновить таблицу
     function updateTable(data) {
         if (!resultsBody) return;
         
@@ -110,13 +113,12 @@ document.addEventListener('DOMContentLoaded', function() {
             tr.appendChild(td);
             resultsBody.appendChild(tr);
         } else {
-            for (let i = 0; i < data.length; i++) {
-                const item = data[i];
+            data.forEach(item => {
                 const tr = document.createElement('tr');
                 
                 const tdName = document.createElement('td');
                 const link = document.createElement('a');
-                link.href = 'templates/group-schedule.html?group=' + encodeURIComponent(item.name);
+                link.href = `templates/group-schedule.html?group=${encodeURIComponent(item.name)}`;
                 link.textContent = item.name;
                 tdName.appendChild(link);
                 
@@ -126,56 +128,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 tr.appendChild(tdName);
                 tr.appendChild(tdSpecialty);
                 resultsBody.appendChild(tr);
-            }
+            });
         }
         
         showResults();
     }
     
-    // Сбор выбранных значений фильтров
+    // Собрать выбранные фильтры
     function getSelectedFilters(filterBlock) {
         const selects = filterBlock.querySelectorAll('select');
         const inputs = filterBlock.querySelectorAll('input');
         const filters = {};
         
-        selects.forEach(function(select) {
+        selects.forEach(select => {
             if (select.value && select.value !== '') {
-                filters[select.id || 'select'] = select.value;
+                const label = select.previousElementSibling?.textContent || 'Параметр';
+                filters[label] = select.value;
             }
         });
         
-        inputs.forEach(function(input) {
+        inputs.forEach(input => {
             if (input.value && input.value.trim() !== '') {
-                filters[input.id || 'input'] = input.value.trim();
+                const label = input.previousElementSibling?.textContent || 'Параметр';
+                filters[label] = input.value.trim();
             }
         });
         
         return filters;
     }
     
-    // Обработчики кнопок переключения типа поиска
-    for (let i = 0; i < searchBtns.length; i++) {
-        searchBtns[i].addEventListener('click', function() {
+    // Обработчики для кнопок выбора типа
+    searchBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
             const type = this.dataset.type;
             switchFilter(type);
         });
-    }
+    });
 
-    // Обработчики кнопки "Показать"
+    // Обработчик для кнопки "Показать"
     const showButtons = document.querySelectorAll('.filter-show-btn');
     
-    for (let i = 0; i < showButtons.length; i++) {
-        showButtons[i].addEventListener('click', async function() {
+    showButtons.forEach(btn => {
+        btn.addEventListener('click', async function() {
             const filterBlock = this.closest('.filter-group');
             const filterType = filterBlock.dataset.filterType;
             
+            // Проверяем, выбраны ли фильтры
             if (!hasSelectedFilters(filterBlock)) {
-                showMessage('Выберите или введите параметры для поиска');
+                // Показываем сообщение на странице
+                showMessage(' Пожалуйста, выберите или введите параметры для поиска');
                 return;
             }
             
+            // Показываем загрузку
             if (resultsBody) {
-                resultsBody.innerHTML = '的人<td colspan="2" style="text-align:center; padding:40px;">Загрузка...<\/td><\/tr>';
+                resultsBody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:40px;">⏳ Загрузка...</td></tr>';
                 showResults();
             }
             
@@ -184,183 +191,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await getData(filterType, filters);
                 updateTable(data);
             } catch (error) {
-                showMessage('Ошибка при загрузке данных');
+                console.error('Ошибка:', error);
+                showMessage(' Ошибка при загрузке данных. Попробуйте позже.');
             }
         });
-    }
+    });
 
+    // Инициализация - скрываем всё
     hideAll();
 });
-
-// ============================================
-// ФУНКЦИИ НАВИГАЦИИ
-// ============================================
-
-// Отображение email пользователя в правом углу
-function updateUserHeader() {
-    const user = localStorage.getItem('user');
-    const navUl = document.querySelector('header nav ul');
-    
-    if (!navUl) return;
-    
-    let userSpan = document.querySelector('.user-email-text');
-    if (userSpan) {
-        userSpan.remove();
-    }
-    
-    if (user) {
-        const userData = JSON.parse(user);
-        
-        userSpan = document.createElement('li');
-        userSpan.className = 'user-email-text';
-        userSpan.style.marginLeft = 'auto';
-        userSpan.style.color = 'var(--white)';
-        userSpan.style.padding = '8px 16px';
-        userSpan.style.fontWeight = '500';
-        userSpan.style.background = 'rgba(255,255,255,0.1)';
-        userSpan.style.borderRadius = '30px';
-        userSpan.textContent = userData.mail;
-        
-        navUl.appendChild(userSpan);
-    }
-}
-
-// Управление пунктами меню (Вход/Выход, Панель администратора)
-function updateNavigation() {
-    const user = localStorage.getItem('user');
-    const navUl = document.querySelector('header nav ul');
-    
-    if (!navUl) return;
-    
-    let loginLi = null;
-    let adminLi = null;
-    let logoutLi = null;
-    
-    // Поиск существующих элементов в меню
-    for (let i = 0; i < navUl.children.length; i++) {
-        const li = navUl.children[i];
-        const link = li.querySelector('a');
-        if (link) {
-            if (link.getAttribute('href') === 'templates/login.html') {
-                loginLi = li;
-            }
-            if (link.getAttribute('href') === 'templates/dashboard.html') {
-                adminLi = li;
-            }
-            if (link.textContent === 'Выход') {
-                logoutLi = li;
-            }
-        }
-    }
-    
-    if (user) {
-        const userData = JSON.parse(user);
-        
-        // Удаляем кнопку "Вход", если есть
-        if (loginLi) {
-            loginLi.remove();
-        }
-        
-        // Добавляем "Панель администратора" только для оператора
-        if (userData.role === 'operator') {
-            if (!adminLi) {
-                const newLi = document.createElement('li');
-                newLi.innerHTML = '<a href="templates/dashboard.html">Панель администратора</a>';
-                navUl.insertBefore(newLi, navUl.children[navUl.children.length - 2]);
-            }
-        } else {
-            if (adminLi) {
-                adminLi.remove();
-            }
-        }
-        
-        // Добавляем кнопку "Выход"
-        if (!logoutLi) {
-            const newLi = document.createElement('li');
-            newLi.innerHTML = '<a href="#" onclick="logout()">Выход</a>';
-            navUl.insertBefore(newLi, navUl.children[navUl.children.length - 1]);
-        }
-    } else {
-        // Пользователь не залогинен - убираем админ-панель и выход
-        if (adminLi) {
-            adminLi.remove();
-        }
-        if (logoutLi) {
-            logoutLi.remove();
-        }
-        
-        // Добавляем кнопку "Вход"
-        if (!loginLi) {
-            const newLi = document.createElement('li');
-            newLi.innerHTML = '<a href="templates/login.html">Вход</a>';
-            navUl.appendChild(newLi);
-        }
-    }
-}
-
-// ============================================
-// ФУНКЦИЯ ВЫХОДА ИЗ АККАУНТА
-// ============================================
-
-function logout() {
-    const user = localStorage.getItem('user');
-    let userName = '';
-    if (user) {
-        const userData = JSON.parse(user);
-        userName = userData.mail;
-    }
-    
-    // Удаляем данные пользователя из хранилища
-    localStorage.removeItem('user');
-    
-    // Показываем уведомление о выходе
-    showNotification('До свидания, ' + userName + '!', 'warning');
-    
-    // Обновляем меню
-    updateNavigation();
-    updateUserHeader();
-    
-    // Перенаправляем на главную страницу
-    setTimeout(function() {
-        window.location.href = '/';
-    }, 1500);
-}
-
-// ============================================
-// ФУНКЦИЯ ПОКАЗА УВЕДОМЛЕНИЙ
-// ============================================
-
-function showNotification(message, type) {
-    const notification = document.createElement('div');
-    notification.className = 'notification ' + type;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Автоматическое исчезновение через 3 секунды
-    setTimeout(function() {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(function() {
-            notification.remove();
-        }, 300);
-    }, 3000);
-}
-
-// ============================================
-// ПРОВЕРКА ПРАВ ОПЕРАТОРА
-// ============================================
-
-function checkOperator() {
-    const user = localStorage.getItem('user');
-    if (!user) {
-        window.location.href = '/templates/login.html';
-        return false;
-    }
-    const userData = JSON.parse(user);
-    if (userData.role !== 'operator') {
-        alert('У вас нет прав доступа');
-        window.location.href = '/index.html';
-        return false;
-    }
-    return true;
-}

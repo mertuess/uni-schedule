@@ -547,3 +547,75 @@ footer .logo {
         flex-direction: column;
     }
 }
+
+/* Стили для подсказок преподавателей */
+.teacher-search-container {
+    position: relative;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border: 1px solid #ddd;
+    border-radius: calc(var(--radius)/2);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: var(--shadow);
+}
+
+    .suggestions-list.active {
+        display: block;
+    }
+
+.suggestion-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .suggestion-item:hover {
+        background: var(--bg);
+    }
+
+/* Стили для выбранных преподавателей */
+.selected-teachers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.teacher-tag {
+    background: var(--blue);
+    color: var(--white);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .teacher-tag .remove-teacher {
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 1;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+.teacher-tag .remove-teacher:hover {
+    background: rgba(255,255,255,0.4);
+}
+

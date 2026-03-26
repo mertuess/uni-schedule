@@ -364,3 +364,30 @@ function checkOperator() {
     }
     return true;
 }
+
+// В функции switchFilter добавьте проверку на тип 'teacher'
+function switchFilter(type) {
+    searchBtns.forEach(function (btn) {
+        if (btn.dataset.type === type) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    filterBlocks.forEach(function (block) {
+        if (block.dataset.filterType === type) {
+            block.style.display = 'block';
+        } else {
+            block.style.display = 'none';
+        }
+    });
+
+    // Скрываем результаты при смене типа поиска
+    hideAll();
+
+    // Если переключились на преподавателей, загружаем список
+    if (type === 'teacher') {
+        loadTeachersList();
+    }
+}

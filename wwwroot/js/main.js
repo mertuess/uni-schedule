@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (resultsBody) {
-                resultsBody.innerHTML = '的人<td colspan="2" style="text-align:center; padding:40px;">Загрузка...<\/td><\/tr>';
+                resultsBody.innerHTML = '<td colspan="2" style="text-align:center; padding:40px;">Загрузка...<\/td><\/tr>';
                 showResults();
             }
             

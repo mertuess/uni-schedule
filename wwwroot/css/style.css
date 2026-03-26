@@ -9,7 +9,6 @@
     --shadow: 0 10px 30px rgba(11, 27, 51, .1);
 }
 
-
 /* Шрифты */
 @font-face {
     font-family: "Bahnschrift";
@@ -65,13 +64,14 @@ h2 { font-size: 32px; margin: 30px 0 20px; border-bottom: 2px solid var(--blue);
 /* Шапка */
 header {
     background: linear-gradient(135deg, var(--blue-dark), var(--blue));
-    height: 130px;
+    height: 150px;
 }
 
 header ul {
     list-style: none;
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 32px;
     padding: 16px 0;
 }
@@ -88,6 +88,15 @@ header a {
 
 header a:hover {
     transform: translateY(-2px);
+}
+
+.user-email {
+    margin-left: auto;
+    color: var(--white);
+    font-weight: 500;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 30px;
 }
 
 /* Контейнер */
@@ -147,12 +156,10 @@ header a:hover {
     box-shadow: 0 6px 16px rgba(10, 58, 155, 0.35);
 }
 
-/* Активная кнопка поиска */
 .search-btn.active {
     background: var(--blue-dark);
 }
 
-/* Кнопка показать в фильтрах */
 .filter-show-btn {
     margin: 15px auto 0;
     max-width: 200px;
@@ -160,7 +167,6 @@ header a:hover {
     display: block;
 }
 
-/* Кнопка назад */
 .back-button svg {
     width: 20px;
     height: 20px;
@@ -232,15 +238,15 @@ header a:hover {
     transition: 0.2s;
 }
 
-    .custom-select:hover {
-        border-color: var(--blue);
-    }
+.custom-select:hover {
+    border-color: var(--blue);
+}
 
-    .custom-select:focus {
-        outline: none;
-        border-color: var(--blue-dark);
-        box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
-    }
+.custom-select:focus {
+    outline: none;
+    border-color: var(--blue-dark);
+    box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
+}
 
 /* Стили для страницы логина */
 .login-container {
@@ -379,6 +385,80 @@ td a {
     font-weight: 500;
 }
 
+/* Кнопки действий */
+.btn-warning {
+    background: #f39c12;
+}
+
+.btn-warning:hover {
+    background: #e67e22;
+}
+
+.btn-danger {
+    background: #e74c3c;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-buttons .btn {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* Уведомления */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+}
+
+.notification.success {
+    background: #27ae60;
+}
+
+.notification.error {
+    background: #e74c3c;
+}
+
+.notification.warning {
+    background: #e74c3c;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
 /* Футер */
 footer {
     background: #222;
@@ -461,5 +541,9 @@ footer .logo {
     
     .login-container {
         margin: 30px 20px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
     }
 }

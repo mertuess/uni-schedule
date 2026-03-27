@@ -1,6 +1,7 @@
 .vs/
 bin/
 obj/
+dbg/
 schedule.db
 token.uni.s
 uni-schedule.csproj.user

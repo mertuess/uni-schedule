@@ -6,7 +6,6 @@
 // │ Описание: Точка входа в приложение                                         │
 // └────────────────────────────────────────────────────────────────────────────┘
 
-// Подключения
 using UniSchedule.Json;
 using UniSchedule.DataBase;
 using UniSchedule.API;
@@ -20,6 +19,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "UniSchedule API", Version = "v1" });
     c.OperationFilter<SwaggerHeaderFilter>(); // Добавляем фильтр для заголовков
+    // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    // c.IncludeXmlComments(xmlPath);
 });
 
 // Регистрируем сервисы в режиме singleton, то есть один экземплр на все приложение

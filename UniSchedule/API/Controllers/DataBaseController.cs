@@ -14,14 +14,32 @@ using UniSchedule.Json;
 /// </summary>
 namespace UniSchedule.API.Controllers
 {
+    /// <summary>
+    /// База данных
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class DatabaseController : ControllerBase
     {
+        /// <summary>
+        /// Экземпляр API
+        /// </summary>
         private readonly API _api;
+        /// <summary>
+        /// Экземпляр json парсера
+        /// </summary>
         private readonly JsonParser _jsonParser;
+        /// <summary>
+        /// Экземпляр менеджера базы данных
+        /// </summary>
         private readonly DataBaseManager _dbm;
 
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="api">Экземпляр API</param>
+        /// <param name="jsonParser">"Экземпляр json парсера"</param>
+        /// <param name="dbm">"Экземпляр менеджера базы данных"</param>
         public DatabaseController(API api, JsonParser jsonParser, DataBaseManager dbm)
         {
             _api = api;
@@ -29,6 +47,15 @@ namespace UniSchedule.API.Controllers
             _dbm = dbm;
         }
 
+        /// <summary>
+        /// Создать нового пользователя
+        /// </summary>
+        /// <param name="email">Электронная почта</param>
+        /// <param name="password">Пароль</param>
+        /// <param name="name">Фамилия Имя Отчество</param>
+        /// <param name="engName">Фамилия Имя Отчество на английском</param>
+        /// <param name="role">Права доступа</param>
+        /// <returns>Ok, если все нормально. BadRequest если что-то пошло не так</returns>
         [HttpGet("users/create")]
         [Authorize("operator")]
         public async Task<IActionResult> CreateUser(
@@ -54,6 +81,10 @@ namespace UniSchedule.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Вывести всех пользователей
+        /// </summary>
+        /// <returns>Список пользователей в формате json</returns>
         [HttpGet("users")]
         [Authorize("operator")]
         public async Task<IActionResult> ShowAllUsers()
@@ -62,6 +93,11 @@ namespace UniSchedule.API.Controllers
             return Content(_jsonParser.Serialize(result), "application/json");
         }
 
+        /// <summary>
+        /// Удалить пользователя
+        /// </summary>
+        /// <param name="email">Электронная почта</param>
+        /// <returns>Ok, если все нормально. BadRequest если что-то пошло не так</returns>
         [HttpGet("users/{email}/remove")]
         [Authorize("operator")]
         public async Task<IActionResult> RemoveUser(string email)
@@ -82,6 +118,17 @@ namespace UniSchedule.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Обновить пользователя
+        /// </summary>
+        /// <param name="email">Электронная почта</param>
+        /// <param name="new_email">Новая электронная почта</param>
+        /// <param name="new_password">Новый пароль</param>
+        /// <param name="new_name">Фамилия Имя Отчество</param>
+        /// <param name="new_engName">Фамилия Имя Отчество на английском</param>
+        /// <param name="new_role">Новые права доступа</param>
+        /// <param name="department">Кафедра</param>
+        /// <returns>Ok, если все нормально. BadRequest если что-то пошло не так</returns>
         [HttpGet("users/{email}/update")]
         [Authorize("operator")]
         public async Task<IActionResult> UpdateUser(
@@ -109,6 +156,11 @@ namespace UniSchedule.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Создать кафедру
+        /// </summary>
+        /// <param name="name">Наименование</param>
+        /// <returns>Ok, если все нормально. BadRequest если что-то пошло не так</returns>
         [HttpGet("departments/create")]
         [Authorize("operator")]
         public async Task<IActionResult> CreateDepartment(
@@ -129,6 +181,12 @@ namespace UniSchedule.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Обновить кафедру
+        /// </summary>
+        /// <param name="name">Наименование</param>
+        /// <param name="new_name">Новое наименование</param>
+        /// <returns>Ok, если все нормально. BadRequest если что-то пошло не так</returns>
         [HttpGet("departments/{name}/update")]
         [Authorize("operator")]
         public async Task<IActionResult> UpdateDepartment(
@@ -150,6 +208,11 @@ namespace UniSchedule.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Удалить кафедру
+        /// </summary>
+        /// <param name="name">Наименование</param>
+        /// <returns>Ok, если все нормально. BadRequest если что-то пошло не так</returns>
         [HttpGet("departments/{name}/remove")]
         [Authorize("operator")]
         public async Task<IActionResult> RemoveDepartment(
@@ -159,17 +222,21 @@ namespace UniSchedule.API.Controllers
             if(res){
                 return Ok(new{
                         success = true,
-                        message = "Department updated successfully"
+                        message = "Department removed successfully"
                         });
             }
             else{
                 return BadRequest(new{
                         success = false,
-                        message = "Failed to update department"
+                        message = "Failed to remove department"
                         });
             }
         }
 
+        /// <summary>
+        /// Отобразить все кафедры
+        /// </summary>
+        /// <returns>Json строку со всеми кафедрами</returns>
         [HttpGet("departments")]
         [Authorize("operator")]
         public async Task<IActionResult> ShowAllDepartments()

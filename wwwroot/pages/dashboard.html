@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+			<title>Панель оператора - UniSchedule</title>
+			<link rel="stylesheet" href="../css/style.css">
+				<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+</head>
+	<body>
+		<header>
+			<a href="https://mauniver.ru">
+				<img src="../resources/images/logo-bottom.svg" alt="МАУ">
+        </a>
+			<nav>
+				<div class="container">
+					<ul id="navMenu">
+						<li>
+							<a href="../index.html">Главная</a>
+						</li>
+						<li>
+							<a href="schedule_teachers.html">Расписание по преподавателям</a>
+						</li>
+						<li>
+							<a href="schedule_room.html">Расписание по аудиториям</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+
+		<main>
+			<div class="container">
+				<div class="main-content">
+					<h1>Панель оператора</h1>
+
+					<div class="info-block">
+						<p>
+							<strong>
+								Всего пользователей: <span id="userCount">0</span>
+							</strong>
+						</p>
+						<div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+							<a href="user_create.html" class="btn btn-success">Создать пользователя</a>
+						</div>
+					</div>
+
+					<div class="table-container">
+						<table class="results-table">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Email</th>
+									<th>Имя</th>
+									<th>Роль</th>
+									<th>Действия</th>
+								</tr>
+							</thead>
+							<tbody id="usersTable">
+								<tr>
+									<td colspan="5">Загрузка...</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<script src="../js/api.js"></script>
+		<script src="../js/auth.js"></script>
+		<script src="../js/dashboard.js"></script>
+	</body>
+</html>

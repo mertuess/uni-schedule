@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Расписание по преподавателям</title>
+				<link rel="stylesheet" href="../css/style.css">
+					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+</head>
+	<body>
+		<header>
+			<a href="https://mauniver.ru">
+				<img src="../resources/images/logo-bottom.svg" alt="на университет">
+        </a>
+			<nav>
+				<div class="container">
+					<ul id="navMenu">
+						<li>
+							<a href="../index.html">Главная</a>
+						</li>
+						<li>
+							<a href="schedule_teachers.html">Расписание по преподавателям</a>
+						</li>
+						<li>
+							<a href="schedule_room.html">Расписание по аудиториям</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+
+		<main>
+			<div class="container">
+				<div class="main-content">
+					<h1>Расписание по преподавателям</h1>
+
+					<div class="info-block">
+						<p>
+							<strong>Как пользоваться:</strong> Введите ID преподавателя(ей) через запятую и выберите период
+						</p>
+						<p>
+							Пример: <code>1</code> или <code>1,2,3</code>
+						</p>
+					</div>
+
+					<div class="search-form">
+						<div class="form-group">
+							<label>ID преподавателя(ей):</label>
+							<input type="text" id="teacherIds" class="custom-select" placeholder="Например: 1 или 1,2,3">
+                    </div>
+
+						<div class="form-group">
+							<label>Дата начала:</label>
+							<input type="date" id="startDate">
+                    </div>
+
+						<div class="form-group">
+							<label>Дата окончания:</label>
+							<input type="date" id="endDate">
+                    </div>
+
+						<button id="searchBtn" class="btn">Найти свободные окна</button>
+					</div>
+
+					<div id="results" class="results-container"></div>
+				</div>
+			</div>
+		</main>
+
+		<script src="../js/api.js"></script>
+		<script src="../js/auth.js"></script>
+		<script src="../js/schedule_teachers.js"></script>
+	</body>
+</html>

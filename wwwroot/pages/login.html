@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+			<title>Вход - UniSchedule</title>
+			<link rel="stylesheet" href="../css/style.css">
+				<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+</head>
+	<body>
+		<header>
+			<a href="https://mauniver.ru">
+				<img src="../resources/images/logo-bottom.svg" alt="на университет">
+        </a>
+			<nav>
+				<div class="container">
+					<ul id="navMenu">
+						<li>
+							<a href="../index.html">Главная</a>
+						</li>
+						<li>
+							<a href="schedule_teachers.html">Расписание по преподавателям</a>
+						</li>
+						<li>
+							<a href="schedule_room.html">Расписание по аудиториям</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+
+		<main>
+			<div class="container">
+				<div class="login-container">
+					<h2>Вход в систему</h2>
+					<form id="loginForm">
+						<div class="form-group">
+							<label>Email</label>
+							<input type="email" id="email" name="email" required="">
+                    </div>
+						<div class="form-group">
+							<label>Пароль</label>
+							<input type="password" id="password" name="password" required="">
+                    </div>
+						<button type="submit" class="login-btn">Войти</button>
+						<div id="errorMessage" class="error"></div>
+					</form>
+				</div>
+			</div>
+		</main>
+
+		<script src="../js/api.js"></script>
+		<script src="../js/auth.js"></script>
+		<script src="../js/login.js"></script>
+	</body>
+</html>

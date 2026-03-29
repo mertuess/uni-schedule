@@ -1,28 +1,36 @@
 ﻿using SQLite;
 using UniSchedule.DataBase.Models;
+using UniSchedule.System;
 
 namespace UniSchedule.DataBase{
     public class DataBaseManager{
         private SQLiteConnection _db;
         private readonly string _dbPath;
+        private readonly Debug _dbg;
+        private readonly Localization _loc;
 
-        public DataBaseManager(IConfiguration configuration){
+        public DataBaseManager(IConfiguration configuration, Debug dbg, Localization loc){
+            _dbg = dbg;
+            _loc = loc;
             _dbPath = configuration.GetConnectionString("DefaultConnection") ?? throw new Exception("Database path not found!");
             bool exist = File.Exists(_dbPath);
             _db = new SQLiteConnection(_dbPath);
             if (!exist)
             {
-                Console.WriteLine($"Database {_dbPath} is not exist!\nCreate new DB with new tables 'Users' and 'Departments'");
+                _dbg.Warning(string.Format(_loc.Text["db_not_found"], _dbPath));
                 _db.CreateTable<User>();
                 _db.CreateTable<Department>();
+                _dbg.Log(string.Format(_loc.Text["db_created"], _dbPath));
                 createOpeartor();
             }
-            Console.WriteLine($"Database connection is active: {_dbPath}");
-            Console.WriteLine($"Registered users: {this.GetAllUsers().Count}");
+            _dbg.Log(string.Format(_loc.Text["db_connected"], _dbPath));
+            _dbg.Log(string.Format(_loc.Text["db_stat"], this.GetAllUsers().Count, this.GetAllDepartments().Count));
         }
 
         public List<User> GetAllUsers() => _db.Table<User>().ToList();
         public async Task<List<User>> GetAllUsersAsync() => _db.Table<User>().ToList();
+        public List<Department> GetAllDepartments() => _db.Table<Department>().ToList();
+        public async Task<List<Department>> GetAllDepartmentsAsync() => _db.Table<Department>().ToList();
 
         public async Task<User?> AuthenticateUserAsync(string email, string password){
             var user = await GetUserByEmailAsync(email);
@@ -118,9 +126,6 @@ namespace UniSchedule.DataBase{
         public async Task<Department?> GetDepartment(int id) =>
             _db.Table<Department>().FirstOrDefault(x => x.Id == id);
 
-        public async Task<List<Department>> GetAllDepartmentsAsync() =>
-            _db.Table<Department>().ToList();
-
         public async Task<bool> TryCreateDepartmentAsync(string name){
             try{
                 if((await GetDepartmentByName(name))!=null) return false;
@@ -173,9 +178,8 @@ namespace UniSchedule.DataBase{
                 Role = "operator",
                 DepartmentId = null
             });
-            Console.WriteLine("Created first user 'operator'\nFor login you can use UI with this data:\n\t" +
-                    "Mail: operator@mauniver.ru\n\t" +
-                    $"Password: {pass}");
+            _dbg.Log(_loc.Text["db_op_created"]);
+            _dbg.Warning(string.Format(_loc.Text["db_op_info"], "operator@mauniver.ru", pass));
         }
     }
 }

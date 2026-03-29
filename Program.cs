@@ -9,6 +9,7 @@
 using UniSchedule.Json;
 using UniSchedule.DataBase;
 using UniSchedule.API;
+using UniSchedule.System;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args); // Создаем builder для настройки webapi
@@ -25,12 +26,13 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Регистрируем сервисы в режиме singleton, то есть один экземплр на все приложение
+builder.Services.AddSingleton<Localization>(); // для текста и локализации
+builder.Services.AddSingleton<Debug>(); // для логгирования
 builder.Services.AddSingleton<DataBaseManager>(); // для работы с базой данных внутри нашего api
 builder.Services.AddSingleton<OutAPI>(); // для работы с внешним api
-builder.Services.AddSingleton<API>(); // для обработки запросов в нашем api
 builder.Services.AddSingleton<JsonParser>(); // для обработки json строк
 
-builder.Services.AddHostedService<UniSchedule.DatabaseInitializationService>(); // Инициализируем БД
+builder.Services.AddHostedService<UniSchedule.InitializationService>(); // Инициализируем БД
 
 var app = builder.Build(); // Собираем приложение с настройками builder
 

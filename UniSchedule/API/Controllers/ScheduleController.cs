@@ -8,6 +8,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UniSchedule.Json;
 using UniSchedule.Json.Models;
+using UniSchedule.API.Responses;
 
 /// <summary>
 /// Пространство имен контроллеров api
@@ -21,23 +22,16 @@ namespace UniSchedule.API.Controllers
     [Route("api/[controller]")]
     public class ScheduleController : ControllerBase
     {
-        /// <summary>
-        /// Экземпляр API
-        /// </summary>
-        private readonly API _api;
-        /// <summary>
-        /// Экземпляр json парсера
-        /// </summary>
+        private readonly OutAPI _o_api;
         private readonly JsonParser _jsonParser;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="api">Экземпляр API</param>
+        /// <param name="o_api">Экземпляр API</param>
         /// <param name="jsonParser">"Экземпляр json парсера"</param>
-        public ScheduleController(API api, JsonParser jsonParser)
-        {
-            _api = api;
+        public ScheduleController(OutAPI o_api, JsonParser jsonParser){
+            _o_api = o_api;
             _jsonParser = jsonParser;
         }
 
@@ -53,15 +47,10 @@ namespace UniSchedule.API.Controllers
         public async Task<IActionResult> GetTeachersMassSchedule(
             string UIDs, 
             string start, 
-            string end)
-        {
+            string end){
             var uidArray = UIDs.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            var data = await _api.GetTeachersMassSchedule( 
-                uidArray, 
-                new Week(start, end)
-            );
-            
-            return Content(data, "application/json");
+            var response = new TeachersScheduleResponse(_o_api, uidArray, new Week(start, end));
+            return Content(_jsonParser.Serialize(await response.GetFreeSlots()), "application/json");
         }
     }
 }

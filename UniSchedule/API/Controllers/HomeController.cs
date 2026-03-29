@@ -15,18 +15,11 @@ namespace UniSchedule.API.Controllers{
     /// Домашняя страница
     /// </summary>
     public class HomeController : Controller{
-        /// <summary>
-        /// Экземпляр API
-        /// </summary>
-        private readonly API _api;
         
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="api">Экземпляр API</param>
-        public HomeController(API api){
-            _api = api;
-        }
+        public HomeController(){}
         
         /// <summary>
         /// Открыть домашнюю страницу
@@ -34,7 +27,13 @@ namespace UniSchedule.API.Controllers{
         /// <returns>HTML верстку index.html в webroot</returns>
         [HttpGet("/index.html")]
         public async Task<IActionResult> Index(){
-            var data = await _api.Main();
+            string data = "";
+            using (StreamReader reader = new StreamReader(@"./wwwroot/index.html")){
+                string? line;
+                while ((line = await reader.ReadLineAsync()) != null){
+                data += line;
+                }
+            }
             return Content(data, "text/html");
         }
         

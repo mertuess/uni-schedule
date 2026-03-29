@@ -9,6 +9,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UniSchedule.Json;
 using UniSchedule.Json.Models;
+using UniSchedule.API.Responses;
 
 /// <summary>
 /// Пространство имен контроллеров api
@@ -22,23 +23,16 @@ namespace UniSchedule.API.Controllers
     [Route("api/[controller]")]
     public class BuildingsController : ControllerBase
     {
-        /// <summary>
-        /// Экземпляр API
-        /// </summary>
-        private readonly API _api;
-        /// <summary>
-        /// Экземпляр json парсера
-        /// </summary>
+        private readonly OutAPI _o_api;
         private readonly JsonParser _jsonParser;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="api">Экземпляр API</param>
+        /// <param name="o_api">Экземпляр API</param>
         /// <param name="jsonParser">"Экземпляр json парсера"</param>
-        public BuildingsController(API api, JsonParser jsonParser)
-        {
-            _api = api;
+        public BuildingsController(OutAPI o_api, JsonParser jsonParser){
+            _o_api = o_api;
             _jsonParser = jsonParser;
         }
 
@@ -54,14 +48,9 @@ namespace UniSchedule.API.Controllers
         public async Task<IActionResult> GetBuildingWorkload(
             int bui_id, 
             string start, 
-            string end)
-        {
-            var data = await _api.GetBuildingWorkload( 
-                bui_id, 
-                new Week(start, end)
-            );
-            
-            return Content(_jsonParser.Serialize(data), "application/json");
+            string end){
+            var response = new BuildingWorkloadResponse(_o_api, bui_id, new Week(start, end));
+            return Content(_jsonParser.Serialize(await response.GetBuildingWorkload()), "application/json");
         }
 
         /// <summary>
@@ -76,18 +65,13 @@ namespace UniSchedule.API.Controllers
         public async Task<IActionResult> GetBuildingsWorkload( 
             string start, 
             string end,
-            [FromQuery] string bui_ids)
-        {
+            [FromQuery] string bui_ids){
             List<int> ids = new List<int>();
             foreach(var s in bui_ids.Split(',', StringSplitOptions.RemoveEmptyEntries)){
                 ids.Add(Convert.ToInt32(s));
             }
-            var data = await _api.GetBuildingsWorkload( 
-                ids.ToArray(), 
-                new Week(start, end)
-            );
-            
-            return Content(_jsonParser.Serialize(data), "application/json");
+            var response = new BuildingsWorkloadResponse(_o_api, ids.ToArray(), new Week(start, end));
+            return Content(_jsonParser.Serialize(await response.GetBuildingsWorkload()), "application/json");
         }
     }
 }

@@ -8,6 +8,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UniSchedule.Json;
 using UniSchedule.Json.Models;
+using UniSchedule.API.Responses;
 
 /// <summary>
 /// Пространство имен контроллеров api
@@ -21,23 +22,17 @@ namespace UniSchedule.API.Controllers
     [Route("api/[controller]")]
     public class RoomsController : ControllerBase
     {
-        /// <summary>
-        /// Экземпляр API
-        /// </summary>
-        private readonly API _api;
-        /// <summary>
-        /// Экземпляр json парсера
-        /// </summary>
+        private readonly OutAPI _o_api;
         private readonly JsonParser _jsonParser;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="api">Экземпляр API</param>
+        /// <param name="o_api">Экземпляр внешнего API</param>
         /// <param name="jsonParser">"Экземпляр json парсера"</param>
-        public RoomsController(API api, JsonParser jsonParser)
+        public RoomsController(OutAPI o_api, JsonParser jsonParser)
         {
-            _api = api;
+            _o_api = o_api;
             _jsonParser = jsonParser;
         }
 
@@ -55,12 +50,8 @@ namespace UniSchedule.API.Controllers
             string start, 
             string end)
         {
-            var data = await _api.GetRoomWorkload( 
-                room_id, 
-                new Week(start, end)
-            );
-            
-            return Content(_jsonParser.Serialize(data), "application/json");
+            var response = new RoomWorkloadResponse(_o_api, room_id, new Week(start, end));
+            return Content(_jsonParser.Serialize(await response.GetRoomWorkload()), "application/json");
         }
     }
 }

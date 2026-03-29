@@ -21,28 +21,16 @@ namespace UniSchedule.API.Controllers
     [Route("api/[controller]")]
     public class DatabaseController : ControllerBase
     {
-        /// <summary>
-        /// Экземпляр API
-        /// </summary>
-        private readonly API _api;
-        /// <summary>
-        /// Экземпляр json парсера
-        /// </summary>
         private readonly JsonParser _jsonParser;
-        /// <summary>
-        /// Экземпляр менеджера базы данных
-        /// </summary>
         private readonly DataBaseManager _dbm;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="api">Экземпляр API</param>
         /// <param name="jsonParser">"Экземпляр json парсера"</param>
         /// <param name="dbm">"Экземпляр менеджера базы данных"</param>
-        public DatabaseController(API api, JsonParser jsonParser, DataBaseManager dbm)
+        public DatabaseController(JsonParser jsonParser, DataBaseManager dbm)
         {
-            _api = api;
             _jsonParser = jsonParser;
             _dbm = dbm;
         }

@@ -1,11 +1,17 @@
 using UniSchedule.DataBase;
+using UniSchedule.System;
+
 namespace UniSchedule{
-  public class DatabaseInitializationService : IHostedService
+  public class InitializationService : IHostedService
   {
     private readonly DataBaseManager _dbManager;
+    private readonly Debug _dbg;
+    private readonly Localization _loc;
 
-    public DatabaseInitializationService(DataBaseManager dbManager){
+    public InitializationService(DataBaseManager dbManager, Debug dbg, Localization loc){
       _dbManager = dbManager;
+      _dbg = dbg;
+      _loc = loc;
     }
 
     public Task StartAsync(CancellationToken cancellationToken){

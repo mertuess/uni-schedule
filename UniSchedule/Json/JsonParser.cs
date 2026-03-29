@@ -6,9 +6,9 @@
 // │ Описание: Класс отвечающий за обработку json строк                         │
 // └────────────────────────────────────────────────────────────────────────────┘
 
-// Использования
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using UniSchedule.System;
 
 /// <summary>
 /// Пространство имен для работы с Json строками
@@ -18,10 +18,15 @@ namespace UniSchedule.Json{
   /// Класс для работы с Json
   /// </summary>
   public class JsonParser{
+    private Debug _dbg;
+    private Localization _loc;
     /// <summary>
     /// Конструктор
     /// </summary>
-    public JsonParser(IConfiguration configuration){}
+    public JsonParser(IConfiguration configuration, Debug dbg, Localization loc){
+      _dbg = dbg;
+      _loc = loc;
+    }
 
     /// <summary>
     /// Метод преобразующий сырую json строку с внешнего api в список моделей

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Редактировать пользователя - UniSchedule</title>
+				<link rel="stylesheet" href="../css/style.css">
+					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+</head>
+	<body>
+		<header>
+			<a href="https://mauniver.ru">
+				<img src="../resources/images/logo-bottom.svg" alt="МАУ">
+        </a>
+			<nav>
+				<div class="container">
+					<ul id="navMenu">
+						<li>
+							<a href="../index.html">Главная</a>
+						</li>
+						<li>
+							<a href="schedule_teachers.html">Расписание по преподавателям</a>
+						</li>
+						<li>
+							<a href="schedule_room.html">Расписание по аудиториям</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+
+		<main>
+			<div class="container">
+				<div class="form-container">
+					<h1>Редактировать пользователя</h1>
+
+					<form id="editUserForm">
+						<div class="form-group">
+							<label for="currentMail">Текущая почта</label>
+							<input type="email" id="currentMail" name="currentMail" readonly="">
+                    </div>
+
+						<div class="form-group">
+							<label for="newMail">Новая почта</label>
+							<input type="email" id="newMail" name="newMail" placeholder="Оставьте пустым, если не меняете">
+                    </div>
+
+						<div class="form-group">
+							<label for="newPassword">Новый пароль</label>
+							<input type="password" id="newPassword" name="newPassword" placeholder="Оставьте пустым, если не меняете">
+                    </div>
+
+						<div class="form-group">
+							<label for="newName">Имя (рус)</label>
+							<input type="text" id="newName" name="newName" placeholder="Оставьте пустым, если не меняете">
+                    </div>
+
+						<div class="form-group">
+							<label for="newEngName">Имя (англ)</label>
+							<input type="text" id="newEngName" name="newEngName" placeholder="Оставьте пустым, если не меняете">
+                    </div>
+
+						<div class="form-group">
+							<label for="newRole">Роль</label>
+							<select id="newRole" name="newRole">
+								<option value="">Не менять</option>
+								<option value="admin">Администратор</option>
+								<option value="teacher">Преподаватель</option>
+								<option value="operator">Оператор</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label for="department">Кафедра (ID)</label>
+							<input type="number" id="department" name="department" placeholder="Оставьте пустым, если не меняете">
+                    </div>
+
+						<div class="form-actions">
+							<button type="submit" class="btn btn-success">Сохранить</button>
+							<a href="dashboard.html" class="btn btn-secondary">Отмена</a>
+						</div>
+
+						<div id="messageBox" class="message-box"></div>
+					</form>
+				</div>
+			</div>
+		</main>
+
+		<script src="../js/api.js"></script>
+		<script src="../js/auth.js"></script>
+		<script src="../js/user_edit.js"></script>
+	</body>
+</html>

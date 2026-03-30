@@ -1,0 +1,9 @@
+.vs/
+bin/
+obj/
+dbg/
+log/
+schedule.db
+token.uni.s
+uni-schedule.csproj.user
+uni-schedule.sln

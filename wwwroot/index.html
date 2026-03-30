@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Расписание - МАУ</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+	<header>
+		<a href="https://mauniver.ru">
+			<img src="resources/images/logo-bottom.svg" alt="на университет">
+		</a>
+		<nav>
+			<div class="container">
+				<ul>
+					<li>
+						<a href="index.html">Главная</a>
+					</li>
+					<li>
+						<a href="templates/rings.html">Расписание звонков</a>
+					</li>
+					</li>
+					<li>
+						<a href="templates/dashboard.html">Панель администратора</a>
+					</li>
+					<li>
+						<a href="templates/login.html">Вход</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
+
+	<main>
+		<div class="container">
+			<div class="main-content">
+				<h1>Расписания учебных занятий</h1>
+
+				<div class="info-block">
+					<p>
+						<strong>18 марта 2026, среда (четная неделя)</strong>
+					</p>
+					<p>Обновлено: 18.03.2026 13:12</p>
+				</div>
+
+				<div class="search-type">
+					<button class="search-btn active" data-type="group">По группам</button>
+					<button class="search-btn" data-type="teacher">По преподавателям</button>
+					<button class="search-btn" data-type="classroom">По аудиториям</button>
+					<a href="templates/classroom_schedule.html" class="search-btn">Занятость аудиторий</a>
+				</div>
+
+				<div class="filters">
+					<!-- Фильтры для поиска по группам -->
+					<div class="filter-group active-filters" data-filter-type="group">
+						<div class="filter-row-dynamic">
+
+							<div class="filter-item">
+								<label>Неделя</label>
+								<select>
+									UI_WEEK
+								</select>
+							</div>
+
+							<div class="filter-item">
+								<label>Институт/Факультет</label>
+								<select>
+									UI_INST
+								</select>
+							</div>
+
+							<div class="filter-item">
+								<label>Курс</label>
+								<select>
+									UI_COURSE
+								</select>
+							</div>
+						</div>
+						<button class="filter-show-btn">Показать</button>
+					</div>
+
+					<!-- Фильтры для поиска по преподавателям (скрыты по умолчанию) -->
+					<div class="filter-group" data-filter-type="teacher" style="display: none;">
+						<div class="filter-row-dynamic">
+							<div class="filter-item">
+								<label>Неделя</label>
+								<select id="teacher-week">
+									UI_WEEK
+								</select>
+							</div>
+
+							<div class="filter-item" style="flex: 2">
+								<label>Преподаватели</label>
+								<div class="teacher-search-container">
+									<input type="text" id="teacher-search-input" placeholder="Введите ФИО преподавателя"
+										autocomplete="off">
+									<div id="teacher-suggestions" class="suggestions-list"></div>
+								</div>
+								<div id="selected-teachers" class="selected-teachers"></div>
+							</div>
+						</div>
+						<button class="filter-show-btn" id="show-teachers-schedule">Показать</button>
+					</div>
+
+					<!-- Фильтры для поиска по аудиториям (скрыты по умолчанию) -->
+					<div class="filter-group" data-filter-type="classroom" style="display: none;">
+						<div class="filter-row-dynamic">
+
+							<div class="filter-item">
+								<label>Неделя</label>
+								<select>
+									UI_WEEK
+								</select>
+							</div>
+
+							<div class="filter-item">
+								<label>Аудитория</label>
+								<select>
+									UI_AUD
+								</select>
+							</div>
+
+							<div class="filter-item">
+								<label>Корпус</label>
+								<select>
+									UI_CORPUS
+								</select>
+							</div>
+						</div>
+						<button class="filter-show-btn">Показать</button>
+					</div>
+				</div>
+
+				<div id="results-container" style="display: none;">
+					<h2>Результаты поиска</h2>
+					<div class="table-container">
+						<table id="results-table">
+							<tbody id="results-body">
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div id="message-container"
+					style="display: none; text-align: center; padding: 20px; background: var(--bg); border-radius: var(--radius); margin-top: 20px;">
+					<p id="message-text"></p>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer>
+		<div class="container">
+			<div>
+				<img src="resources/images/logo-header.svg" alt="МАУ" class="logo">
+				<div class="social">
+					<a href="#">
+						<img src="resources/images/vk.svg" alt="VK">
+					</a>
+					<a href="#">
+						<img src="resources/images/telegram.svg" alt="Telegram">
+					</a>
+					<a href="#">
+						<img src="resources/images/ok.svg" alt="OK">
+					</a>
+				</div>
+			</div>
+
+			<div>
+				<p>ФГАОУ ВО «Мурманский арктический университет»</p>
+				<p>ул. Егорова, 16, Мурманск</p>
+				<p>Тел.: 8 (8152) 21-39-27</p>
+				<p>Email: rector@mstu.edu.ru</p>
+			</div>
+
+			<div class="feedback-links">
+				<a href="#">Сообщить о проблеме</a>
+				<a href="#">Замечания по сайту</a>
+				<p class="copy">© 2026 Мурманский арктический университет</p>
+			</div>
+		</div>
+	</footer>
+
+	<script src="js/main.js"></script>
+	<script src="js/teachers.js"></script>
+</body>
+
+</html>

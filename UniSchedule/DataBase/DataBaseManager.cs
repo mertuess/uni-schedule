@@ -46,9 +46,11 @@ namespace UniSchedule.DataBase{
 
             try{
                 _db.Delete(user);
+                _dbg.Log(string.Format(_loc.Text["db_user_r_err"], email));
                 return true;
             }
-            catch(Exception){
+            catch(Exception e){
+                _dbg.Error(string.Format(_loc.Text["db_user_r_err"], email, e.Message));
                 return false;
             }
         }
@@ -69,10 +71,11 @@ namespace UniSchedule.DataBase{
                     Role = role,
                     DepartmentId = null
                 });
+                _dbg.Log(string.Format(_loc.Text["db_user_c"], email));
                 return true;
             }
             catch(Exception e){
-                Console.WriteLine("Creating new user throw exception: " + e.Message);
+                _dbg.Error(string.Format(_loc.Text["db_user_c_err"], email, e.Message));
                 return false;
             }
         }
@@ -99,11 +102,11 @@ namespace UniSchedule.DataBase{
                 if(department!=null) user.DepartmentId = department;
 
                 _db.Update(user);
-
+                _dbg.Log(string.Format(_loc.Text["db_user_u"], email));
                 return true;
             }
             catch(Exception e){
-                Console.WriteLine("Updating user throw exception: " + e.Message);
+                _dbg.Error(string.Format(_loc.Text["db_user_u_err"], email, e.Message));
                 return false;
             }
         }
@@ -130,10 +133,11 @@ namespace UniSchedule.DataBase{
             try{
                 if((await GetDepartmentByName(name))!=null) return false;
                 _db.Insert(new Department{ Name = name });
+                _dbg.Log(string.Format(_loc.Text["db_dep_c"], name));
                 return true;
             }
             catch(Exception e){
-                Console.WriteLine("Creating new department throw exception: " + e.Message);
+                _dbg.Error(string.Format(_loc.Text["db_dep_c_err"], name, e.Message));
                 return false;
             }
         }
@@ -145,10 +149,11 @@ namespace UniSchedule.DataBase{
                 if((await GetDepartmentByName(new_name))!=null) return false;
                 dep.Name = new_name;
                 _db.Update(dep);
+                _dbg.Log(string.Format(_loc.Text["db_dep_u"], name));
                 return true;
             }
             catch(Exception e){
-                Console.WriteLine("Updating new department throw exception: " + e.Message);
+                _dbg.Error(string.Format(_loc.Text["db_dep_u_err"], name, e.Message));
                 return false;
             }
         }
@@ -158,10 +163,11 @@ namespace UniSchedule.DataBase{
                 var dep = await GetDepartmentByName(name);
                 if(dep==null) return false;
                 _db.Delete(dep);
+                _dbg.Log(string.Format(_loc.Text["db_dep_r"], name));
                 return true;
             }
             catch(Exception e){
-                Console.WriteLine("Removing new department throw exception: " + e.Message);
+                _dbg.Error(string.Format(_loc.Text["db_dep_r_err"], name, e.Message));
                 return false;
             }
         }

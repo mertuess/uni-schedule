@@ -95,13 +95,13 @@ namespace UniSchedule.API.Controllers
             if(res){
                 return Ok(new{
                         success = true,
-                        message = "User created successfully"
+                        message = "User removed successfully"
                         });
             }
             else{
                 return BadRequest(new{
                         success = false,
-                        message = "Failed to create user. User may already exist"
+                        message = "Failed to remove user. Can't find user with this email"
                         });
             }
         }

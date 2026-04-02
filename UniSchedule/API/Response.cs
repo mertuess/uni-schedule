@@ -11,7 +11,6 @@ namespace UniSchedule.API.Responses
     /// Инициализирует новый экземпляр класса Response.
     /// </summary>
     /// <param name="o_api">Экземпляр OutAPI для отправки запросов</param>
-    /// <param name="jsp">Экземпляр JsonParser для парсинга JSON</param>
     public Response(OutAPI o_api)
     {
       _o_api = o_api;

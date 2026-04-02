@@ -5,13 +5,9 @@
 // │ Файл: SwaggerHeaderFilter.cs                                               │
 // │ Описание: Класс реализующий ввод данных авторизации в запросы Swagger      │
 // └────────────────────────────────────────────────────────────────────────────┘
-// Подключения
 using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-/// <summary>
-/// Класс фильтра для swagger
-/// </summary>
 public class SwaggerHeaderFilter : IOperationFilter
 {
   /// <summary>

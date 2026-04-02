@@ -9,9 +9,6 @@
 using UniSchedule.Json;
 using UniSchedule.System;
 
-/// <summary>
-/// Пространство имен для определения API классов
-/// </summary>
 namespace UniSchedule.API{
   /// <summary>
   /// Класс для работы с внешним api
@@ -21,19 +18,21 @@ namespace UniSchedule.API{
     private readonly string url;
     private readonly JsonParser _jsonParser;
     private readonly Debug _dbg;
+    private readonly Localization _loc;
 
     /// <summary>
     /// Конструктор класса
     /// </summary>
     public OutAPI(IConfiguration configuration, JsonParser jsonParser, Debug dbg, Localization loc)
     {
+      _jsonParser = jsonParser;
+      _dbg = dbg;
+      _loc = loc;
       // Проверяем наличие строки подклюения к api
       url = configuration.GetConnectionString("OutAPI_URL")??
         throw new Exception("Out API URL not found!"); // Кидаем исключение если не нашли строку
       sharedClient.BaseAddress = new Uri(url); // Даем http клиенту точный адрес
       sharedClient.DefaultRequestHeaders.Add("accept", "*/*"); // Добавляем необходимый header
-      _jsonParser = jsonParser;
-      _dbg = dbg;
       this.loadToken(); // Загружаем токен из файла
     }
 
@@ -49,22 +48,32 @@ namespace UniSchedule.API{
     // Общий метод отправки запросов на внешний api
     private async Task<string> getAsync(string path){
       // Отправляем запрос
-      using HttpResponseMessage response = await sharedClient.GetAsync(path); 
+      _dbg.Log(string.Format(_loc.Text["out_api_send"], path));
+      using HttpResponseMessage response = await sharedClient.GetAsync(path);
+
+      // Информируем о результате запроса во внешний api
+      if(response.IsSuccessStatusCode)
+        _dbg.Log(string.Format(_loc.Text["out_api_succ"], response.StatusCode));
+      else
+        _dbg.Error(string.Format(_loc.Text["out_api_badr"], response.StatusCode));
+
       response.EnsureSuccessStatusCode(); // Ожидаем положительный ответ от сервера
       // Считываем данные ответа
       var jsonResponse = await response.Content.ReadAsStringAsync(); 
+      
       return jsonResponse; // Возвращаем результат
     }
 
     /// Загрузка токена из внешнего файла token.uni.s
     private void loadToken(){
       if(!File.Exists("token.uni.s")) // Проверяем наличие файла
-        throw new Exception("Файл токена не найден"); // Выбрасываем исключение если не нашли файл
+        throw new FileNotFoundException(string.Format(_loc.Text["out_api_token_file_not_found"], "token.uni.s")); 
       // Считываем байты из файла
       byte[] data = File.ReadAllBytes("token.uni.s");
       var token = Crypto.Decrypt(data); // Дешифруем токен
       // Заполняем заголовок клиента ключом
       sharedClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}"); 
+      _dbg.Log(string.Format(_loc.Text["out_api_token_succ"], "token.uni.s"));
     }
   }
 }

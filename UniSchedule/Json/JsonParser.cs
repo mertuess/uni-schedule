@@ -10,9 +10,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using UniSchedule.System;
 
-/// <summary>
-/// Пространство имен для работы с Json строками
-/// </summary>
 namespace UniSchedule.Json{
   /// <summary>
   /// Класс для работы с Json

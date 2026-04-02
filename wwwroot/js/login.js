@@ -1,7 +1,7 @@
 const err = document.getElementById('error-message');
-const t_btn = document.getElementById('t-btn');
-const r_btn = document.getElementById('r-btn');
-const d_btn = document.getElementById('d-btn');
+//const t_btn = document.getElementById('t-btn');
+//const r_btn = document.getElementById('r-btn');
+//const d_btn = document.getElementById('d-btn');
 
 if(authEmail==""){
   t_btn.style["display"] = "none";
@@ -11,8 +11,8 @@ if(authEmail==""){
 
 // Функция установки учетных данных
 function setAuth(email, password) {
-    authEmail = email;
-    authPassword = password;
+    window.authEmail = email;
+    window.authPassword = password;
     setCookie("Uni-Email", email, 90);
     setCookie("Uni-Password", password, 90);
 }

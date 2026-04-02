@@ -6,29 +6,16 @@
 // │ Описание: Класс криптографии для повышения безопасности использования api  │
 // └────────────────────────────────────────────────────────────────────────────┘
 
-// Подключения
 using System.Security.Cryptography;
 using System.Text;
 
-/// <summary>
-/// Основное пространство имен api
-/// </summary>
 namespace UniSchedule{
   /// <summary>
   /// Класс криптографии
   /// </summary>
   static class Crypto{
-    /// <summary>
-    /// Ключ для шифрования
-    /// </summary>
     private static readonly byte[] Key = Encoding.UTF8.GetBytes("0123456789ABCDEF0123456789ABCDEF");
-    /// <summary>
-    /// Вектор для шифрования
-    /// </summary>
     private static readonly byte[] IV = Encoding.UTF8.GetBytes("0123456789ABCDEF");
-    /// <summary>
-    /// Возможные символы для генерации пароля
-    /// </summary>
     private static readonly string allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890%$#@&";
 
     /// <summary>

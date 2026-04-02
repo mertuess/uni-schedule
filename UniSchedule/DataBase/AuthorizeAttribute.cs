@@ -1,4 +1,3 @@
-// AuthorizeAttribute.cs
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]

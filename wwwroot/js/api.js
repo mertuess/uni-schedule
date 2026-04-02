@@ -2,8 +2,26 @@
 const API_BASE = 'http://localhost:5000/api';
 
 // Хранилище для токена авторизации
-let authEmail = getCookie("Uni-Email");
-let authPassword = getCookie("Uni-Password");
+//let authEmail = getCookie("Uni-Email") || null;
+//let authPassword = getCookie("Uni-Password") || null;
+
+// Хранилище для токена авторизации
+let authEmail = null;
+let authPassword = null;
+
+// Инициализация из cookie после загрузки
+try {
+    const emailCookie = getCookie("Uni-Email");
+    const passCookie = getCookie("Uni-Password");
+    if (emailCookie && passCookie) {
+        authEmail = emailCookie;
+        authPassword = passCookie;
+    }
+} catch(e) {
+    console.log("Ошибка чтения cookie:", e);
+    authEmail = null;
+    authPassword = null;
+}
 
 // Функция получения заголовков
 function getHeaders() {
@@ -37,6 +55,22 @@ async function apiGet(endpoint) {
         console.error('API Error:', error);
         return { success: false, error: error.message };
     }
+}
+
+// Функция установки учетных данных
+function setAuth(email, password) {
+    authEmail = email;
+    authPassword = password;
+    setCookie("Uni-Email", email, 90);
+    setCookie("Uni-Password", password, 90);
+}
+
+// Функция очистки учетных данных
+function clearAuth() {
+    authEmail = null;
+    authPassword = null;
+    setCookie("Uni-Email", "", -1);
+    setCookie("Uni-Password", "", -1);
 }
 
 // ============== 1. РАБОТА С ПОЛЬЗОВАТЕЛЯМИ ==============

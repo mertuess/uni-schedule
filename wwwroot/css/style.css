@@ -9,7 +9,6 @@
     --shadow: 0 10px 30px rgba(11, 27, 51, .1);
 }
 
-/* Шрифты */
 @font-face {
     font-family: "Bahnschrift";
     src: url("../resources/fonts/Bahnschrift.ttf");
@@ -20,7 +19,6 @@
     src: url("../resources/fonts/Bebas-Neue.ttf");
 }
 
-/* Базовые стили */
 * {
     margin: 0;
     padding: 0;
@@ -40,66 +38,44 @@ a {
     color: var(--text);
 }
 
-ul li a {
-    margin-top: -13px;
-    font-size: 20px;
-}
-
-img {
-    margin-top: 5px;
-    width: 300px;
-}
-
-/* Заголовки */
-h1, h2, h3 {
-    font-family: "Bebas-Neue", sans-serif;
-    font-weight: 500;
-    color: var(--blue-dark);
-    text-align: center;
-}
-
-h1 { font-size: 48px; margin-bottom: 20px; }
-h2 { font-size: 32px; margin: 30px 0 20px; border-bottom: 2px solid var(--blue); padding-bottom: 10px; }
-
-/* Шапка */
+/* Header */
 header {
     background: linear-gradient(135deg, var(--blue-dark), var(--blue));
-    height: 150px;
+    padding: 20px 0;
 }
 
-header ul {
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header img {
+    width: 250px;
+}
+
+nav ul {
     list-style: none;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 32px;
-    padding: 16px 0;
+    gap: 20px;
 }
 
-header a {
+nav a {
     color: var(--white);
-    font-weight: 500;
     padding: 8px 16px;
     border-radius: 30px;
     transition: 0.3s;
-    display: grid;
-    justify-content: center;
 }
 
-header a:hover {
-    transform: translateY(-2px);
+nav a:hover {
+    background: rgba(255,255,255,0.2);
 }
 
-.user-email {
-    margin-left: auto;
-    color: var(--white);
-    font-weight: 500;
-    padding: 8px 16px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 30px;
+nav a.active {
+    background: rgba(255,255,255,0.3);
 }
 
-/* Контейнер */
+/* Container */
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -114,46 +90,59 @@ header a:hover {
     margin: 30px 0;
 }
 
-/* Инфо блок */
+/* Headers */
+h1, h2, h3 {
+    font-family: "Bebas-Neue", sans-serif;
+    font-weight: 500;
+    color: var(--blue-dark);
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 32px;
+    margin: 20px 0;
+    border-bottom: 2px solid var(--blue);
+    padding-bottom: 10px;
+}
+
+/* Info block */
 .info-block {
     background: var(--bg);
     border-left: 4px solid var(--blue);
     padding: 15px 20px;
-    border-radius: calc(var(--radius)/2);
+    border-radius: 8px;
     margin: 20px 0;
     text-align: center;
 }
 
-/* Кнопки */
+/* Buttons */
 .btn, 
 .search-btn, 
-.filter-show-btn, 
-.back-button {
+.filter-show-btn {
     background: var(--blue);
     color: var(--white);
-    padding: 12px 30px;
+    padding: 10px 24px;
     border: none;
     border-radius: 30px;
     font-family: "Bahnschrift", sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(11, 91, 211, 0.25);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-decoration: none;
+    transition: 0.2s;
+    display: inline-block;
+    text-align: center;
 }
 
 .btn:hover, 
 .search-btn:hover, 
-.filter-show-btn:hover, 
-.back-button:hover {
+.filter-show-btn:hover {
     background: var(--blue-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(10, 58, 155, 0.35);
+    transform: translateY(-1px);
 }
 
 .search-btn.active {
@@ -161,36 +150,39 @@ header a:hover {
 }
 
 .filter-show-btn {
-    margin: 15px auto 0;
-    max-width: 200px;
+    margin-top: 15px;
     width: 100%;
+    max-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
     display: block;
 }
 
-.back-button svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
+/* Search type */
+.search-type {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    justify-content: center;
 }
 
-/* Фильтры */
+/* Filters */
 .filters {
     background: var(--bg);
     padding: 20px;
     border-radius: var(--radius);
-    margin: 25px 0;
+    margin: 20px 0;
 }
 
 .filter-row-dynamic {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
-    align-items: flex-end;
 }
 
 .filter-item {
     flex: 1;
-    min-width: 200px;
+    min-width: 180px;
 }
 
 .filter-item label {
@@ -204,51 +196,120 @@ header a:hover {
 .filter-item select,
 .filter-item input {
     width: 100%;
-    padding: 12px 15px;
-    border: 2px solid transparent;
-    border-radius: calc(var(--radius)/2);
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-family: "Bahnschrift", sans-serif;
     font-size: 14px;
     background: var(--white);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: 0.2s;
-}
-
-.filter-item select:hover,
-.filter-item input:hover {
-    border-color: var(--blue);
 }
 
 .filter-item select:focus,
 .filter-item input:focus {
     outline: none;
-    border-color: var(--blue-dark);
-    box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
-}
-
-.custom-select {
-    width: 15%;
-    padding: 12px 15px;
-    border: 2px solid transparent;
-    border-radius: calc(var(--radius)/2);
-    font-family: "Bahnschrift", sans-serif;
-    font-size: 14px;
-    background: var(--white);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: 0.2s;
-}
-
-.custom-select:hover {
     border-color: var(--blue);
 }
 
-.custom-select:focus {
-    outline: none;
-    border-color: var(--blue-dark);
-    box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
+/* Teacher search */
+.teacher-search-container {
+    position: relative;
 }
 
-/* Стили для страницы логина */
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+}
+
+.suggestions-list.active {
+    display: block;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background: var(--bg);
+}
+
+.selected-teachers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.teacher-tag {
+    background: var(--blue);
+    color: var(--white);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.remove-teacher {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-teacher:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+/* Table */
+.table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+}
+
+th {
+    background: var(--blue);
+    color: var(--white);
+    padding: 12px;
+    text-align: left;
+    font-weight: 500;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid var(--bg);
+}
+
+tr:hover {
+    background: var(--bg);
+}
+
+/* Login form */
 .login-container {
     max-width: 400px;
     margin: 50px auto;
@@ -259,9 +320,8 @@ header a:hover {
 }
 
 .login-container h2 {
-    margin-top: 0;
-    color: var(--blue-dark);
     text-align: center;
+    margin-top: 0;
 }
 
 .form-group {
@@ -277,25 +337,21 @@ header a:hover {
 
 .form-group input {
     width: 100%;
-    padding: 12px 15px;
-    border: 2px solid transparent;
-    border-radius: calc(var(--radius)/2);
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-family: "Bahnschrift", sans-serif;
     font-size: 14px;
-    background: var(--bg);
-    transition: 0.2s;
 }
 
-.form-group input:hover,
 .form-group input:focus {
-    border-color: var(--blue);
     outline: none;
-    background: var(--white);
+    border-color: var(--blue);
 }
 
 .login-btn {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background: var(--blue);
     color: var(--white);
     border: none;
@@ -304,88 +360,92 @@ header a:hover {
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    transition: 0.3s;
-    box-shadow: 0 4px 12px rgba(11, 91, 211, 0.25);
-}
-
-.delete-btn {
-    width: 100%;
-    background: var(--red);
-    color: var(--white);
-    padding: 14px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 30px;
-    font-family: "Bahnschrift", sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-decoration: none;
-}
-
-.delete-btn:hover {
-    background: #c82333;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.35);
 }
 
 .login-btn:hover {
     background: var(--blue-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(10, 58, 155, 0.35);
 }
 
 .error {
-    color: #e74c3c;
+    color: var(--red);
     margin-top: 15px;
     text-align: center;
     display: none;
-    font-weight: 500;
 }
 
-/* Таблицы */
-.table-container {
-    overflow-x: auto;
-    margin: 20px 0;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--white);
-}
-
-th {
-    background: var(--blue);
-    color: var(--white);
-    font-weight: 500;
-    padding: 14px 16px;
-    text-align: left;
-}
-
-td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--bg);
-}
-
-tr:hover {
+/* Search form */
+.search-form {
     background: var(--bg);
+    padding: 20px;
+    border-radius: var(--radius);
+    margin-bottom: 25px;
 }
 
-td a {
-    color: var(--blue);
-    font-weight: 500;
+.search-form .form-group {
+    margin-bottom: 15px;
 }
 
-/* Кнопки действий */
+.search-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: "Bahnschrift", sans-serif;
+}
+
+/* Messages */
+.message-box {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.message-box.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message-box.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message-info {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Results container */
+.results-container {
+    margin-top: 20px;
+}
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.btn-danger {
+    background: var(--red);
+}
+
+.btn-danger:hover {
+    background: #a00;
+}
+
 .btn-warning {
     background: #f39c12;
 }
@@ -394,228 +454,35 @@ td a {
     background: #e67e22;
 }
 
-.btn-danger {
-    background: #e74c3c;
-}
-
-.btn-danger:hover {
-    background: #c0392b;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.action-buttons .btn {
-    padding: 6px 12px;
-    font-size: 12px;
-}
-
-/* Уведомления */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 12px 20px;
-    border-radius: 8px;
-    color: white;
-    font-weight: 500;
-    z-index: 9999;
-    animation: slideIn 0.3s ease;
-}
-
-.notification.success {
-    background: #27ae60;
-}
-
-.notification.error {
-    background: #e74c3c;
-}
-
-.notification.warning {
-    background: #e74c3c;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-/* Футер */
-footer {
-    background: #222;
-    padding: 40px 0;
-    margin-top: 50px;
-}
-
-footer .container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-}
-
-footer p {
-    color: #cecece;
-    font-size: 13px;
-    margin-bottom: 10px;
-}
-
-footer .logo {
-    max-width: 180px;
-}
-
-.social img {
-    width: 24px;
-    height: 24px;
-    margin-top: 8px;
-    margin-right: 8px;
-    opacity: 0.8;
-}
-
-.feedback-links a {
-    color: #fff;
-    display: inline-block;
-    margin: 0 10px 10px 0;
-    padding: 8px 16px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 30px;
-    font-size: 13px;
-    transition: 0.2s;
-}
-
-.feedback-links a:hover {
-    background: var(--blue);
-    transform: translateY(-2px);
-}
-
-.copy {
-    margin-top: 20px;
-    font-size: 12px;
-    opacity: 0.7;
-}
-
-/* Адаптивность */
+/* Responsive */
 @media (max-width: 768px) {
+    header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
     .filter-row-dynamic {
         flex-direction: column;
     }
     
     .filter-item {
-        width: 100%;
         min-width: 100%;
     }
     
-    .filter-show-btn,
-    .back-button {
-        max-width: 100%;
+    .search-type {
+        flex-direction: column;
+    }
+    
+    .search-btn {
         width: 100%;
-    }
-    
-    footer .container {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-    
-    .feedback-links a {
-        display: block;
-        margin: 0 0 10px;
-    }
-    
-    .login-container {
-        margin: 30px 20px;
     }
     
     .action-buttons {
         flex-direction: column;
     }
 }
-
-/* Стили для подсказок преподавателей */
-.teacher-search-container {
-    position: relative;
-}
-
-.suggestions-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--white);
-    border: 1px solid #ddd;
-    border-radius: calc(var(--radius)/2);
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 1000;
-    display: none;
-    box-shadow: var(--shadow);
-}
-
-    .suggestions-list.active {
-        display: block;
-    }
-
-.suggestion-item {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-    .suggestion-item:hover {
-        background: var(--bg);
-    }
-
-/* Стили для выбранных преподавателей */
-.selected-teachers {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.teacher-tag {
-    background: var(--blue);
-    color: var(--white);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-    .teacher-tag .remove-teacher {
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 18px;
-        line-height: 1;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-.teacher-tag .remove-teacher:hover {
-    background: rgba(255,255,255,0.4);
-}
-

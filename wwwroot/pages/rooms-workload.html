@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Вход - МАУ</title>
+				<title>Занятость аудиторий - МАУ</title>
 				<link rel="stylesheet" href="../css/style.css">
 					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
 </head>
@@ -22,13 +22,13 @@
 							<a href="teachers-schedule.html">Преподаватели</a>
 						</li>
 						<li>
-							<a href="rooms-workload.html">Аудитории</a>
+							<a href="rooms-workload.html" class="active">Аудитории</a>
 						</li>
 						<li>
 							<a href="dashboard.html">Админ</a>
 						</li>
 						<li>
-							<a href="login.html" class="active">Вход</a>
+							<a href="login.html" id="auth-link">Вход</a>
 						</li>
 					</ul>
 				</nav>
@@ -37,20 +37,27 @@
 
 		<main>
 			<div class="container">
-				<div class="login-container">
-					<h2>Вход в систему</h2>
-					<form id="login-form">
+				<div class="main-content">
+					<h1>Занятость аудиторий</h1>
+
+					<div class="search-form">
 						<div class="form-group">
-							<label>Email</label>
-							<input type="email" id="email" required="">
+							<label>ID аудитории</label>
+							<input type="number" id="room-id" placeholder="Введите ID">
                     </div>
 						<div class="form-group">
-							<label>Пароль</label>
-							<input type="password" id="password" required="">
+							<label>Дата начала</label>
+							<input type="date" id="start-date">
                     </div>
-						<button type="submit" class="login-btn">Войти</button>
-						<div id="error-message" class="error"></div>
-					</form>
+						<div class="form-group">
+							<label>Дата окончания</label>
+							<input type="date" id="end-date">
+                    </div>
+						<button class="btn" id="search-workload">Показать</button>
+					</div>
+
+					<div id="results"></div>
+					<div id="message" class="message-box"></div>
 				</div>
 			</div>
 		</main>

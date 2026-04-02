@@ -68,11 +68,11 @@ nav a {
 }
 
 nav a:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 nav a.active {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 /* Container */
@@ -91,7 +91,9 @@ nav a.active {
 }
 
 /* Headers */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     font-family: "Bebas-Neue", sans-serif;
     font-weight: 500;
     color: var(--blue-dark);
@@ -121,8 +123,8 @@ h2 {
 }
 
 /* Buttons */
-.btn, 
-.search-btn, 
+.btn,
+.search-btn,
 .filter-show-btn {
     background: var(--blue);
     color: var(--white);
@@ -138,8 +140,8 @@ h2 {
     text-align: center;
 }
 
-.btn:hover, 
-.search-btn:hover, 
+.btn:hover,
+.search-btn:hover,
 .filter-show-btn:hover {
     background: var(--blue-dark);
     transform: translateY(-1px);
@@ -265,7 +267,7 @@ h2 {
     font-weight: bold;
     font-size: 16px;
     line-height: 1;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     width: 18px;
     height: 18px;
@@ -275,7 +277,7 @@ h2 {
 }
 
 .remove-teacher:hover {
-    background: rgba(255,255,255,0.4);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* Table */
@@ -454,34 +456,38 @@ tr:hover {
     background: #e67e22;
 }
 
+.off {
+    display: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     header .container {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     nav ul {
         flex-wrap: wrap;
         justify-content: center;
     }
-    
+
     .filter-row-dynamic {
         flex-direction: column;
     }
-    
+
     .filter-item {
         min-width: 100%;
     }
-    
+
     .search-type {
         flex-direction: column;
     }
-    
+
     .search-btn {
         width: 100%;
     }
-    
+
     .action-buttons {
         flex-direction: column;
     }

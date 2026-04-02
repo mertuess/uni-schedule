@@ -2,14 +2,8 @@
 const API_BASE = 'http://localhost:5000/api';
 
 // Хранилище для токена авторизации
-let authEmail = null;
-let authPassword = null;
-
-// Функция установки учетных данных
-function setAuth(email, password) {
-    authEmail = email;
-    authPassword = password;
-}
+let authEmail = getCookie("Uni-Email");
+let authPassword = getCookie("Uni-Password");
 
 // Функция получения заголовков
 function getHeaders() {
@@ -28,17 +22,14 @@ async function apiGet(endpoint) {
             headers: getHeaders()
         });
         
-        if (response.status === 401) {
+        if (response.status === 401)
             throw new Error('Неверные учетные данные');
-        }
         
-        if (response.status === 403) {
+        if (response.status === 403)
             throw new Error('Нет прав доступа');
-        }
         
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error(`Ошибка ${response.status}`);
-        }
         
         const data = await response.json();
         return { success: true, data };

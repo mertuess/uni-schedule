@@ -1,153 +1,63 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Расписание - МАУ</title>
-				<link rel="stylesheet" href="css/style.css">
-					<link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Расписание - МАУ</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
 </head>
-	<body>
-		<header>
-			<div class="container">
-				<a href="https://mauniver.ru">
-					<img src="resources/images/logo-bottom.svg" alt="МАУ">
-            </a>
-				<nav>
-					<ul>
-						<li>
-							<a href="index.html" class="active">Главная</a>
-						</li>
-						<li>
-							<a href="pages/teachers-schedule.html">Преподаватели</a>
-						</li>
-						<li>
-							<a href="pages/rooms-workload.html">Аудитории</a>
-						</li>
-						<li>
-							<a href="pages/dashboard.html">Админ</a>
-						</li>
-						<li>
-							<a href="pages/login.html" id="auth-link">Вход</a>
-						</li>
-					</ul>
-				</nav>
-			</div>
-		</header>
 
-		<main>
-			<div class="container">
-				<div class="main-content">
-					<h1>Расписание учебных занятий</h1>
+<body>
+	<header>
+		<div class="container">
+			<a href="https://mauniver.ru">
+				<img src="resources/images/logo-bottom.svg" alt="МАУ">
+			</a>
+			<nav>
+				<ul>
+					<li>
+						<a href="index.html" class="active">Главная</a>
+					</li>
+					<li>
+						<a href="pages/teachers-schedule.html" id="t-btn">Преподаватели</a>
+					</li>
+					<li>
+						<a href="pages/rooms-workload.html" id="r-btn">Аудитории</a>
+					</li>
+					<li>
+						<a href="pages/dashboard.html" id="d-btn">Админ</a>
+					</li>
+					<li>
+						<a href="pages/login.html" id="auth-link">Вход</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
 
-					<div class="info-block">
-						<p>
-							<strong id="current-date"></strong>
-						</p>
-						<p>
-							Обновлено: <span id="update-time"></span>
-						</p>
-					</div>
+	<main>
+		<div class="container">
+			<div class="main-content">
+				<h1>UniSchedule</h1>
 
-					<div class="search-type">
-						<button class="search-btn active" data-type="teacher">Расписание преподавателей</button>
-						<button class="search-btn" data-type="classroom">Нагруженность аудиторий</button>
-					</div>
-
-					<div class="filters">
-						<div class="filter-group" data-filter-type="group">
-							<div class="filter-row-dynamic">
-								<div class="filter-item">
-									<label>Неделя</label>
-									<select id="group-week">
-										<option value="even">Четная</option>
-										<option value="odd">Нечетная</option>
-									</select>
-								</div>
-								<div class="filter-item">
-									<label>Институт</label>
-									<select id="group-institute">
-										<option value="">Выберите институт</option>
-									</select>
-								</div>
-								<div class="filter-item">
-									<label>Курс</label>
-									<select id="group-course">
-										<option value="">Все</option>
-										<option value="1">1 курс</option>
-										<option value="2">2 курс</option>
-										<option value="3">3 курс</option>
-										<option value="4">4 курс</option>
-									</select>
-								</div>
-							</div>
-							<button class="filter-show-btn" id="show-group">Показать</button>
-						</div>
-
-						<div class="filter-group" data-filter-type="teacher" style="display: none;">
-							<div class="filter-row-dynamic">
-								<div class="filter-item">
-									<label>Неделя</label>
-									<select id="teacher-week">
-										<option value="even">Четная</option>
-										<option value="odd">Нечетная</option>
-									</select>
-								</div>
-								<div class="filter-item">
-									<label>Преподаватель</label>
-									<div class="teacher-search-container">
-										<input type="text" id="teacher-search" placeholder="Введите ФИО">
-											<div id="teacher-suggestions" class="suggestions-list"></div>
-										</div>
-									<div id="selected-teachers" class="selected-teachers"></div>
-								</div>
-							</div>
-							<button class="filter-show-btn" id="show-teacher">Показать</button>
-						</div>
-
-						<div class="filter-group" data-filter-type="classroom" style="display: none;">
-							<div class="filter-row-dynamic">
-								<div class="filter-item">
-									<label>Неделя</label>
-									<select id="room-week">
-										<option value="even">Четная</option>
-										<option value="odd">Нечетная</option>
-									</select>
-								</div>
-								<div class="filter-item">
-									<label>Аудитория</label>
-									<input type="text" id="room-number" placeholder="Номер аудитории">
-                            </div>
-								<div class="filter-item">
-									<label>Корпус</label>
-									<select id="room-building">
-										<option value="">Все</option>
-									</select>
-								</div>
-							</div>
-							<button class="filter-show-btn" id="show-room">Показать</button>
-						</div>
-					</div>
-
-					<div id="results" style="display: none;">
-						<h2>Результаты</h2>
-						<div class="table-container">
-							<table id="results-table">
-								<thead>
-									<tr id="table-head"></tr>
-								</thead>
-								<tbody id="table-body"></tbody>
-							</table>
-						</div>
-					</div>
-
-					<div id="message" class="message-info" style="display: none;">
-						<p id="message-text"></p>
-					</div>
+				<div class="info-block">
+					<p>
+						<strong id="current-date"></strong>
+					</p>
+					<p>
+						Микросервис, который из БД получает данные из основной системы расписания вуза и предоставляет представление
+						расписания по преподавателям, кафедрам, институтам и корпусам
+					</p>
 				</div>
 			</div>
-		</main>
+		</div>
+	</main>
 
-		<script src="../js/api.js"></script>
-	</body>
+	<script src="../js/cookie.js"></script>
+	<script src="../js/api.js"></script>
+	<script src="../js/main.js"></script>
+</body>
+
 </html>

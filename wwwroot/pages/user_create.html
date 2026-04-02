@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Создать пользователя - UniSchedule</title>
+				<link rel="stylesheet" href="../css/style.css">
+					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+</head>
+	<body>
+		<header>
+			<a href="https://mauniver.ru">
+				<img src="../resources/images/logo-bottom.svg" alt="МАУ">
+        </a>
+			<nav>
+				<div class="container">
+					<ul id="navMenu">
+						<li>
+							<a href="../index.html">Главная</a>
+						</li>
+						<li>
+							<a href="schedule_teachers.html">Расписание по преподавателям</a>
+						</li>
+						<li>
+							<a href="schedule_room.html">Расписание по аудиториям</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+
+		<main>
+			<div class="container">
+				<div class="form-container">
+					<h1>Создать пользователя</h1>
+
+					<form id="createUserForm">
+						<div class="form-group">
+							<label for="email">Email *</label>
+							<input type="email" id="email" name="email" required="" placeholder="user@university.ru">
+                    </div>
+
+						<div class="form-group">
+							<label for="password">Пароль *</label>
+							<input type="password" id="password" name="password" required="" placeholder="••••••••">
+                    </div>
+
+						<div class="form-group">
+							<label for="name">Имя (рус) *</label>
+							<input type="text" id="name" name="name" required="" placeholder="Иванов Иван">
+                    </div>
+
+						<div class="form-group">
+							<label for="engName">Имя (англ) *</label>
+							<input type="text" id="engName" name="engName" required="" placeholder="Ivanov Ivan">
+                    </div>
+
+						<div class="form-group">
+							<label for="role">Роль *</label>
+							<select id="role" name="role" required="">
+								<option value="">Выберите роль</option>
+								<option value="admin">Администратор</option>
+								<option value="teacher">Преподаватель</option>
+								<option value="operator">Оператор</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label for="department">Кафедра (ID)</label>
+							<input type="number" id="department" name="department" placeholder="Например: 1">
+                    </div>
+
+						<div class="form-actions">
+							<button type="submit" class="btn btn-success">Создать</button>
+							<a href="dashboard.html" class="btn btn-secondary">Отмена</a>
+						</div>
+
+						<div id="messageBox" class="message-box"></div>
+					</form>
+				</div>
+			</div>
+		</main>
+
+		<script src="../js/api.js"></script>
+		<script src="../js/auth.js"></script>
+		<script src="../js/user_create.js"></script>
+	</body>
+</html>

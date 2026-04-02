@@ -232,5 +232,37 @@ namespace UniSchedule.API.Controllers
             var result = await _dbm.GetAllDepartmentsAsync();
             return Content(_jsonParser.Serialize(result), "application/json");
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("tryauth")]
+        public async Task<IActionResult> TryAuth(
+            [FromQuery] string email, 
+            [FromQuery] string password)
+        {
+            var users = _dbm.GetAllUsers();
+            if(users.Where(x => x.Mail == email).Count() < 1)
+                return Content("Пользователь не найден", "text/text");
+            var user = users.Where(x => x.Mail == email).First();
+            if(!_dbm.VerifyPassword(password, user.Password))
+                return Content("Неверный пароль. Попробуйте еще раз на 5 получите приз", "text/text");
+            return Content("Успешно", "text/text");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("users/{email}/role")]
+        [Authorize("operator", "teacher")]
+        public async Task<IActionResult> GetRole(
+            string email)
+        {
+            var users = _dbm.GetAllUsers();
+            var user = users.Where(x => x.Mail == email).First();
+            return Content(_jsonParser.Serialize(user.Role), "text/text");
+        }
     }
 }

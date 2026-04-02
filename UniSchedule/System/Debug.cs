@@ -6,7 +6,7 @@ namespace UniSchedule.System{
     public Debug(IConfiguration configuration){
       string path = configuration["DebugFileName"]?? throw new KeyNotFoundException();
       if(!Directory.Exists("log")) Directory.CreateDirectory("log");
-      logFileStream = new StreamWriter("log/" + path + $"_{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}.log");
+      logFileStream = new StreamWriter(Path.Combine("log", path + $"_{DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss")}.log"));
     }
 
     public void Log(string message){

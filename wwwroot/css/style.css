@@ -298,18 +298,23 @@ th {
     background: var(--blue);
     color: var(--white);
     padding: 12px;
-    text-align: left;
+    text-align: center;
     font-weight: 500;
+    border: solid var(--bg) 1px;
 }
 
 td {
     padding: 12px;
-    border-bottom: 1px solid var(--bg);
+    border: 1px solid var(--bg);
 }
 
-tr:hover {
-    background: var(--bg);
+td.free {
+    background: #62a0ea;
 }
+
+/* tr:hover { */
+/*     background: var(--bg); */
+/* } */
 
 /* Login form */
 .login-container {
@@ -456,8 +461,322 @@ tr:hover {
     background: #e67e22;
 }
 
-.off {
+/* Autocomplete styles */
+.autocomplete-list {
+    position: fixed;
+    border: 1px solid #ddd;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #fff;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: none;
+}
+
+.autocomplete-list.show {
+    display: block;
+}
+
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.autocomplete-item:hover {
+    background-color: #e3f2fd;
+}
+
+.autocomplete-item.selected {
+    background-color: #2196f3;
+    color: white;
+}
+
+.selected-teachers {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.selected-teacher-tag {
+    background-color: #e3f2fd;
+    border-radius: 16px;
+    padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.selected-teacher-tag button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    padding: 0 4px;
+}
+
+.selected-teacher-tag button:hover {
+    color: #f44336;
+}
+
+.hide {
+    display: none;
+}
+
+/* Input styles */
+.filter-item input,
+.search-form input,
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: "Bahnschrift", sans-serif;
+    font-size: 14px;
+    background: var(--white);
+    transition: all 0.3s ease;
+    color: var(--text);
+}
+
+.filter-item input:hover,
+.search-form input:hover {
+    border-color: var(--blue);
+}
+
+.filter-item input:focus,
+.search-form input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
+}
+
+.filter-item input::placeholder,
+.search-form input::placeholder {
+    color: #999;
+    font-size: 13px;
+}
+
+/* Select styles */
+.filter-item select,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: "Bahnschrift", sans-serif;
+    font-size: 14px;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230b5bd3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+.filter-item select:hover,
+select:hover {
+    border-color: var(--blue);
+}
+
+.filter-item select:focus,
+select:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(11, 91, 211, 0.1);
+}
+
+/* Option styles */
+.filter-item select option,
+select option {
+    padding: 10px;
+    font-family: "Bahnschrift", sans-serif;
+    font-size: 14px;
+    background: var(--white);
+    color: var(--text);
+}
+
+.filter-item select option:hover,
+select option:hover {
+    background: var(--blue);
+    color: var(--white);
+}
+
+.filter-item select option:checked,
+select option:checked {
+    background: var(--blue);
+    color: var(--white);
+}
+
+/* Disabled state */
+.filter-item select:disabled,
+.filter-item input:disabled,
+select:disabled,
+input:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Read-only state */
+.filter-item input[readonly] {
+    background: #f9f9f9;
+    cursor: default;
+}
+
+/* Date input specific */
+input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background: rgba(11, 91, 211, 0.1);
+}
+
+/* Number input specific */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 0.5;
+}
+
+input[type="number"]::-webkit-inner-spin-button:hover,
+input[type="number"]::-webkit-outer-spin-button:hover {
+    opacity: 1;
+}
+
+/* Custom select for better styling across browsers */
+.custom-select {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.custom-select select {
+    width: 100%;
+}
+
+/* Search input with icon */
+.search-input-wrapper {
+    position: relative;
+}
+
+.search-input-wrapper input {
+    padding-right: 35px;
+}
+
+.search-input-wrapper::after {
+    content: "🔍";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Error state for inputs */
+.filter-item input.error,
+.search-form input.error,
+select.error {
+    border-color: var(--red);
+    background-color: rgba(200, 20, 20, 0.05);
+}
+
+.filter-item input.error:focus,
+.search-form input.error:focus,
+select.error:focus {
+    box-shadow: 0 0 0 3px rgba(200, 20, 20, 0.1);
+}
+
+/* Success state for inputs */
+.filter-item input.success,
+.search-form input.success,
+select.success {
+    border-color: #28a745;
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+/* Input with label animation */
+.input-group {
+    position: relative;
+    margin-top: 20px;
+}
+
+.input-group input {
+    padding-top: 20px;
+}
+
+.input-group label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    color: #999;
+    font-size: 14px;
+}
+
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
+    top: 8px;
+    font-size: 11px;
+    color: var(--blue);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+    .filter-item select,
+    select,
+    .filter-item input,
+    input[type="text"],
+    input[type="date"] {
+        font-size: 16px;
+        /* Prevents zoom on mobile */
+    }
+}
+
+/* Firefox specific fixes */
+@-moz-document url-prefix() {
+
+    .filter-item select,
+    select {
+        padding: 9px 12px;
+    }
+}
+
+/* Edge specific fixes */
+@supports (-ms-ime-align: auto) {
+
+    .filter-item select,
+    select {
+        padding: 9px 12px;
+    }
 }
 
 /* Responsive */

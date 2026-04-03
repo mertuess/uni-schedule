@@ -1,67 +1,83 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Занятость аудиторий - МАУ</title>
-				<link rel="stylesheet" href="../css/style.css">
-					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Занятость аудиторий - МАУ</title>
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
 </head>
-	<body>
-		<header>
-			<div class="container">
-				<a href="https://mauniver.ru">
-					<img src="../resources/images/logo-bottom.svg" alt="МАУ">
-            </a>
-				<nav>
-					<ul>
-						<li>
-							<a href="../index.html">Главная</a>
-						</li>
-						<li>
-							<a href="teachers-schedule.html">Преподаватели</a>
-						</li>
-						<li>
-							<a href="rooms-workload.html" class="active">Аудитории</a>
-						</li>
-						<li>
-							<a href="dashboard.html">Панель оператора</a>
-						</li>
-						<li>
-							<a href="login.html" id="auth-link">Вход</a>
-						</li>
-					</ul>
-				</nav>
-			</div>
-		</header>
 
-		<main>
-			<div class="container">
-				<div class="main-content">
-					<h1>Занятость аудиторий</h1>
+<body>
+	<header>
+		<div class="container">
+			<a href="https://mauniver.ru">
+				<img src="../resources/images/logo-bottom.svg" alt="МАУ">
+			</a>
+			<nav>
+				<ul>
+					<li>
+						<a href="../index.html">Главная</a>
+					</li>
+					<li>
+						<a href="teachers-schedule.html">Преподаватели</a>
+					</li>
+					<li>
+						<a href="rooms-workload.html" class="active">Аудитории</a>
+					</li>
+					<li>
+						<a href="dashboard.html">Панель оператора</a>
+					</li>
+					<li>
+						<a href="login.html" id="auth-link">Вход</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
 
-					<div class="search-form">
-						<div class="form-group">
-							<label>ID аудитории</label>
-							<input type="number" id="room-id" placeholder="Введите ID">
-                    </div>
-						<div class="form-group">
-							<label>Дата начала</label>
-							<input type="date" id="start-date">
-                    </div>
-						<div class="form-group">
-							<label>Дата окончания</label>
-							<input type="date" id="end-date">
-                    </div>
-						<button class="btn" id="search-workload">Показать</button>
+	<main>
+		<div class="container">
+			<div class="main-content">
+				<h1>Занятость аудитории</h1>
+				<div class="search-form">
+					<div class="form-group">
+						<label>Выбор корпусов</label>
+						<input type="text" id="buildings-ids" placeholder="Начните вводить вводить корпус" autocomplete="off">
+						<div id="buildings-autocomplete-list" class="autocomplete-list"></div>
+						<div id="selected-buildings-list" class="selected-teachers"></div>
 					</div>
-
-					<div id="results"></div>
-					<div id="message" class="message-box"></div>
+					<div class="form-group">
+						<select id="buildings">
+						</select>
+					</div>
+					<div class="form-group">
+						<select id="rooms">
+						</select>
+					</div>
+					<div class="form-group">
+						<label>Дата начала</label>
+						<input type="date" id="start-date">
+					</div>
+					<div class="form-group">
+						<label>Дата окончания</label>
+						<input type="date" id="end-date">
+					</div>
+					<button class="btn" id="search-room-workload" onclick="showRoomWorkload()">Показать по аудитории</button>
+					<button class="btn" id="search-build-workload" onclick="showBuildingWorkload()">Показать по корпусу</button>
+					<button class="btn hide" id="search-builds-workload" onclick="showBuildingsWorkload()">Показать по
+						корпусам</button>
 				</div>
-			</div>
-		</main>
 
-		<script src="../js/api.js"></script>
-	</body>
+				<div id="results"></div>
+			</div>
+		</div>
+	</main>
+
+	<script src="../js/cookie.js"></script>
+	<script src="../js/api.js"></script>
+	<script src="../js/room.js"></script>
+</body>
+
 </html>

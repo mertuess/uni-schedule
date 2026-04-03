@@ -1,5 +1,15 @@
 // Базовый URL для API
 const API_BASE = 'http://localhost:5000/api';
+const OAPI_BASE = 'https://api-schedule.mauniver.ru';
+const ALL_SLOTS = [
+    "09:00 - 10:35",
+    "10:45 - 12:20",
+    "12:40 - 14:15",
+    "14:45 - 16:20",
+    "16:30 - 18:05",
+    "18:15 - 19:50",
+    "20:00 - 21:35"
+];
 
 // Хранилище для токена авторизации
 //let authEmail = getCookie("Uni-Email") || null;
@@ -17,7 +27,7 @@ try {
         authEmail = emailCookie;
         authPassword = passCookie;
     }
-} catch(e) {
+} catch (e) {
     console.log("Ошибка чтения cookie:", e);
     authEmail = null;
     authPassword = null;
@@ -32,6 +42,13 @@ function getHeaders() {
     };
 }
 
+function getOApiHeaders() {
+    return {
+        'accept': '*/*',
+        'Authorization': 'Bearer ' + getCookie('o-api-token')
+    };
+}
+
 // Базовая функция для GET запросов
 async function apiGet(endpoint) {
     try {
@@ -39,16 +56,40 @@ async function apiGet(endpoint) {
             method: 'GET',
             headers: getHeaders()
         });
-        
+
         if (response.status === 401)
             throw new Error('Неверные учетные данные');
-        
+
         if (response.status === 403)
             throw new Error('Нет прав доступа');
-        
+
         if (!response.ok)
             throw new Error(`Ошибка ${response.status}`);
-        
+
+        const data = await response.json();
+        return { success: true, data };
+    } catch (error) {
+        console.error('API Error:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+async function oApiGet(endpoint) {
+    try {
+        const response = await fetch(`${OAPI_BASE}${endpoint}`, {
+            method: 'GET',
+            headers: getOApiHeaders()
+        });
+
+        if (response.status === 401)
+            throw new Error('Неверные учетные данные');
+
+        if (response.status === 403)
+            throw new Error('Нет прав доступа');
+
+        if (!response.ok)
+            throw new Error(`Ошибка ${response.status}`);
+
         const data = await response.json();
         return { success: true, data };
     } catch (error) {
@@ -106,7 +147,7 @@ async function updateUser(email, newEmail, newPassword, newName, newEngName, new
     if (newEngName) params.append('new_engName', newEngName);
     if (newRole) params.append('new_role', newRole);
     if (department) params.append('department', department);
-    
+
     return await apiGet(`/Database/users/${encodeURIComponent(email)}/update?${params}`);
 }
 
@@ -166,4 +207,20 @@ async function getBuildingsWorkload(start, end, buildingIds) {
 async function getTeachersFreeSlots(teacherUIDs, start, end) {
     const uids = teacherUIDs.join(',');
     return await apiGet(`/Schedule/teachers/${uids}/${start}/${end}`);
+}
+
+async function getTeachersList() {
+    return await oApiGet(`/teachers`);
+}
+
+async function getTeacherSchedule(teacher, start, end) {
+    return await oApiGet(`/teachers/${teacher}/schedule/${start}/${end}`);
+}
+
+async function getBuildings() {
+    return await oApiGet(`/buildings`);
+}
+
+async function getRooms(bui_id) {
+    return await oApiGet(`/buildings/${bui_id}/rooms`);
 }

@@ -1,11 +1,11 @@
 const dep = document.getElementById('department');
 const mail = document.getElementById('mail');
 const pass = document.getElementById('password');
-const name = document.getElementById('name');
+const _name = document.getElementById('name');
 const engName = document.getElementById('engName');
 const role = document.getElementById('role');
 
-getDepartments().then(function(result) {
+getDepartments().then(function (result) {
     if (result.success) {
         let arr = result.data;
         for (let i = 0; i < arr.length; i++) {
@@ -20,12 +20,12 @@ getDepartments().then(function(result) {
 
 function submit() {
     let new_dep = null;
-    
+
     if (dep.value != "null" && dep.value != "") {
         new_dep = parseInt(dep.value);
     }
-    
-    createUser(email.value, pass.value, name.value, engName.value, role.value).then(function(result) {
+
+    createUser(email.value, pass.value, _name.value, engName.value, role.value).then(function (result) {
         if (result.success) {
             window.location.href = './dashboard.html';
         } else {

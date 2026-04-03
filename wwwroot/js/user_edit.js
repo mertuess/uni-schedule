@@ -1,12 +1,12 @@
 const dep = document.getElementById('department');
 const mail = document.getElementById('mail');
 const pass = document.getElementById('password');
-const name = document.getElementById('name');
+const _name = document.getElementById('name');
 const engName = document.getElementById('engName');
 const role = document.getElementById('role');
 let oldMail = "";
 
-getDepartments().then(function(result) {
+getDepartments().then(function (result) {
     let arr = result.data;
     for (let i = 0; i < arr.length; i++) {
         const d = arr[i];
@@ -15,14 +15,14 @@ getDepartments().then(function(result) {
         s.value = d.Id;
         dep.appendChild(s);
     }
-    getUsers().then(function(result) {
+    getUsers().then(function (result) {
         let arr = result.data;
         for (let i = 0; i < arr.length; i++) {
             if (arr[i].Id != localStorage.getItem('user-to-edit')) continue;
             let u = arr[i];
             oldMail = u.Mail;
             mail.value = u.Mail;
-            name.value = u.Name;
+            _name.value = u.Name;
             engName.value = u.EngName;
             role.value = u.Role;
             if (u.DepartmentId) {
@@ -36,7 +36,7 @@ function submit() {
     let new_pass = null;
     let new_dep = null;
     let new_mail = null;
-    
+
     if (pass.value != "") {
         new_pass = pass.value;
     }
@@ -48,8 +48,8 @@ function submit() {
     if (mail.value != oldMail) {
         new_mail = mail.value;
     }
-    
-    updateUser(oldMail, mail.value, new_pass, name.value, engName.value, role.value, new_dep).then(function() {
+
+    updateUser(oldMail, new_mail, new_pass, _name.value, engName.value, role.value, new_dep).then(function () {
         window.location.href = './dashboard.html';
     });
 }

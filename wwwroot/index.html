@@ -2,62 +2,67 @@
 <html lang="ru">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Расписание - МАУ</title>
-	<link rel="stylesheet" href="css/style.css">
-	<link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Расписание - МАУ</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="resources/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
 </head>
 
 <body>
-	<header>
-		<div class="container">
-			<a href="https://mauniver.ru">
-				<img src="resources/images/logo-bottom.svg" alt="МАУ">
-			</a>
-			<nav>
-				<ul>
-					<li>
-						<a href="index.html" class="active">Главная</a>
-					</li>
-					<li>
-						<a href="pages/teachers-schedule.html" id="t-btn">Преподаватели</a>
-					</li>
-					<li>
-						<a href="pages/rooms-workload.html" id="r-btn">Аудитории</a>
-					</li>
-					<li>
-						<a href="pages/dashboard.html" id="d-btn">Панель оператора</a>
-					</li>
-					<li>
-						<a href="pages/login.html" id="auth-link">Вход</a>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</header>
+<header>
+    <div class="container">
+        <a href="https://mauniver.ru">
+            <img alt="МАУ" src="resources/images/logo-bottom.svg">
+        </a>
+        <nav>
+            <ul>
+                <li>
+                    <a class="active" href="index.html">Главная</a>
+                </li>
+                <li>
+                    <a href="pages/teachers-schedule.html" id="t-btn">Преподаватели</a>
+                </li>
+                <li>
+                    <a href="pages/department-schedule.html" id="dep-btn">Кафедры</a>
+                </li>
+                <li>
+                    <a href="pages/rooms-workload.html" id="r-btn">Аудитории</a>
+                </li>
+                <li>
+                    <a href="pages/dashboard.html" id="d-btn">Панель оператора</a>
+                </li>
+                <li>
+                    <a href="pages/login.html" id="auth-link">Вход</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-	<main>
-		<div class="container">
-			<div class="main-content">
-				<h1>UniSchedule</h1>
+<main>
+    <div class="container">
+        <div class="main-content">
+            <h1>UniSchedule</h1>
 
-				<div class="info-block">
-					<p>
-						<strong id="current-date"></strong>
-					</p>
-					<p>
-						Микросервис, который из БД получает данные из основной системы расписания вуза и предоставляет представление
-						расписания по преподавателям, кафедрам, институтам и корпусам
-					</p>
-				</div>
-			</div>
-		</div>
-	</main>
+            <div class="info-block">
+                <p>
+                    <strong id="current-date"></strong>
+                </p>
+                <p>
+                    Микросервис, который из БД получает данные из основной системы расписания вуза и предоставляет
+                    представление
+                    расписания по преподавателям, кафедрам, институтам и корпусам
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
 
-	<script src="../js/cookie.js"></script>
-	<script src="../js/api.js"></script>
-	<script src="../js/main.js"></script>
+<script src="../js/cookie.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/check_login.js"></script>
+<script src="../js/main.js"></script>
 </body>
 
 </html>

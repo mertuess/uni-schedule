@@ -741,8 +741,8 @@ select.success {
     font-size: 14px;
 }
 
-.input-group input:focus+label,
-.input-group input:not(:placeholder-shown)+label {
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
     top: 8px;
     font-size: 11px;
     color: var(--blue);

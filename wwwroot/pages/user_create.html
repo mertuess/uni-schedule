@@ -1,93 +1,97 @@
 <!DOCTYPE html>
 <html lang="ru">
 
-	<head>
-		<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Создать пользователя - UniSchedule</title>
-				<link rel="stylesheet" href="../css/style.css">
-					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Создать пользователя - UniSchedule</title>
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../resources/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
 </head>
 
-	<body>
-		<header>
-			<a href="https://mauniver.ru">
-				<img src="../resources/images/logo-bottom.svg" alt="МАУ">
-        </a>
-			<nav>
-				<ul>
-					<li>
-						<a href="../index.html">Главная</a>
-					</li>
-					<li>
-						<a href="teachers-schedule.html">Преподаватели</a>
-					</li>
-					<li>
-						<a href="rooms-workload.html">Аудитории</a>
-					</li>
-					<li>
-						<a href="dashboard.html" class="active">Панель оператора</a>
-					</li>
-				</ul>
-			</nav>
-		</header>
+<body>
+<header>
+    <a href="https://mauniver.ru">
+        <img alt="МАУ" src="../resources/images/logo-bottom.svg">
+    </a>
+    <nav>
+        <ul>
+            <li>
+                <a href="../index.html">Главная</a>
+            </li>
+            <li>
+                <a href="teachers-schedule.html">Преподаватели</a>
+            </li>
+            <li>
+                <a href="department-schedule.html" id="dep-btn">Кафедры</a>
+            </li>
+            <li>
+                <a href="rooms-workload.html">Аудитории</a>
+            </li>
+            <li>
+                <a class="active" href="dashboard.html">Панель оператора</a>
+            </li>
+        </ul>
+    </nav>
+</header>
 
-		<main>
-			<div class="container">
-				<div class="main-content">
-					<h1>Создать пользователя</h1>
+<main>
+    <div class="container">
+        <div class="main-content">
+            <h1>Создать пользователя</h1>
 
-					<div id="createUserForm">
-						<div class="form-group">
-							<label for="email">Email *</label>
-							<input type="email" id="email">
-                    </div>
+            <div id="createUserForm">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input id="email" type="email">
+                </div>
 
-						<div class="form-group">
-							<label for="password">Пароль *</label>
-							<input type="password" id="password">
-                    </div>
+                <div class="form-group">
+                    <label for="password">Пароль *</label>
+                    <input id="password" type="password">
+                </div>
 
-						<div class="form-group">
-							<label for="name">Имя (рус) *</label>
-							<input type="text" id="name">
-                    </div>
+                <div class="form-group">
+                    <label for="name">Имя (рус) *</label>
+                    <input id="name" type="text">
+                </div>
 
-						<div class="form-group">
-							<label for="engName">Имя (англ) *</label>
-							<input type="text" id="engName">
-                    </div>
+                <div class="form-group">
+                    <label for="engName">Имя (англ) *</label>
+                    <input id="engName" type="text">
+                </div>
 
-						<div class="form-group">
-							<label for="role">Роль *</label>
-							<select id="role">
-								<option value="">Выберите роль</option>
-								<option value="teacher">Преподаватель</option>
-								<option value="operator">Оператор</option>
-							</select>
-						</div>
+                <div class="form-group">
+                    <label for="role">Роль *</label>
+                    <select id="role">
+                        <option value="">Выберите роль</option>
+                        <option value="teacher">Преподаватель</option>
+                        <option value="operator">Оператор</option>
+                    </select>
+                </div>
 
-						<div class="form-group">
-							<label for="department">Кафедра</label>
-							<select id="department">
-								<option value="null">Без кафедры</option>
-							</select>
-						</div>
+                <div class="form-group">
+                    <label for="department">Кафедра</label>
+                    <select id="department">
+                        <option value="null">Без кафедры</option>
+                    </select>
+                </div>
 
-						<div class="form-actions">
-							<button onclick="submit()" class="btn btn-success">Создать</button>
-							<a href="dashboard.html" class="btn btn-secondary">Отмена</a>
-						</div>
+                <div class="form-actions">
+                    <button class="btn btn-success" onclick="submit()">Создать</button>
+                    <a class="btn btn-secondary" href="dashboard.html">Отмена</a>
+                </div>
 
-						<div id="messageBox" class="message-box"></div>
-					</div>
-				</div>
-			</div>
-		</main>
+                <div class="message-box" id="messageBox"></div>
+            </div>
+        </div>
+    </div>
+</main>
 
-		<script src="../js/cookie.js"></script>
-		<script src="../js/api.js"></script>
-		<script src="../js/user_create.js"></script>
-	</body>
+<script src="../js/cookie.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/check_login.js"></script>
+<script src="../js/user_create.js"></script>
+</body>
 
 </html>

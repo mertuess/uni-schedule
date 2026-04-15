@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Занятость аудиторий - МАУ</title>
+    <title>Расписание кафедры - МАУ</title>
     <link href="../css/style.css" rel="stylesheet">
     <link href="../resources/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
 </head>
@@ -24,10 +24,10 @@
                     <a href="teachers-schedule.html">Преподаватели</a>
                 </li>
                 <li>
-                    <a href="department-schedule.html" id="dep-btn">Кафедры</a>
+                    <a class="active" href="department-schedule.html" id="dep-btn">Кафедры</a>
                 </li>
                 <li>
-                    <a class="active" href="rooms-workload.html">Аудитории</a>
+                    <a href="rooms-workload.html">Аудитории</a>
                 </li>
                 <li>
                     <a href="dashboard.html" id="d-btn">Панель оператора</a>
@@ -43,21 +43,17 @@
 <main>
     <div class="container">
         <div class="main-content">
-            <h1>Занятость аудитории</h1>
+            <h1>Свободные окна преподавателей одной кафедры</h1>
+
+            <div class="info-block">
+                <p>Выберите преподавателей из списка</p>
+            </div>
+
             <div class="search-form">
                 <div class="form-group">
-                    <label>Выбор корпусов</label>
-                    <input autocomplete="off" id="buildings-ids" placeholder="Начните вводить вводить корпус"
-                           type="text">
-                    <div class="autocomplete-list" id="buildings-autocomplete-list"></div>
-                    <div class="selected-teachers" id="selected-buildings-list"></div>
-                </div>
-                <div class="form-group">
-                    <select id="buildings">
-                    </select>
-                </div>
-                <div class="form-group">
-                    <select id="rooms">
+                    <label>Кафедра</label>
+                    <select id="department">
+                        <option value="-1">Выберите кафедру</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -68,16 +64,12 @@
                     <label>Дата окончания</label>
                     <input id="end-date" type="date">
                 </div>
-                <button class="btn" id="search-room-workload" onclick="showRoomWorkload()">Показать по аудитории
-                </button>
-                <button class="btn" id="search-build-workload" onclick="showBuildingWorkload()">Показать по корпусу
-                </button>
-                <button class="btn hide" id="search-builds-workload" onclick="showBuildingsWorkload()">Показать по
-                    корпусам
-                </button>
+                <button class="btn" id="search-slots" onclick="teachersSchedulesSearch()">Найти</button>
             </div>
 
-            <div id="results"></div>
+            <div id="results">
+            </div>
+            <div class="message-box" id="message"></div>
         </div>
     </div>
 </main>
@@ -85,7 +77,8 @@
 <script src="../js/cookie.js"></script>
 <script src="../js/api.js"></script>
 <script src="../js/check_login.js"></script>
-<script src="../js/room.js"></script>
+<script src="../js/teachers.js"></script>
+<script src="../js/departments.js"></script>
 </body>
 
 </html>

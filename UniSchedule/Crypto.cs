@@ -9,102 +9,111 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace UniSchedule{
-  /// <summary>
-  /// Класс криптографии
-  /// </summary>
-  static class Crypto{
+namespace UniSchedule;
+
+/// <summary>
+///     Класс криптографии
+/// </summary>
+internal static class Crypto
+{
     private static readonly byte[] Key = Encoding.UTF8.GetBytes("0123456789ABCDEF0123456789ABCDEF");
     private static readonly byte[] IV = Encoding.UTF8.GetBytes("0123456789ABCDEF");
-    private static readonly string allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890%$#@&";
+
+    private static readonly string
+        allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890%$#@&";
 
     /// <summary>
-    /// Метод хеширующий строку алгоритмом MD5
+    ///     Метод хеширующий строку алгоритмом MD5
     /// </summary>
     /// <param name="input">Строка для хеширования</param>
     /// <returns>Захешированную строку</returns>
-    public static string MD5HashCreate(string input){
-      MD5 MD5Hash = MD5.Create();
-      byte[] inputBytes = Encoding.ASCII.GetBytes(input);
-      byte[] hash = MD5Hash.ComputeHash(inputBytes);
-      return Convert.ToHexString(hash); 
+    public static string MD5HashCreate(string input)
+    {
+        var MD5Hash = MD5.Create();
+        var inputBytes = Encoding.ASCII.GetBytes(input);
+        var hash = MD5Hash.ComputeHash(inputBytes);
+        return Convert.ToHexString(hash);
     }
 
     /// <summary>
-    /// Шифрование строки
+    ///     Шифрование строки
     /// </summary>
     /// <param name="plainText">Исходный текст</param>
     /// <returns>Зашифрованный массив byte</returns>
-    static public byte[] Encrypt(string plainText){
-      if (plainText == null || plainText.Length <= 0)
-        return new byte[0];
-      byte[] encrypted;
+    public static byte[] Encrypt(string plainText)
+    {
+        if (plainText == null || plainText.Length <= 0)
+            return new byte[0];
+        byte[] encrypted;
 
-      using (Aes aesAlg = Aes.Create()){
-        aesAlg.Key = Key;
-        aesAlg.IV = IV;
+        using (var aesAlg = Aes.Create())
+        {
+            aesAlg.Key = Key;
+            aesAlg.IV = IV;
 
-        ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+            var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
-        using (MemoryStream msEncrypt = new MemoryStream()){
-          using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write)){
-            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt)){
-              swEncrypt.Write(plainText);
+            using (var msEncrypt = new MemoryStream())
+            {
+                using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                {
+                    using (var swEncrypt = new StreamWriter(csEncrypt))
+                    {
+                        swEncrypt.Write(plainText);
+                    }
+                }
+
+                encrypted = msEncrypt.ToArray();
             }
-          }
-          encrypted = msEncrypt.ToArray();
         }
-      }
 
-      return encrypted;
+        return encrypted;
     }
 
     /// <summary>
-    /// Дешифрование строки
+    ///     Дешифрование строки
     /// </summary>
     /// <param name="cipherText">Зашифрованный массив byte</param>
     /// <returns>Расшифрованный текст</returns>
-    static public string Decrypt(byte[] cipherText)
+    public static string Decrypt(byte[] cipherText)
     {
-      if (cipherText == null || cipherText.Length <= 0)
-          return string.Empty;
+        if (cipherText == null || cipherText.Length <= 0)
+            return string.Empty;
 
-      string plaintext = string.Empty;
+        var plaintext = string.Empty;
 
-      using (Aes aesAlg = Aes.Create())
-      {
-        aesAlg.Key = Key;
-        aesAlg.IV = IV;
-
-        ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-        using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+        using (var aesAlg = Aes.Create())
         {
-          using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-          {
-            using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-            {
-              plaintext = srDecrypt.ReadToEnd();
-            }
-          }
-        }
-      }
+            aesAlg.Key = Key;
+            aesAlg.IV = IV;
 
-      return plaintext;
+            var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+            using (var msDecrypt = new MemoryStream(cipherText))
+            {
+                using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                {
+                    using (var srDecrypt = new StreamReader(csDecrypt))
+                    {
+                        plaintext = srDecrypt.ReadToEnd();
+                    }
+                }
+            }
+        }
+
+        return plaintext;
     }
 
     /// <summary>
-    /// Метод генерирующий пароль заданной длины
+    ///     Метод генерирующий пароль заданной длины
     /// </summary>
     /// <param name="lenght">Длина пароля</param>
     /// <returns>Сгенерированный пароль</returns>
-    public static string GeneratePassword(int lenght){
-      string pass = "";
-      var generator = new Random();
-      for(int i = 0; i < lenght; i++){
-        pass += (allowed_chars[generator.Next(0, allowed_chars.Length)]);
-      }
-      return pass;
+    public static string GeneratePassword(int lenght)
+    {
+        var pass = "";
+        var generator = new Random();
+        for (var i = 0; i < lenght; i++) pass += allowed_chars[generator.Next(0, allowed_chars.Length)];
+        return pass;
     }
-  }
 }

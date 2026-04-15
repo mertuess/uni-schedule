@@ -3,6 +3,7 @@ bin/
 obj/
 dbg/
 log/
+.idea/
 schedule.db
 token.uni.s
 uni-schedule.csproj.user

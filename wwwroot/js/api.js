@@ -67,10 +67,10 @@ async function apiGet(endpoint) {
             throw new Error(`Ошибка ${response.status}`);
 
         const data = await response.json();
-        return { success: true, data };
+        return {success: true, data};
     } catch (error) {
         console.error('API Error:', error);
-        return { success: false, error: error.message };
+        return {success: false, error: error.message};
     }
 }
 
@@ -91,10 +91,10 @@ async function oApiGet(endpoint) {
             throw new Error(`Ошибка ${response.status}`);
 
         const data = await response.json();
-        return { success: true, data };
+        return {success: true, data};
     } catch (error) {
         console.error('API Error:', error);
-        return { success: false, error: error.message };
+        return {success: false, error: error.message};
     }
 }
 
@@ -211,6 +211,10 @@ async function getTeachersFreeSlots(teacherUIDs, start, end) {
 
 async function getTeachersList() {
     return await oApiGet(`/teachers`);
+}
+
+async function getUsersByDepartmentList(departmentId) {
+    return await apiGet(`/Database/departments/${departmentId}/users`);
 }
 
 async function getTeacherSchedule(teacher, start, end) {

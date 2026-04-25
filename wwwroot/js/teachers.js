@@ -75,9 +75,21 @@ function updateSelected() {
     });
 }
 
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ teachersSchedulesSearch
 function teachersSchedulesSearch() {
     getSchedules().then((res) => {
         generateTables(res);
+        
+        // Активация кнопки экспорта
+        if (typeof window.activateExport === 'function') {
+            window.activateExport(res, 'Расписание преподавателей');
+        }
+    }).catch(error => {
+        console.error('Ошибка загрузки расписания:', error);
+        const messageBox = document.getElementById('message');
+        if (messageBox) {
+            messageBox.innerHTML = '<div class="error">Ошибка загрузки расписания. Проверьте подключение к интернету.</div>';
+        }
     });
 }
 
@@ -86,6 +98,12 @@ async function getSchedules() {
     selected_teachers.forEach(t => {
         uids.push(t.UID);
     });
+    
+    if (uids.length === 0) {
+        alert('Пожалуйста, выберите преподавателей');
+        return {};
+    }
+    
     free_slots = (await getTeachersFreeSlots(uids, date_start_obj.value, date_end_obj.value)).data;
 
     console.log(free_slots);
@@ -145,7 +163,7 @@ function getTableRow(head, slots, date) {
     final_row.appendChild(nd);
     ALL_SLOTS.forEach(slot => {
         let d = document.createElement('td');
-        if (free_slots[date].includes(slot)) d.classList.add('free');
+        if (free_slots[date] && free_slots[date].includes(slot)) d.classList.add('free');
         slots.forEach(s => {
             if (s.slot === slot) {
                 d.textContent = s.disciplines;
@@ -181,10 +199,18 @@ window.addEventListener('scroll', () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    let teachers_data = await getTeachersList();
-    teachers_list = teachers_data.data.teachers;
+    try {
+        let teachers_data = await getTeachersList();
+        teachers_list = teachers_data.data.teachers;
 
-    autocomplete_list.style.top = `${teacher_input.getBoundingClientRect().bottom}px`;
-    autocomplete_list.style.width = teacher_input.offsetWidth.toString() + 'px';
-    teacher_input.addEventListener('input', onTeacherInput);
+        autocomplete_list.style.top = `${teacher_input.getBoundingClientRect().bottom}px`;
+        autocomplete_list.style.width = teacher_input.offsetWidth.toString() + 'px';
+        teacher_input.addEventListener('input', onTeacherInput);
+    } catch (error) {
+        console.error('Ошибка загрузки списка преподавателей:', error);
+        const messageBox = document.getElementById('message');
+        if (messageBox) {
+            messageBox.innerHTML = '<div class="error">Ошибка загрузки списка преподавателей. Проверьте подключение к интернету.</div>';
+        }
+    }
 });

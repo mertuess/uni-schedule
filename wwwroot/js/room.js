@@ -253,3 +253,148 @@ window.addEventListener('scroll', () => {
     autocomplete_list.style.top = `${buildings_input.getBoundingClientRect().bottom}px`;
 });
 
+// ========== ДОБАВИТЬ ЭТИ ФУНКЦИИ В КОНЕЦ ФАЙЛА room.js ==========
+
+// Функция для преобразования данных загруженности в события для iCal
+function convertWorkloadToEvents(workloadData, roomName, date) {
+    const events = [];
+    const slotMapping = {
+        '09:00 - 10:35': { start: '09:00', end: '10:35', num: 1 },
+        '10:45 - 12:20': { start: '10:45', end: '12:20', num: 2 },
+        '12:40 - 14:15': { start: '12:40', end: '14:15', num: 3 },
+        '14:45 - 16:20': { start: '14:45', end: '16:20', num: 4 },
+        '16:30 - 18:05': { start: '16:30', end: '18:05', num: 5 },
+        '18:15 - 19:50': { start: '18:15', end: '19:50', num: 6 },
+        '20:00 - 21:35': { start: '20:00', end: '21:35', num: 7 }
+    };
+    
+    if (workloadData && workloadData.workload && workloadData.workload[date]) {
+        const dateWorkload = workloadData.workload[date];
+        for (let slotKey in slotMapping) {
+            const slotNum = slotMapping[slotKey].num;
+            if (dateWorkload[slotNum]) {
+                events.push({
+                    date: date,
+                    startTime: slotMapping[slotKey].start,
+                    endTime: slotMapping[slotKey].end,
+                    title: `Занятость аудитории ${roomName}`,
+                    description: `Аудитория занята в ${slotKey}`,
+                    location: roomName
+                });
+            }
+        }
+    }
+    return events;
+}
+
+// Функция для активации экспорта (для одной аудитории)
+function activateRoomExport(workloadData, roomName) {
+    if (typeof window.activateExportRoom === 'function') {
+        window.activateExportRoom(workloadData, roomName);
+    } else {
+        // Прямой вызов если функция не определена
+        window.lastWorkloadData = workloadData;
+        window.lastWorkloadRoom = roomName;
+        window.lastDataType = 'room';
+        
+        const exportBtn = document.getElementById('export-ical');
+        if (exportBtn && workloadData && workloadData.workload) {
+            exportBtn.style.display = 'inline-block';
+            exportBtn.disabled = false;
+            console.log('Кнопка экспорта для аудитории активирована');
+        }
+    }
+}
+
+// Модифицированная функция showRoomWorkload (добавляем активацию экспорта)
+const originalShowRoomWorkload = showRoomWorkload;
+window.showRoomWorkload = async function() {
+    await originalShowRoomWorkload();
+    
+    // После загрузки данных активируем кнопку экспорта
+    const roomName = rooms_obj.options[rooms_obj.selectedIndex]?.textContent || 'Аудитория';
+    const workloadData = (await getRoomWorkload(rooms_obj.value, date_start_obj.value, date_end_obj.value)).data;
+    
+    if (workloadData && workloadData.workload && Object.keys(workloadData.workload).length > 0) {
+        if (typeof window.activateExportRoom === 'function') {
+            window.activateExportRoom(workloadData, roomName);
+        } else {
+            window.lastWorkloadData = workloadData;
+            window.lastWorkloadRoom = roomName;
+            window.lastDataType = 'room';
+            
+            const exportBtn = document.getElementById('export-ical');
+            if (exportBtn) {
+                exportBtn.style.display = 'inline-block';
+                exportBtn.disabled = false;
+                console.log('Кнопка экспорта для аудитории активирована');
+            }
+        }
+    }
+};
+
+// Сохраняем оригинальную функцию
+if (typeof showRoomWorkload === 'function') {
+    window.originalShowRoomWorkload = showRoomWorkload;
+    showRoomWorkload = window.showRoomWorkload;
+}
+
+// Функция для экспорта данных аудитории (будет вызвана из кнопки)
+window.exportRoomToIcal = function() {
+    const events = [];
+    
+    if (window.lastWorkloadData && window.lastWorkloadData.workload) {
+        for (let date in window.lastWorkloadData.workload) {
+            const dateEvents = convertWorkloadToEvents(window.lastWorkloadData, window.lastWorkloadRoom, date);
+            events.push(...dateEvents);
+        }
+    }
+    
+    if (events.length === 0) {
+        alert('Нет данных для экспорта');
+        return;
+    }
+    
+    // Генерируем iCal
+    let ical = 'BEGIN:VCALENDAR\r\n';
+    ical += 'VERSION:2.0\r\n';
+    ical += 'PRODID:-//UniSchedule//Rooms//RU\r\n';
+    ical += 'CALSCALE:GREGORIAN\r\n';
+    ical += `X-WR-CALNAME:Загруженность ${window.lastWorkloadRoom}\r\n`;
+    ical += 'X-WR-TIMEZONE:Europe/Moscow\r\n';
+    
+    events.forEach(event => {
+        const dateClean = event.date.replace(/-/g, '');
+        const startTimeClean = event.startTime.replace(/:/g, '');
+        const endTimeClean = event.endTime.replace(/:/g, '');
+        const now = new Date();
+        const nowStamp = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}T${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}${now.getSeconds().toString().padStart(2,'0')}`;
+        
+        ical += 'BEGIN:VEVENT\r\n';
+        ical += `UID:${Date.now()}-${Math.random()}@unischedule.ru\r\n`;
+        ical += `DTSTAMP:${nowStamp}\r\n`;
+        ical += `DTSTART;TZID=Europe/Moscow:${dateClean}T${startTimeClean}00\r\n`;
+        ical += `DTEND;TZID=Europe/Moscow:${dateClean}T${endTimeClean}00\r\n`;
+        ical += `SUMMARY:${event.title}\r\n`;
+        ical += `DESCRIPTION:${event.description}\r\n`;
+        ical += `LOCATION:${event.location}\r\n`;
+        ical += 'END:VEVENT\r\n';
+    });
+    
+    ical += 'END:VCALENDAR\r\n';
+    
+    // Скачиваем файл
+    const blob = new Blob([ical], {type: 'text/calendar; charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `room_${window.lastWorkloadRoom}_${new Date().toISOString().slice(0,10)}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert(`Экспортировано ${events.length} записей о занятости в календарь!`);
+};
+
+console.log('Экспорт для аудиторий загружен');

@@ -17,7 +17,15 @@ public class AuthenticationMiddleware
     public async Task InvokeAsync(HttpContext context, DataBaseManager db)
     {
         var path = context.Request.Path.ToString().ToLower();
+        
         if (path == "/index.html" || path == "/" || path == "/api/database/tryauth")
+        {
+            await _next(context);
+            return;
+        }
+        
+        // Публичные пути для iCal календаря
+        if (path.StartsWith("/api/calendar"))
         {
             await _next(context);
             return;

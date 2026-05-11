@@ -1,112 +1,113 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Панель администратора - МАУ</title>
-				<link rel="stylesheet" href="../css/style.css">
-					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Панель администратора - МАУ</title>
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../resources/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
 </head>
-	<body>
-		<header>
-			<div class="container">
-				<a href="https://mauniver.ru">
-					<img src="../resources/images/logo-bottom.svg" alt="МАУ">
-            </a>
-				<nav>
-					<ul>
-						<li>
-							<a href="../index.html">Главная</a>
-						</li>
-						<li>
-							<a href="teachers-schedule.html">Преподаватели</a>
-						</li>
-						<li>
-							<a href="rooms-workload.html">Аудитории</a>
-						</li>
-						<li>
-							<a href="dashboard.html" class="active">Админ</a>
-						</li>
-						<li>
-							<a href="login.html" id="auth-link">Выход</a>
-						</li>
-					</ul>
-				</nav>
-			</div>
-		</header>
 
-		<main>
-			<div class="container">
-				<div class="main-content">
-					<h1>Управление пользователями</h1>
+<body>
+<header>
+    <div class="container">
+        <a href="https://mauniver.ru">
+            <img alt="МАУ" src="../resources/images/logo-bottom.svg">
+        </a>
+        <nav>
+            <ul>
+                <li>
+                    <a href="../index.html">Главная</a>
+                </li>
+                <li>
+                    <a href="teachers-schedule.html">Преподаватели</a>
+                </li>
+                <li>
+                    <a href="department-schedule.html" id="dep-btn">Кафедры</a>
+                </li>
+                <li>
+                    <a href="rooms-workload.html">Аудитории</a>
+                </li>
+                <li>
+                    <a class="active" href="dashboard.html">Панель оператора</a>
+                </li>
+                <li>
+                    <a href="login.html" id="auth-link">Выход</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-					<div class="info-block">
-						<p>
-							Всего пользователей: <strong id="user-count">0</strong>
-						</p>
-						<button class="btn" id="create-user-btn" style="margin-top: 15px;">Создать пользователя</button>
-					</div>
+<main>
+    <div class="container">
+        <div class="main-content">
+            <h2>Управление пользователями</h2>
 
-					<div class="table-container">
-						<table>
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Email</th>
-									<th>Имя</th>
-									<th>Роль</th>
-									<th>Действия</th>
-								</tr>
-							</thead>
-							<tbody id="users-list">
-								<tr>
-									<td colspan="5">Загрузка...</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+            <div class="info-block">
+                <p>
+                    Всего пользователей: <strong id="user-count">0</strong>
+                </p>
+                <a class="btn" href="user_create.html">Создать пользователя</a>
+            </div>
 
-					<div id="message" class="message-box"></div>
-				</div>
-			</div>
-		</main>
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Имя</th>
+                        <th>Роль</th>
+                        <th>Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody id="users-list"></tbody>
+                </table>
+            </div>
 
-		<div id="user-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-			<div style="background: white; padding: 30px; border-radius: 18px; max-width: 500px; width: 90%;">
-				<h2 id="modal-title">Создать пользователя</h2>
-				<form id="user-form">
-					<div class="form-group">
-						<label>Email</label>
-						<input type="email" id="user-email" required="">
+            <h2 style="margin-top: 40px;">Управление кафедрами</h2>
+
+            <div class="info-block">
+                <button class="btn" id="createDeptBtn">Создать кафедру</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody id="departments-list"></tbody>
+                </table>
+            </div>
+
+            <div id="dept-modal"
+                 style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+                <div style="background: white; padding: 30px; border-radius: 18px; max-width: 400px; width: 90%;">
+                    <h2 id="dept-modal-title">Создать кафедру</h2>
+                    <div class="form-group">
+                        <label>Название кафедры</label>
+                        <input id="dept-name" style="width: 100%;" type="text">
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn" id="saveDeptBtn">Сохранить</button>
+                        <button class="btn" id="closeDeptModal" style="background: gray;">Отмена</button>
+                    </div>
                 </div>
-					<div class="form-group">
-						<label>Пароль</label>
-						<input type="password" id="user-password">
-                </div>
-					<div class="form-group">
-						<label>Имя</label>
-						<input type="text" id="user-name" required="">
-                </div>
-					<div class="form-group">
-						<label>Имя (англ)</label>
-						<input type="text" id="user-eng-name" required="">
-                </div>
-					<div class="form-group">
-						<label>Роль</label>
-						<select id="user-role">
-							<option value="admin">Администратор</option>
-							<option value="teacher">Преподаватель</option>
-							<option value="operator">Оператор</option>
-						</select>
-					</div>
-					<div style="display: flex; gap: 10px; margin-top: 20px;">
-						<button type="submit" class="btn">Сохранить</button>
-						<button type="button" class="btn" id="close-modal" style="background: gray;">Отмена</button>
-					</div>
-				</form>
-			</div>
-		</div>
+            </div>
+        </div>
+    </div>
+</main>
+            <script src="../js/cookie.js"></script>
+            <script src="../js/api.js"></script>
+            <script src="../js/check_login.js"></script>
+            <script src="../js/dashboard.js"></script>
 
-		<script src="../js/api.js"></script>
-	</body>
+</body>
+
 </html>

@@ -1,74 +1,84 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Расписание преподавателей - МАУ</title>
-				<link rel="stylesheet" href="../css/style.css">
-					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Расписание преподавателей - МАУ</title>
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../resources/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
 </head>
-	<body>
-		<header>
-			<div class="container">
-				<a href="https://mauniver.ru">
-					<img src="../resources/images/logo-bottom.svg" alt="МАУ">
-            </a>
-				<nav>
-					<ul>
-						<li>
-							<a href="../index.html">Главная</a>
-						</li>
-						<li>
-							<a href="teachers-schedule.html" class="active">Преподаватели</a>
-						</li>
-						<li>
-							<a href="rooms-workload.html">Аудитории</a>
-						</li>
-						<li>
-							<a href="dashboard.html">Админ</a>
-						</li>
-						<li>
-							<a href="login.html" id="auth-link">Вход</a>
-						</li>
-					</ul>
-				</nav>
-			</div>
-		</header>
 
-		<main>
-			<div class="container">
-				<div class="main-content">
-					<h1>Свободные окна преподавателей</h1>
+<body>
+<header>
+    <div class="container">
+        <a href="https://mauniver.ru">
+            <img alt="МАУ" src="../resources/images/logo-bottom.svg">
+        </a>
+        <nav>
+            <ul>
+                <li>
+                    <a href="../index.html">Главная</a>
+                </li>
+                <li>
+                    <a class="active" href="teachers-schedule.html">Преподаватели</a>
+                </li>
+                <li>
+                    <a href="department-schedule.html" id="dep-btn">Кафедры</a>
+                </li>
+                <li>
+                    <a href="rooms-workload.html">Аудитории</a>
+                </li>
+                <li>
+                    <a href="dashboard.html" id="d-btn">Панель оператора</a>
+                </li>
+                <li>
+                    <a href="login.html" id="auth-link">Вход</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-					<div class="info-block">
-						<p>Введите ID преподавателей через запятую</p>
-						<p>
-							Пример: <code>1</code> или <code>1,2,3</code>
-						</p>
-					</div>
+<main>
+    <div class="container">
+        <div class="main-content">
+            <h1>Свободные окна преподавателей</h1>
 
-					<div class="search-form">
-						<div class="form-group">
-							<label>ID преподавателей</label>
-							<input type="text" id="teacher-ids" placeholder="1,2,3">
-                    </div>
-						<div class="form-group">
-							<label>Дата начала</label>
-							<input type="date" id="start-date">
-                    </div>
-						<div class="form-group">
-							<label>Дата окончания</label>
-							<input type="date" id="end-date">
-                    </div>
-						<button class="btn" id="search-slots">Найти</button>
-					</div>
+            <div class="info-block">
+                <p>Выберите преподавателей из списка</p>
+            </div>
 
-					<div id="results"></div>
-					<div id="message" class="message-box"></div>
-				</div>
-			</div>
-		</main>
+            <div class="search-form">
+                <div class="form-group">
+                    <label>Поиск преподавателей</label>
+                    <input autocomplete="off" id="teacher-ids" placeholder="Начните вводить ФИО преподавателя"
+                           type="text">
+                    <div class="autocomplete-list" id="teacher-autocomplete-list"></div>
+                    <div class="selected-teachers" id="selected-teachers-list"></div>
+                </div>
+                <div class="form-group">
+                    <label>Дата начала</label>
+                    <input id="start-date" type="date">
+                </div>
+                <div class="form-group">
+                    <label>Дата окончания</label>
+                    <input id="end-date" type="date">
+                </div>
+                <button class="btn" id="search-slots" onclick="teachersSchedulesSearch()">Найти</button>
+            </div>
 
-		<script src="../js/api.js"></script>
-	</body>
+            <div id="results">
+            </div>
+            <div class="message-box" id="message"></div>
+        </div>
+    </div>
+</main>
+
+<script src="../js/cookie.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/check_login.js"></script>
+<script src="../js/teachers.js"></script>
+</body>
+
 </html>

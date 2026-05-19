@@ -12,6 +12,7 @@ using UniSchedule.API;
 using UniSchedule.DataBase;
 using UniSchedule.Json;
 using UniSchedule.System;
+using UniSchedule.Services;
 
 var builder = WebApplication.CreateBuilder(args); // Создаем builder для настройки webapi
 
@@ -34,6 +35,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers(); // Добавляем поддержку контроллеров
 builder.Services.AddOpenApi(); // Добавляем поддержку OpenAPI для генерации документации
+builder.Services.AddScoped<ICalendarService, CalendarService>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "UniSchedule API", Version = "v1" });
@@ -62,7 +64,7 @@ app.UseCors();
 
 app.MapOpenApi(); // Оставляем OpenAPI для релизной версии
 
-app.UseHttpsRedirection(); // Используем редирект на https с http (у вас запросило сертификаты из-за этого)
+app.UseHttpsRedirection(); // Используем редирект на https с http
 app.UseStaticFiles(); // Позволяем использовать js, css и прочие ресурсы верстки
 app.MapControllers(); // Подключаем контроллеры запросов
 

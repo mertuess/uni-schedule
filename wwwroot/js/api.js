@@ -1,5 +1,6 @@
 // Базовый URL для API
-const API_BASE = 'http://localhost:5000/api';
+// const API_BASE = 'http://localhost:5000/api';
+const API_BASE = '/api';
 const OAPI_BASE = 'https://api-schedule.mauniver.ru';
 const ALL_SLOTS = [
     "09:00 - 10:35",

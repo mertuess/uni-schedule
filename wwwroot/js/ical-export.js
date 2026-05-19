@@ -143,13 +143,7 @@ window.activateExportRoom = function(workloadData, roomName) {
 // Переопределяем exportToIcal для поддержки аудиторий
 const originalExportToIcal = window.exportToIcal;
 window.exportToIcal = function() {
-    if (window.lastDataType === 'room' && window.lastWorkloadData) {
-        exportRoomToIcal();
-    } else if (window.lastDataType === 'schedule' && window.lastScheduleData) {
-        originalExportToIcal();
-    } else {
-        alert('Нет данных для экспорта');
-    }
+    originalExportToIcal();
 };
 
 function exportRoomToIcal() {

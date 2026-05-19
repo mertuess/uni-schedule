@@ -64,7 +64,7 @@ app.UseCors();
 
 app.MapOpenApi(); // Оставляем OpenAPI для релизной версии
 
-app.UseHttpsRedirection(); // Используем редирект на https с http (у вас запросило сертификаты из-за этого)
+app.UseHttpsRedirection(); // Используем редирект на https с http
 app.UseStaticFiles(); // Позволяем использовать js, css и прочие ресурсы верстки
 app.MapControllers(); // Подключаем контроллеры запросов
 

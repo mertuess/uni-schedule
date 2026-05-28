@@ -15,7 +15,7 @@ getDepartments().then(function (result) {
 
 function getAllTeachers(){
     selected_teachers = []
-    getUsersByDepartmentList(parseInt(dep.value)).then((result) => {
+    getUsersByDepartment(parseInt(dep.value)).then((result) => {
         let users = result.data;
         users.forEach(teacher => {
             var o_api_teacher = search(teacher.Name.toLowerCase())[0];

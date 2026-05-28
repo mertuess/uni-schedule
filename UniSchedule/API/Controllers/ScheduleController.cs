@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using UniSchedule.API.Responses;
 using UniSchedule.Json;
 using UniSchedule.Json.Models;
+using UniSchedule.Services;
 
 /// <summary>
 /// Пространство имен контроллеров api
@@ -25,16 +26,18 @@ public class ScheduleController : ControllerBase
 {
     private readonly JsonParser _jsonParser;
     private readonly OutAPI _o_api;
+    private readonly CacheService _cache;
 
     /// <summary>
     ///     Конструктор
     /// </summary>
     /// <param name="o_api">Экземпляр API</param>
     /// <param name="jsonParser">"Экземпляр json парсера"</param>
-    public ScheduleController(OutAPI o_api, JsonParser jsonParser)
+    public ScheduleController(OutAPI o_api, JsonParser jsonParser, CacheService cache)
     {
         _o_api = o_api;
         _jsonParser = jsonParser;
+        _cache = cache;
     }
 
     /// <summary>

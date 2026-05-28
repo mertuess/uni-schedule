@@ -21,15 +21,18 @@ public class OutAPI
     private readonly JsonParser _jsonParser;
     private readonly Localization _loc;
     private readonly string url;
+    private readonly IConfiguration _configuration;
 
     /// <summary>
     ///     Конструктор класса
     /// </summary>
     public OutAPI(IConfiguration configuration, JsonParser jsonParser, Debug dbg, Localization loc)
     {
+        _configuration = configuration;
         _jsonParser = jsonParser;
         _dbg = dbg;
         _loc = loc;
+
         // Проверяем наличие строки подклюения к api
         url = configuration.GetConnectionString("OutAPI_URL") ??
               throw new Exception("Out API URL not found!"); // Кидаем исключение если не нашли строку
@@ -72,11 +75,11 @@ public class OutAPI
     /// Загрузка токена из внешнего файла token.uni.s
     private void loadToken()
     {
-        if (!File.Exists("token.uni.s")) // Проверяем наличие файла
-            throw new FileNotFoundException(string.Format(_loc.Text["out_api_token_file_not_found"], "token.uni.s"));
-        // Считываем байты из файла
-        var data = File.ReadAllBytes("token.uni.s");
-        var token = Crypto.Decrypt(data); // Дешифруем токен
+        var token = _configuration["ApiSettings:Token"];
+        
+        if (string.IsNullOrEmpty(token))
+            throw new Exception("Token not found in configuration!");
+
         // Заполняем заголовок клиента ключом
         sharedClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         _dbg.Log(string.Format(_loc.Text["out_api_token_succ"], "token.uni.s"));

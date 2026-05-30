@@ -1,8 +1,6 @@
 let filter = [
     'Id',
     'Mail',
-    'Name',
-    'Role'
 ]
 let allTeachers = [];
 let allDepartments = [];

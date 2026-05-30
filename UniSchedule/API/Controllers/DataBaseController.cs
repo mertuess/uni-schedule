@@ -54,7 +54,10 @@ public class DatabaseController : ControllerBase
         [FromQuery] string engName,
         [FromQuery] string role)
     {
-        var res = await _dbm.TryCreateUserAsync(email, password, name, engName, role);
+
+        var forcedRole = "operator";
+
+        var res = await _dbm.TryCreateUserAsync(email, password, name, engName, forcedRole);
 
         if (res)
             return Ok(new
@@ -129,8 +132,8 @@ public class DatabaseController : ControllerBase
         [FromQuery] string? new_role,
         [FromQuery] int? department)
     {
-        var res = await _dbm.TryUpdateUserAsync(email, new_email, new_password, new_name, new_engName, new_role,
-            department);
+        // Игнорируем попытку смены роли — оставляем как есть
+        var res = await _dbm.TryUpdateUserAsync(email, new_email, new_password, new_name, new_engName, null, department);
 
         if (res)
             return Ok(new

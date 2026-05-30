@@ -6,29 +6,33 @@ const dep_btn = document.getElementById('dep-btn');
 
 if (authEmail && authPassword) {
     apiGet(`/Database/users/${authEmail}/role`).then((result) => {
-        if (result.success) {
-            let role = result.data;
-            if (role !== "operator" && d_btn) {
-                d_btn.style.display = "none";
-            }
+        if (result.success && result.data == 'operator') {
+            if (d_btn) d_btn.style.display = 'block';
+            if (dep_btn) dep_btn.style.display = 'block';
+            } else{
+            if (d_btn) d_btn.style.display = 'none';
+            if (dep_btn) dep_btn.style.display = 'none';
+            if (t_btn) t_btn.style.display = 'none';
+            if (r_btn) r_btn.style.display = 'none';
         }
     });
 } else {
     if (d_btn) d_btn.style.display = "none";
+    if (dep_btn) dep_btn.style.display = 'none';
+    if (t_btn) t_btn.style.display = 'none';
+    if (r_btn) r_btn.style.display = 'none';
 }
 
-if (authEmail && authPassword) {
-    if (l_btn) {
+if (l_btn) {
+    if (authEmail && authPassword) {
         l_btn.innerHTML = 'Выход';
-        l_btn.onclick = function (e) {
-            e.preventDefault();
+        l_btn.onclick = function(e) {
+            if (e) e.preventDefault();
             clearAuth();
             window.location.href = '';
         };
-        l_btn.href = '';
-    }
-} else {
-    if (l_btn) {
+        l_btn.href = '#';
+    } else {
         l_btn.innerHTML = 'Вход';
         l_btn.href = './pages/login.html';
     }

@@ -45,8 +45,8 @@ builder.Services.AddSwaggerGen(c =>
 // Регистрируем сервисы в режиме singleton, то есть один экземплр на все приложение
 builder.Services.AddSingleton<Localization>(); // для текста и локализации
 builder.Services.AddSingleton<Debug>(); // для логгирования
-builder.Services.AddSingleton<DataBaseManager>(); // для работы с базой данных внутри нашего api
 builder.Services.AddSingleton<OutAPI>(); // для работы с внешним api
+builder.Services.AddSingleton<DataBaseManager>(); // для работы с базой данных внутри нашего api
 builder.Services.AddSingleton<JsonParser>(); // для обработки json строк
 builder.Services.AddSingleton<Debug>();
 builder.Services.AddSingleton<CacheService>(); // для кэширования данных

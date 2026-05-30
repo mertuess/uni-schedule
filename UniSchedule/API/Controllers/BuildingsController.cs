@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using UniSchedule.API.Responses;
 using UniSchedule.Json;
 using UniSchedule.Json.Models;
+using UniSchedule.Services;
 
 /// <summary>
 /// Пространство имен контроллеров api
@@ -25,16 +26,39 @@ public class BuildingsController : ControllerBase
 {
     private readonly JsonParser _jsonParser;
     private readonly OutAPI _o_api;
+    private readonly CacheService _cache;
 
     /// <summary>
     ///     Конструктор
     /// </summary>
     /// <param name="o_api">Экземпляр API</param>
     /// <param name="jsonParser">"Экземпляр json парсера"</param>
-    public BuildingsController(OutAPI o_api, JsonParser jsonParser)
+    public BuildingsController(OutAPI o_api, JsonParser jsonParser, CacheService cache)
     {
         _o_api = o_api;
         _jsonParser = jsonParser;
+        _cache = cache;
+    }
+
+    /// <summary>
+    ///     Получить список всех корпусов (с кэшированием) ← НОВЫЙ МЕТОД
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetBuildings()
+    {
+        const string cacheKey = "static:buildings";
+
+        // Пробуем получить из кэша
+        if (_cache.TryGet<List<Building>>(cacheKey, out var cached))
+            return Ok(cached);
+
+        // Если нет в кэше — запрашиваем у внешнего API
+        var buildings = await _o_api.SendRequest<Building>("/buildings", "buildings");
+
+        // Сохраняем в кэш
+        _cache.SetStatic(cacheKey, buildings);
+
+        return Ok(buildings);
     }
 
     /// <summary>

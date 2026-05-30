@@ -7,167 +7,209 @@ const results_obj = document.getElementById('results');
 
 let teachers_list = [];
 let selected_teachers = [];
-let free_slots = [];
+let free_slots = {};
 
+// Поиск преподавателей
 function search(name_part) {
-    let _lower = name_part.toLowerCase().trim();
-    return teachers_list.filter(t => {
-        return t.teacher.toLowerCase().includes(_lower) &&
-            !selected_teachers.some(sel => sel.teacher_id === t.teacher_id);
+    if (!Array.isArray(teachers_list)) return [];
+    var _lower = name_part.toLowerCase().trim();
+    return teachers_list.filter(function(t) {
+        var teacherName = t.teacher || t.name || t.fullName || '';
+        var teacherId = t.UID || t.uid || t.id || t.teacher_id;
+        return teacherName.toLowerCase().includes(_lower) &&
+            !selected_teachers.some(function(sel) { return sel.UID === teacherId; });
     }).slice(0, 10);
 }
 
 function updateAutocomplete(teachers) {
-    if (teacher_input.value === '') {
+    if (!autocomplete_list) return;
+    if (teacher_input && teacher_input.value === '') {
         hideAutocomplete();
+        return;
     }
     autocomplete_list.innerHTML = '';
-    teachers.forEach(t => {
-        const item = document.createElement('div');
+    teachers.forEach(function(t) {
+        var item = document.createElement('div');
         item.className = 'autocomplete-item';
-        item.textContent = t.teacher;
-        item.addEventListener('click', () => addTeacher(t));
+        item.textContent = t.teacher || t.name || '';
+        item.addEventListener('click', function() { addTeacher(t); });
         autocomplete_list.appendChild(item);
     });
 }
 
 function showAutocomplete() {
-    autocomplete_list.classList.add('show');
+    if (autocomplete_list) autocomplete_list.classList.add('show');
 }
-
 function hideAutocomplete() {
-    setTimeout(() => {
-        autocomplete_list.classList.remove('show');
+    setTimeout(function() {
+        if (autocomplete_list) autocomplete_list.classList.remove('show');
     }, 200);
 }
 
 function addTeacher(t) {
-    if (selected_teachers.some(teacher => teacher.teacher_id === t.teacher_id)) return;
-    selected_teachers.push(t);
+    var uid = t.UID || t.uid || t.id || t.teacher_id;
+    var name = t.teacher || t.name || t.fullName || '';
+    var teacherId = t.teacher_id || t.id || uid;
+    
+    if (!uid) return;
+    if (selected_teachers.some(function(teacher) { return teacher.UID === uid; })) return;
+    
+    selected_teachers.push({ UID: uid, teacher_id: teacherId, teacher: name });
     updateSelected();
-    teacher_input.value = '';
+    if (teacher_input) teacher_input.value = '';
     hideAutocomplete();
 }
 
 function removeTeacher(teacherId) {
-    selected_teachers = selected_teachers.filter(t => t.teacher_id !== teacherId);
+    selected_teachers = selected_teachers.filter(function(t) { 
+        return t.UID !== teacherId && t.teacher_id !== teacherId; 
+    });
     updateSelected();
 }
 
 function onTeacherInput(e) {
-    const searchText = e.target.value;
-    const filtered = search(searchText);
+    var searchText = e.target.value;
+    var filtered = search(searchText);
     updateAutocomplete(filtered);
     showAutocomplete();
 }
 
 function updateSelected() {
+    if (!selected_list) return;
     selected_list.innerHTML = '';
-    selected_teachers.forEach(teacher => {
-        const tag = document.createElement('div');
+    selected_teachers.forEach(function(teacher) {
+        var teacherId = teacher.UID || teacher.teacher_id;
+        var tag = document.createElement('div');
         tag.className = 'selected-teacher-tag';
-        tag.innerHTML = `
-        ${teacher.teacher}
-        <button type="button" data-id="${teacher.teacher_id}">×</button>
-    `;
-        tag.querySelector('button').addEventListener('click', () => removeTeacher(teacher.teacher_id));
+        tag.innerHTML = teacher.teacher + '<button type="button" data-id="' + teacherId + '">×</button>';
+        var btn = tag.querySelector('button');
+        if (btn) btn.addEventListener('click', function() { removeTeacher(teacherId); });
         selected_list.appendChild(tag);
     });
 }
 
-// ИСПРАВЛЕННАЯ ФУНКЦИЯ teachersSchedulesSearch
+// Основная функция поиска
 function teachersSchedulesSearch() {
-    getSchedules().then((res) => {
-        generateTables(res);
-        
-        // Активация кнопки экспорта
-        if (typeof window.activateExport === 'function') {
-            window.activateExport(res, 'Расписание преподавателей');
+    if (!selected_teachers || selected_teachers.length === 0) {
+        if (results_obj) results_obj.innerHTML = '<div class="error">Пожалуйста, выберите хотя бы одного преподавателя</div>';
+        return;
+    }
+    var start = date_start_obj ? date_start_obj.value : null;
+    var end = date_end_obj ? date_end_obj.value : null;
+    if (!start || !end) {
+        if (results_obj) results_obj.innerHTML = '<div class="error">Пожалуйста, укажите период дат</div>';
+        return;
+    }
+
+    getSchedules().then(function(res) {
+        if (res && Object.keys(res).length > 0) {
+            generateTables(res);
+            if (typeof window.activateExport === 'function') {
+                window.activateExport(res, 'Расписание преподавателей');
+            }
+        } else {
+            if (results_obj) results_obj.innerHTML = '<div class="info">Нет данных для отображения</div>';
         }
-    }).catch(error => {
+    }).catch(function(error) {
         console.error('Ошибка загрузки расписания:', error);
-        const messageBox = document.getElementById('message');
-        if (messageBox) {
-            messageBox.innerHTML = '<div class="error">Ошибка загрузки расписания. Проверьте подключение к интернету.</div>';
-        }
+        if (results_obj) results_obj.innerHTML = '<div class="error">Ошибка загрузки расписания</div>';
     });
 }
 
 async function getSchedules() {
-    let uids = [];
-    selected_teachers.forEach(t => {
-        uids.push(t.UID);
-    });
-    
-    if (uids.length === 0) {
-        alert('Пожалуйста, выберите преподавателей');
-        return {};
-    }
-    
-    free_slots = (await getTeachersFreeSlots(uids, date_start_obj.value, date_end_obj.value)).data;
+    var uids = [];
+    selected_teachers.forEach(function(t) { if (t && t.UID) uids.push(t.UID); });
+    if (uids.length === 0) return {};
 
-    console.log(free_slots);
-    const promises = selected_teachers.map(async t => {
-        let sh = await getTeacherSchedule(t.UID, date_start_obj.value, date_end_obj.value);
-        return sh.data.timetable;
-    });
+    var start = date_start_obj ? date_start_obj.value : null;
+    var end = date_end_obj ? date_end_obj.value : null;
+    if (!start || !end) return {};
 
-    const results = await Promise.all(promises);
-    const flatResults = results.flat();
-
-    const groupedByDate = {};
-
-    flatResults.forEach(item => {
-        const date = item.date;
-
-        if (!groupedByDate[date]) {
-            groupedByDate[date] = [];
+    try {
+        var freeSlotsResponse = await getTeachersFreeSlots(uids, start, end);
+        if (freeSlotsResponse && freeSlotsResponse.success && freeSlotsResponse.data) {
+            free_slots = freeSlotsResponse.data;
         }
 
-        groupedByDate[date].push(item);
-    });
+        var promises = selected_teachers.map(async function(t) {
+            if (!t || !t.UID) return [];
+            var scheduleResponse = await getTeacherSchedule(t.UID, start, end);
+            if (scheduleResponse && scheduleResponse.success && scheduleResponse.data) {
+                var scheduleData = scheduleResponse.data;
+                if (scheduleData && scheduleData.timetable && Array.isArray(scheduleData.timetable)) {
+                    return scheduleData.timetable;
+                }
+                if (scheduleData && scheduleData.schedule && Array.isArray(scheduleData.schedule)) {
+                    return scheduleData.schedule;
+                }
+                if (Array.isArray(scheduleData)) return scheduleData;
+                if (scheduleData && typeof scheduleData === 'object') return [scheduleData];
+            }
+            return [];
+        });
 
-    return groupedByDate;
+        var results = await Promise.all(promises);
+        var flatResults = [];
+        for (var i = 0; i < results.length; i++) {
+            if (Array.isArray(results[i])) flatResults = flatResults.concat(results[i]);
+        }
+
+        var groupedByDate = {};
+        flatResults.forEach(function(item) {
+            if (!item || !item.date) return;
+            var date = item.date;
+            if (!groupedByDate[date]) groupedByDate[date] = [];
+            groupedByDate[date].push(item);
+        });
+        return groupedByDate;
+    } catch (error) {
+        console.error('Ошибка в getSchedules:', error);
+        return {};
+    }
 }
 
 function generateTables(sch) {
+    if (!results_obj) return;
     results_obj.innerHTML = '';
-    for (let date in sch) {
-        let table = getTableTemplate(date);
+    if (!sch || Object.keys(sch).length === 0) {
+        results_obj.innerHTML = '<div class="info">Расписание не найдено на выбранный период</div>';
+        return;
+    }
 
-        const groupedByTeacher = {};
-        sch[date].forEach(item => {
-            const teacher = item.teacher;
+    for (var date in sch) {
+        var table = getTableTemplate(date);
+        var dayItems = sch[date];
+        if (!Array.isArray(dayItems)) continue;
 
-            if (!groupedByTeacher[teacher]) {
-                groupedByTeacher[teacher] = []
-            }
-
+        var groupedByTeacher = {};
+        dayItems.forEach(function(item) {
+            if (!item || !item.teacher) return;
+            var teacher = item.teacher;
+            if (!groupedByTeacher[teacher]) groupedByTeacher[teacher] = [];
             groupedByTeacher[teacher].push(item);
         });
 
-        console.log(groupedByTeacher);
-
-        for (let teacher in groupedByTeacher) {
+        for (var teacher in groupedByTeacher) {
             table.appendChild(getTableRow(teacher, groupedByTeacher[teacher], date));
         }
-
         results_obj.appendChild(table);
+        results_obj.appendChild(document.createElement('br'));
     }
 }
 
 function getTableRow(head, slots, date) {
-    let final_row = document.createElement('tr');
-    let nd = document.createElement('td');
+    var final_row = document.createElement('tr');
+    var nd = document.createElement('td');
     nd.textContent = head;
     final_row.appendChild(nd);
-    ALL_SLOTS.forEach(slot => {
-        let d = document.createElement('td');
-        if (free_slots[date] && free_slots[date].includes(slot)) d.classList.add('free');
-        slots.forEach(s => {
-            if (s.slot === slot) {
-                d.textContent = s.disciplines;
-            }
+
+    ALL_SLOTS.forEach(function(slot) {
+        var d = document.createElement('td');
+        if (free_slots && free_slots[date] && Array.isArray(free_slots[date]) && free_slots[date].includes(slot)) {
+            d.classList.add('free');
+        }
+        slots.forEach(function(s) {
+            if (s && s.slot === slot) d.textContent = s.disciplines || '';
         });
         final_row.appendChild(d);
     });
@@ -175,18 +217,18 @@ function getTableRow(head, slots, date) {
 }
 
 function getTableTemplate(name) {
-    let res = document.createElement('table');
+    var res = document.createElement('table');
     res.style.tableLayout = 'fixed';
-    let tr_0 = document.createElement('tr');
-    let tr_1 = document.createElement('tr');
-    let fh = document.createElement('th');
+    var tr_0 = document.createElement('tr');
+    var tr_1 = document.createElement('tr');
+    var fh = document.createElement('th');
     fh.colSpan = 8;
     fh.textContent = name;
     tr_0.appendChild(fh);
     res.appendChild(tr_0);
     tr_1.appendChild(document.createElement('th'));
-    ALL_SLOTS.forEach(sl => {
-        let sh = document.createElement('th');
+    ALL_SLOTS.forEach(function(sl) {
+        var sh = document.createElement('th');
         sh.textContent = sl;
         tr_1.appendChild(sh);
     });
@@ -194,23 +236,26 @@ function getTableTemplate(name) {
     return res;
 }
 
-window.addEventListener('scroll', () => {
-    autocomplete_list.style.top = `${teacher_input.getBoundingClientRect().bottom}px`;
+window.addEventListener('scroll', function() {
+    if (autocomplete_list && teacher_input) {
+        autocomplete_list.style.top = teacher_input.getBoundingClientRect().bottom + 'px';
+    }
 });
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async function() {
+    if (!teacher_input || !autocomplete_list) return;
     try {
-        let teachers_data = await getTeachersList();
-        teachers_list = teachers_data.data.teachers;
-
-        autocomplete_list.style.top = `${teacher_input.getBoundingClientRect().bottom}px`;
+        var teachers_data = await getTeachersList();
+        if (teachers_data && teachers_data.success && teachers_data.data) {
+            var data = teachers_data.data;
+            if (Array.isArray(data)) teachers_list = data;
+            else if (data && data.teachers && Array.isArray(data.teachers)) teachers_list = data.teachers;
+        }
+        autocomplete_list.style.top = teacher_input.getBoundingClientRect().bottom + 'px';
         autocomplete_list.style.width = teacher_input.offsetWidth.toString() + 'px';
         teacher_input.addEventListener('input', onTeacherInput);
     } catch (error) {
         console.error('Ошибка загрузки списка преподавателей:', error);
-        const messageBox = document.getElementById('message');
-        if (messageBox) {
-            messageBox.innerHTML = '<div class="error">Ошибка загрузки списка преподавателей. Проверьте подключение к интернету.</div>';
-        }
+        teachers_list = [];
     }
 });

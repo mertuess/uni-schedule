@@ -9,101 +9,120 @@
     <link href="../resources/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
 </head>
 
-<body>
-<header>
-    <div class="container">
-        <a href="https://mauniver.ru">
-            <img alt="МАУ" src="../resources/images/logo-bottom.svg">
-        </a>
-        <nav>
-            <ul>
-                <li>
-                    <a href="../index.html">Главная</a>
-                </li>
-                <li>
-                    <a href="teachers-schedule.html">Преподаватели</a>
-                </li>
-                <li>
-                    <a href="department-schedule.html" id="dep-btn">Кафедры</a>
-                </li>
-                <li>
-                    <a href="rooms-workload.html">Аудитории</a>
-                </li>
-                <li>
-                    <a class="active" href="dashboard.html">Панель оператора</a>
-                </li>
-                <li>
-                    <a href="login.html" id="auth-link">Выход</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
+	<body>
+		<header>
+			<div class="container">
+				<a href="https://mauniver.ru">
+					<img alt="МАУ" src="../resources/images/logo-bottom.svg">
+				</a>
+				<nav>
+					<ul>
+						<li>
+							<a href="../index.html">Главная</a>
+						</li>
+						<li>
+							<a href="teachers-schedule.html">Преподаватели</a>
+						</li>
+						<li>
+							<a href="department-schedule.html" id="dep-btn">Кафедры</a>
+						</li>
+						<li>
+							<a href="rooms-workload.html">Аудитории</a>
+						</li>
+						<li>
+							<a class="active" href="dashboard.html">Панель оператора</a>
+						</li>
+						<li>
+							<a href="login.html" id="auth-link">Выход</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+		</header>
 
-<main>
-    <div class="container">
-        <div class="main-content">
-            <h2>Управление пользователями</h2>
+		<main>
+			<div class="container">
+				<div class="main-content">
+					<h2>Управление пользователями</h2>
+					<div class="info-block">
+						<p>
+							Всего пользователей: <strong id="user-count">0</strong>
+						</p>
+						<a class="btn" href="user_create.html">Создать пользователя</a>
+					</div>
+					<div class="table-container">
+						<table>
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Email</th>
+									<th>Имя</th>
+									<th>Роль</th>
+									<th>Действия</th>
+								</tr>
+							</thead>
+							<tbody id="users-list"></tbody>
+						</table>
+					</div>
 
-            <div class="info-block">
-                <p>
-                    Всего пользователей: <strong id="user-count">0</strong>
-                </p>
-                <a class="btn" href="user_create.html">Создать пользователя</a>
-            </div>
+					<h2 style="margin-top: 40px;">Управление кафедрами</h2>
+					<div class="info-block">
+						<button class="btn" id="createDeptBtn">Создать кафедру</button>
+					</div>
+					<div class="table-container">
+						<table>
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Название</th>
+									<th>Действия</th>
+								</tr>
+							</thead>
+							<tbody id="departments-list"></tbody>
+						</table>
+					</div>
+					<div id="dept-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:1000;">
+						<div style="background:white;padding:30px;border-radius:18px;max-width:400px;width:90%;">
+							<h2 id="dept-modal-title">Создать кафедру</h2>
+							<div class="form-group">
+								<label>Название кафедры</label>
+								<input id="dept-name" style="width:100%" type="text">
+							</div>
+							<div style="display:flex;gap:10px;margin-top:20px;">
+								<button class="btn" id="saveDeptBtn">Сохранить</button>
+								<button class="btn" id="closeDeptModal" style="background:gray">Отмена</button>
+							</div>
+						</div>
+					</div>
 
-            <div class="table-container">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Email</th>
-                        <th>Имя</th>
-                        <th>Роль</th>
-                        <th>Действия</th>
-                    </tr>
-                    </thead>
-                    <tbody id="users-list"></tbody>
-                </table>
-            </div>
-
-            <h2 style="margin-top: 40px;">Управление кафедрами</h2>
-
-            <div class="info-block">
-                <button class="btn" id="createDeptBtn">Создать кафедру</button>
-            </div>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Название</th>
-                        <th>Действия</th>
-                    </tr>
-                    </thead>
-                    <tbody id="departments-list"></tbody>
-                </table>
-            </div>
-
-            <div id="dept-modal"
-                 style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-                <div style="background: white; padding: 30px; border-radius: 18px; max-width: 400px; width: 90%;">
-                    <h2 id="dept-modal-title">Создать кафедру</h2>
-                    <div class="form-group">
-                        <label>Название кафедры</label>
-                        <input id="dept-name" style="width: 100%;" type="text">
-                    </div>
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button class="btn" id="saveDeptBtn">Сохранить</button>
-                        <button class="btn" id="closeDeptModal" style="background: gray;">Отмена</button>
-                    </div>
+					<h2 style="margin-top: 40px;">Привязка преподавателя к кафедре</h2>
+					<div class="bind-section">
+						<div style="margin-bottom: 15px;">
+							<label>Поиск преподавателя:</label>
+							<input type="text" id="teacher-search" class="form-control" placeholder="Введите фамилию..." style="width: 100%;" oninput="searchTeachers()">
                 </div>
-            </div>
-        </div>
-    </div>
-</main>
-            <script src="../js/cookie.js"></script>
+
+						<div id="teacher-results" class="teacher-list" style="display: none; margin-bottom: 15px;"></div>
+
+						<div id="selected-teacher" style="display: none; margin-bottom: 15px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
+							<strong>Выбран:</strong>
+							<span id="selected-name"></span>
+							<button type="button" class="btn btn-sm btn-danger" onclick="clearSelection()" style="margin-left: 10px; padding: 2px 8px;">×</button>
+						</div>
+
+						<div id="department-select-block" style="display: none; margin-bottom: 15px;">
+							<label>Кафедра:</label>
+							<select id="bind-dept" class="form-control" style="width: 100%;">
+								<option value="">-- Не привязан --</option>
+							</select>
+						</div>
+
+						<button type="button" class="btn btn-primary" id="btn-bind" onclick="bindTeacher()" disabled="">Привязать</button>
+						<div id="bind-msg" style="margin-top: 10px;"></div>
+					</div>
+				</div>
+			</div>
+		</main>
             <script src="../js/api.js"></script>
             <script src="../js/check_login.js"></script>
             <script src="../js/dashboard.js"></script>

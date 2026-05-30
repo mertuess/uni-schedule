@@ -27,4 +27,8 @@ public class User
     public string EngName { get; set; } = string.Empty;
     public string Role { get; set; } = "user";
     public int? DepartmentId { get; set; }
+
+    // Внешний UID преподавателя из БД университета
+    [Column("UniversityUid")]
+    public string UniversityUid { get; set; } = string.Empty;
 }

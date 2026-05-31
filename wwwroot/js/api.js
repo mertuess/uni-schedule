@@ -32,9 +32,12 @@ try {
 
 function getHeaders() {
     const headers = { 'Content-Type': 'application/json' };
-    if (authEmail && authPassword) {
-        headers['Uni-Email'] = authEmail;
-        headers['Uni-Password'] = authPassword;
+    const email = getCookie("Uni-Email");
+    const password = getCookie("Uni-Password");
+    
+    if (email && password) {
+        headers['Uni-Email'] = email;
+        headers['Uni-Password'] = password;
     }
     return headers;
 }
@@ -43,7 +46,7 @@ async function apiGet(endpoint) {
     try {
         const response = await fetch(API_BASE + endpoint, {
             method: 'GET',
-            headers: getHeaders()
+            headers: getHeaders()  
         });
 
         if (response.status === 401)
@@ -124,8 +127,12 @@ async function tryAuth(email, password) {
 
 // Кафедры
 async function getDepartments() { return await apiGet('/Database/departments'); }
-async function createDepartment(name) {
-    return await apiGet('/Database/departments/create?name=' + encodeURIComponent(name));
+async function createDepartment(name) { 
+    const email = getCookie("Uni-Email");
+    const password = getCookie("Uni-Password");
+    const url = '/Database/departments/create?name=' + encodeURIComponent(name);
+   
+    return await apiGet(url);
 }
 async function updateDepartment(name, newName) {
     return await apiGet('/Database/departments/' + encodeURIComponent(name) + '/update?new_name=' + encodeURIComponent(newName));

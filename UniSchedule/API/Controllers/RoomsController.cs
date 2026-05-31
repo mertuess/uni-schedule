@@ -55,13 +55,16 @@ public class RoomsController : ControllerBase
     /// Получить загруженность аудитории за определенный период
     /// </summary>
     [HttpGet("{room_id}/workload/{start}/{end}")]
-    [AllowAnonymous]  
-    public async Task<IActionResult> GetRoomWorkload(
-        int room_id,
-        string start,
-        string end)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetRoomWorkload(int room_id, string start, string end)
     {
+        string key = $"schedule:room:{room_id}:{start}:{end}";
+        if (_cache.TryGet<object>(key, out var cached))
+            return Content(_jsonParser.Serialize(cached), "application/json");
+
         var response = new RoomWorkloadResponse(_o_api, room_id, new Week(start, end));
-        return Content(_jsonParser.Serialize(await response.GetRoomWorkload()), "application/json");
+        var result = await response.GetRoomWorkload();
+        _cache.SetSchedule(key, result);
+        return Content(_jsonParser.Serialize(result), "application/json");
     }
 }

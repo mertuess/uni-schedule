@@ -162,12 +162,14 @@ public class DatabaseController : ControllerBase
     [Authorize("operator")]
     public async Task<IActionResult> GetAllTeachersExternal()
     {
-        try
-        {
-            var teachers = await _dbm.GetAllTeachersExternalAsync();
-            return Ok(teachers.Select(t => new { uid = t.UID, name = t.teacher, faculty = t.faculty }));
-        }
-        catch (Exception ex) { return StatusCode(500, new { error = "Ошибка: " + ex.Message }); }
+        if (_cache.TryGet<object>("static:teachers:external", out var cached))
+            return Ok(cached);
+
+        var teachers = await _dbm.GetAllTeachersExternalAsync();
+        var formatted = teachers.Select(t => new { uid = t.UID, name = t.teacher, faculty = t.faculty }).ToList();
+
+        _cache.SetStatic("static:teachers:external", formatted); 
+        return Ok(formatted);
     }
 
     [HttpPost("teachers/{uid}/bind")]
@@ -176,7 +178,11 @@ public class DatabaseController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(uid)) return BadRequest(new { error = "UID обязателен" });
         var success = _dbm.BindTeacher(uid, request.name ?? "", request.departmentId);
-        if (success) return Ok(new { success = true, message = "Привязано" });
+        if (success)
+        {
+            _cache.Invalidate("static:teachers:external"); 
+            return Ok(new { success = true, message = "Привязано" });
+        }
         return BadRequest(new { error = "Ошибка привязки (см. лог сервера)" });
     }
 
@@ -192,8 +198,12 @@ public class DatabaseController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetDepartmentSchedule(int departmentId, [FromQuery] string start, [FromQuery] string end)
     {
-        if (string.IsNullOrWhiteSpace(start) || string.IsNullOrWhiteSpace(end)) return BadRequest(new { error = "start и end обязательны" });
+        string key = $"schedule:dept:{departmentId}:{start}:{end}";
+        if (_cache.TryGet<List<object>>(key, out var cached))
+            return Ok(cached);
+
         var schedule = await _dbm.GetDepartmentScheduleAsync(departmentId, start, end);
+        _cache.SetSchedule(key, schedule);
         return Ok(schedule);
     }
 

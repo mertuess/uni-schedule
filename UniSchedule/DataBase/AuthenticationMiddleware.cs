@@ -27,6 +27,7 @@ public class AuthenticationMiddleware
         {
             // Статика и главные страницы
             if (path == "/" || path == "" || path == "/index.html" ||
+                path == "/login.html" || path == "/pages/login.html" ||
                 path.StartsWith("/js/") || path.StartsWith("/css/") ||
                 path.StartsWith("/images/") || path.StartsWith("/swagger") ||
                 path.StartsWith("/openapi"))

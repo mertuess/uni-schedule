@@ -37,14 +37,17 @@ public class ScheduleController : ControllerBase
     /// Получить пересечение окон у списка преподавателей за период
     /// </summary>
     [HttpGet("teachers/{UIDs}/{start}/{end}")]
-    [AllowAnonymous] 
-    public async Task<IActionResult> GetTeachersMassSchedule(
-        string UIDs,
-        string start,
-        string end)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetTeachersMassSchedule(string UIDs, string start, string end)
     {
+        string key = $"schedule:free-slots:{UIDs}:{start}:{end}";
+        if (_cache.TryGet<object>(key, out var cached))
+            return Content(_jsonParser.Serialize(cached), "application/json");
+
         var uidArray = UIDs.Split(',', StringSplitOptions.RemoveEmptyEntries);
         var response = new TeachersScheduleResponse(_o_api, uidArray, new Week(start, end));
-        return Content(_jsonParser.Serialize(await response.GetFreeSlots()), "application/json");
+        var result = await response.GetFreeSlots();
+        _cache.SetSchedule(key, result);
+        return Content(_jsonParser.Serialize(result), "application/json");
     }
 }

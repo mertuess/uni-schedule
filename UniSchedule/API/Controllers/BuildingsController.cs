@@ -55,30 +55,34 @@ public class BuildingsController : ControllerBase
     /// Получить информацию о нагруженности корпуса
     /// </summary>
     [HttpGet("{bui_id}/workload/{start}/{end}")]
-    [AllowAnonymous]  
-    public async Task<IActionResult> GetBuildingWorkload(
-        int bui_id,
-        string start,
-        string end)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetBuildingWorkload(int bui_id, string start, string end)
     {
+        string key = $"schedule:building:{bui_id}:{start}:{end}";
+        if (_cache.TryGet<object>(key, out var cached))
+            return Content(_jsonParser.Serialize(cached), "application/json");
+
         var response = new BuildingWorkloadResponse(_o_api, bui_id, new Week(start, end));
-        return Content(_jsonParser.Serialize(await response.GetBuildingWorkload()), "application/json");
+        var result = await response.GetBuildingWorkload();
+        _cache.SetSchedule(key, result);
+        return Content(_jsonParser.Serialize(result), "application/json");
     }
 
     /// <summary>
     /// Получить информацию о нагруженности корпусов
     /// </summary>
     [HttpGet("workload/{start}/{end}")]
-    [AllowAnonymous]  
-    public async Task<IActionResult> GetBuildingsWorkload(
-        string start,
-        string end,
-        [FromQuery] string bui_ids)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetBuildingsWorkload(string start, string end, [FromQuery] string bui_ids)
     {
-        var ids = new List<int>();
-        foreach (var s in bui_ids.Split(',', StringSplitOptions.RemoveEmptyEntries))
-            ids.Add(Convert.ToInt32(s));
-        var response = new BuildingsWorkloadResponse(_o_api, ids.ToArray(), new Week(start, end));
-        return Content(_jsonParser.Serialize(await response.GetBuildingsWorkload()), "application/json");
+        string key = $"schedule:buildings:{bui_ids}:{start}:{end}";
+        if (_cache.TryGet<object>(key, out var cached))
+            return Content(_jsonParser.Serialize(cached), "application/json");
+
+        var ids = bui_ids.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+        var response = new BuildingsWorkloadResponse(_o_api, ids, new Week(start, end));
+        var result = await response.GetBuildingsWorkload();
+        _cache.SetSchedule(key, result);
+        return Content(_jsonParser.Serialize(result), "application/json");
     }
 }

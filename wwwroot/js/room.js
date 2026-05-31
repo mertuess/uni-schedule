@@ -11,26 +11,49 @@ let buildings = [];
 let rooms = [];
 let selected_buildings = [];
 
+function extractData(response, primaryField, secondaryField) {
+    if (!response?.success || !response.data) return [];
+    let data = response.data;
+    if (data[primaryField] && Array.isArray(data[primaryField])) {
+        return data[primaryField];
+    }
+    if (data[secondaryField] && Array.isArray(data[secondaryField])) {
+        return data[secondaryField];
+    }
+    if (Array.isArray(data)) {
+        return data;
+    }
+    return [];
+}
+
+function getField(obj, primary, secondary, fallback) {
+    return obj?.[primary] || obj?.[secondary] || fallback || '';
+}
+
 function updateBuildings() {
     if (!buildings_obj) return;
-    buildings_obj.innerHTML = '';
+    buildings_obj.innerHTML = '<option value="">-- Выберите корпус --</option>';
     buildings.forEach(function(x) {
-        if (!x || !x.bui_id) return;
+        const id = getField(x, 'Id', 'bui_id', null);
+        const name = getField(x, 'Name', 'building', 'Корпус ' + id);
+        if (!id) return;
         var opt = document.createElement('option');
-        opt.value = x.bui_id;
-        opt.textContent = x.building || 'Корпус ' + x.bui_id;
+        opt.value = id;
+        opt.textContent = name;
         buildings_obj.appendChild(opt);
     });
 }
 
 function updateRooms() {
     if (!rooms_obj) return;
-    rooms_obj.innerHTML = '';
+    rooms_obj.innerHTML = '<option value="">-- Выберите аудиторию --</option>';
     rooms.forEach(function(x) {
-        if (!x || !x.room_id) return;
+        const id = getField(x, 'Id', 'room_id', null);
+        const name = getField(x, 'Name', 'room', 'Аудитория ' + id);
+        if (!id) return;
         var opt = document.createElement('option');
-        opt.value = x.room_id;
-        opt.textContent = x.room || 'Аудитория ' + x.room_id;
+        opt.value = id;
+        opt.textContent = name;
         rooms_obj.appendChild(opt);
     });
 }
@@ -39,8 +62,8 @@ function search(name_part) {
     if (!Array.isArray(buildings)) return [];
     var _lower = name_part.toLowerCase().trim();
     return buildings.filter(function(t) {
-        return t && t.building && t.building.toLowerCase().includes(_lower) &&
-            !selected_buildings.some(function(sel) { return sel.bui_id === t.bui_id; });
+        return t && getField(t, 'Name', 'building', '') && getField(t, 'Name', 'building', '').toLowerCase().includes(_lower) &&
+            !selected_buildings.some(function(sel) { return getField(sel, 'Id', 'bui_id') === getField(t, 'Id', 'bui_id'); });
     }).slice(0, 10);
 }
 
@@ -51,7 +74,7 @@ function updateAutocomplete(items) {
     items.forEach(function(t) {
         var item = document.createElement('div');
         item.className = 'autocomplete-item';
-        item.textContent = t.building;
+        item.textContent = getField(t, 'Name', 'building', '');
         item.addEventListener('click', function() { addTeacher(t); });
         autocomplete_list.appendChild(item);
     });
@@ -63,7 +86,7 @@ function hideAutocomplete() {
 }
 
 function addTeacher(t) {
-    if (selected_buildings.some(function(teacher) { return teacher.bui_id === t.bui_id; })) return;
+    if (selected_buildings.some(function(teacher) { return getField(teacher, 'Id', 'bui_id') === getField(t, 'Id', 'bui_id'); })) return;
     selected_buildings.push(t);
     updateSelected();
     if (buildings_input) buildings_input.value = '';
@@ -71,7 +94,7 @@ function addTeacher(t) {
 }
 
 function removeTeacher(building_id) {
-    selected_buildings = selected_buildings.filter(function(t) { return t.bui_id !== building_id; });
+    selected_buildings = selected_buildings.filter(function(t) { return getField(t, 'Id', 'bui_id') !== building_id; });
     updateSelected();
 }
 
@@ -88,11 +111,19 @@ function updateSelected() {
     selected_buildings.forEach(function(teacher) {
         var tag = document.createElement('div');
         tag.className = 'selected-teacher-tag';
-        tag.innerHTML = teacher.building + '<button type="button" data-id="' + teacher.bui_id + '">×</button>';
+        tag.innerHTML = getField(teacher, 'Name', 'building', '') + '<button type="button" data-id="' + getField(teacher, 'Id', 'bui_id') + '">×</button>';
         var btn = tag.querySelector('button');
-        if (btn) btn.addEventListener('click', function() { removeTeacher(teacher.bui_id); });
+        if (btn) btn.addEventListener('click', function() { removeTeacher(getField(teacher, 'Id', 'bui_id')); });
         selected_list.appendChild(tag);
     });
+}
+
+function extractWorkload(response) {
+    if (!response?.success || !response.data) return null;
+    const data = response.data;
+    if (data.workload) return data;
+    if (data.data?.workload) return data.data;
+    return null;
 }
 
 async function showRoomWorkload() {
@@ -109,24 +140,24 @@ async function showRoomWorkload() {
     results.innerHTML = '<div class="loading">Загрузка данных...</div>';
     try {
         var response = await getRoomWorkload(roomId, start, end);
-        if (!response || !response.success || !response.data) {
+        var wl = extractWorkload(response);
+        
+        if (!wl || !wl.workload) {
             results.innerHTML = '<div class="error">Ошибка: ' + (response && response.error ? response.error : 'Нет данных') + '</div>';
             return;
         }
-        var wl = response.data;
-        if (!wl || !wl.workload) { results.innerHTML = 'Данных по загруженности нет'; return; }
-
-        var dates = Object.keys(wl.workload).sort();
-        if (dates.length === 0) { results.innerHTML = 'Нет данных о загруженности'; return; }
-
+        
         var pt = getPercentTable([wl]);
         results.innerHTML = '';
         results.appendChild(pt);
 
+        var dates = Object.keys(wl.workload).sort();
+        if (dates.length === 0) { results.innerHTML = 'Нет данных о загруженности'; return; }
+
         for (var i = 0; i < dates.length; i++) {
             var date = dates[i];
-            var table = getTableTemplate(date);
-            var row = getTableRow(wl.room, wl.workload[date]);
+            var table = getTableTemplate(getField(wl, 'room', 'Room', 'Аудитория'));
+            var row = getTableRow(getField(wl, 'room', 'Room', ''), wl.workload[date]);
             table.appendChild(row);
             results.appendChild(table);
             results.appendChild(document.createElement('br'));
@@ -153,13 +184,13 @@ async function showBuildingWorkload() {
     results.innerHTML = '<div class="loading">Загрузка данных...</div>';
     try {
         var response = await getBuildingWorkload(buildingId, start, end);
-        if (!response || !response.success || !response.data) {
+        var wl = extractWorkload(response);
+        
+        if (!wl || !wl.workload) {
             results.innerHTML = '<div class="error">Ошибка: ' + (response && response.error ? response.error : 'Нет данных') + '</div>';
             return;
         }
-        var wl = response.data;
-        if (!wl || !wl.workload) { results.innerHTML = 'Данных по загруженности нет'; return; }
-
+        
         var pt = getPercentTable(wl.workload);
         results.innerHTML = '';
         results.appendChild(pt);
@@ -173,14 +204,14 @@ async function showBuildingWorkload() {
 
         for (var j = 0; j < sortedDates.length; j++) {
             var date = sortedDates[j];
-            var table = getTableTemplate(date);
+            var table = getTableTemplate('Корпус');
             for (var k = 0; k < wl.workload.length; k++) {
                 var room = wl.workload[k];
                 if (room.workload[date]) {
-                    var row = getTableRow(room.room, room.workload[date]);
+                    var row = getTableRow(getField(room, 'room', 'Room', ''), room.workload[date]);
                     table.appendChild(row);
                 } else {
-                    var row = getEmptyTableRow(room.room);
+                    var row = getEmptyTableRow(getField(room, 'room', 'Room', 'Аудитория'));
                     table.appendChild(row);
                 }
             }
@@ -247,8 +278,8 @@ function getPercentTable(wl_arr) {
         var row = document.createElement('tr');
         var room_cell = document.createElement('td');
         var wl_cell = document.createElement('td');
-        room_cell.textContent = wl_arr[wl].room;
-        wl_cell.textContent = wl_arr[wl].workload_percent + '%';
+        room_cell.textContent = getField(wl_arr[wl], 'room', 'Room', 'Аудитория');
+        wl_cell.textContent = (wl_arr[wl].workload_percent || 0) + '%';
         row.appendChild(room_cell);
         row.appendChild(wl_cell);
         table.appendChild(row);
@@ -264,9 +295,7 @@ if (buildings_obj) {
         try {
             var roomsResponse = await getRooms(selectedBuiId);
             if (roomsResponse && roomsResponse.success && roomsResponse.data) {
-                var roomsData = roomsResponse.data;
-                if (roomsData && roomsData.rooms && Array.isArray(roomsData.rooms)) rooms = roomsData.rooms;
-                else if (Array.isArray(roomsData)) rooms = roomsData;
+                rooms = extractData(roomsResponse, 'rooms', 'rooms');
                 updateRooms();
             }
         } catch (error) { console.error('Ошибка загрузки аудиторий:', error); }
@@ -274,28 +303,34 @@ if (buildings_obj) {
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
-    if (!buildings_obj || !rooms_obj || !autocomplete_list || !buildings_input) return;
+    // Инициализируем только то, что нужно
+    if (!buildings_obj || !rooms_obj) return;
+    
     try {
         var buildingsResponse = await getBuildings();
         if (buildingsResponse && buildingsResponse.success && buildingsResponse.data) {
-            var buildingsData = buildingsResponse.data;
-            if (buildingsData && buildingsData.buildings && Array.isArray(buildingsData.buildings)) buildingsData = buildingsData.buildings;
-            buildings = Array.isArray(buildingsData) ? buildingsData.slice(2) : [];
+            buildings = extractData(buildingsResponse, 'buildings', 'buildings');
         }
-        if (buildings.length > 0 && buildings[0] && buildings[0].bui_id) {
-            var roomsResponse = await getRooms(buildings[0].bui_id.toString());
-            if (roomsResponse && roomsResponse.success && roomsResponse.data) {
-                var roomsData = roomsResponse.data;
-                if (roomsData && roomsData.rooms && Array.isArray(roomsData.rooms)) roomsData = roomsData.rooms;
-                rooms = Array.isArray(roomsData) ? roomsData : [];
+        
+        // Загружаем аудитории для первого корпуса, если есть
+        if (buildings.length > 0) {
+            const firstBuildingId = getField(buildings[0], 'Id', 'bui_id', null);
+            if (firstBuildingId) {
+                var roomsResponse = await getRooms(firstBuildingId.toString());
+                if (roomsResponse && roomsResponse.success && roomsResponse.data) {
+                    rooms = extractData(roomsResponse, 'rooms', 'rooms');
+                }
             }
         }
+        
         updateBuildings();
         updateRooms();
+        
+        // Оставляем обработчики для совместимости, но они не активны
         if (autocomplete_list && buildings_input) {
             autocomplete_list.style.top = buildings_input.getBoundingClientRect().bottom + 'px';
             autocomplete_list.style.width = buildings_input.offsetWidth.toString() + 'px';
-            buildings_input.addEventListener('input', onBuildingsInput);
+            // buildings_input.addEventListener('input', onBuildingsInput); // ← Отключено, т.к. поле скрыто
         }
     } catch (error) {
         console.error('Ошибка загрузки корпусов:', error);
@@ -309,7 +344,7 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// Экспорт в iCal
+// Экспорт в iCal (оставляем как есть)
 function convertWorkloadToEvents(workloadData, roomName, date) {
     var events = [];
     var slotMapping = {

@@ -667,6 +667,24 @@ input[type="number"]::-webkit-outer-spin-button:hover {
     opacity: 1;
 }
 
+/* Бейдж привязки преподавателя к кафедре */
+.binding-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    background: #e3f2fd;
+    color: #0066cc;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    vertical-align: middle;
+}
+
+.binding-badge:hover {
+    background: #bbdefb;
+    cursor: default;
+}
+
 /* Custom select for better styling across browsers */
 .custom-select {
     position: relative;

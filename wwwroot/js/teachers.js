@@ -8,8 +8,17 @@ const results_obj = document.getElementById('results');
 let teachers_list = [];
 let selected_teachers = [];
 let free_slots = {};
+let teacherBindings = {};
 
-// Поиск преподавателей
+async function loadTeacherBindings() {
+    try {
+        teacherBindings = await getTeacherBindings();
+    } catch (e) {
+        console.warn('Не удалось загрузить привязки:', e);
+        teacherBindings = {};
+    }
+}
+
 function search(name_part) {
     if (!Array.isArray(teachers_list)) return [];
     var _lower = name_part.toLowerCase().trim();
@@ -31,7 +40,14 @@ function updateAutocomplete(teachers) {
     teachers.forEach(function(t) {
         var item = document.createElement('div');
         item.className = 'autocomplete-item';
-        item.textContent = t.teacher || t.name || '';
+        
+        var uid = t.UID || t.uid || t.id || t.teacher_id;
+        var binding = teacherBindings[uid];
+        var bindingBadge = binding 
+            ? `<span class="binding-badge" title="Кафедра: ${binding.departmentName}">${binding.departmentName}</span>` 
+            : '';
+        
+        item.innerHTML = `<span class="teacher-name">${t.teacher || t.name || ''}</span>${bindingBadge}`;
         item.addEventListener('click', function() { addTeacher(t); });
         autocomplete_list.appendChild(item);
     });
@@ -81,14 +97,19 @@ function updateSelected() {
         var teacherId = teacher.UID || teacher.teacher_id;
         var tag = document.createElement('div');
         tag.className = 'selected-teacher-tag';
-        tag.innerHTML = teacher.teacher + '<button type="button" data-id="' + teacherId + '">×</button>';
+        
+        var binding = teacherBindings[teacherId];
+        var bindingBadge = binding 
+            ? `<span class="binding-badge-small" title="Кафедра: ${binding.departmentName}"> ${binding.departmentName}</span>` 
+            : '';
+        
+        tag.innerHTML = `<span class="selected-teacher-name">${teacher.teacher}</span>${bindingBadge}<button type="button" data-id="${teacherId}">×</button>`;
         var btn = tag.querySelector('button');
         if (btn) btn.addEventListener('click', function() { removeTeacher(teacherId); });
         selected_list.appendChild(tag);
     });
 }
 
-// Основная функция поиска
 function teachersSchedulesSearch() {
     if (!selected_teachers || selected_teachers.length === 0) {
         if (results_obj) results_obj.innerHTML = '<div class="error">Пожалуйста, выберите хотя бы одного преподавателя</div>';
@@ -190,7 +211,11 @@ function generateTables(sch) {
         });
 
         for (var teacher in groupedByTeacher) {
-            table.appendChild(getTableRow(teacher, groupedByTeacher[teacher], date));
+            var uid = selected_teachers.find(t => t.teacher === teacher)?.UID;
+            var binding = uid ? teacherBindings[uid] : null;
+            var bindingBadge = binding ? ` <span class="binding-badge-table"> ${binding.departmentName}</span>` : '';
+            
+            table.appendChild(getTableRow(teacher + bindingBadge, groupedByTeacher[teacher], date));
         }
         results_obj.appendChild(table);
         results_obj.appendChild(document.createElement('br'));
@@ -200,7 +225,7 @@ function generateTables(sch) {
 function getTableRow(head, slots, date) {
     var final_row = document.createElement('tr');
     var nd = document.createElement('td');
-    nd.textContent = head;
+    nd.innerHTML = head; 
     final_row.appendChild(nd);
 
     ALL_SLOTS.forEach(function(slot) {
@@ -223,7 +248,7 @@ function getTableTemplate(name) {
     var tr_1 = document.createElement('tr');
     var fh = document.createElement('th');
     fh.colSpan = 8;
-    fh.textContent = name;
+    fh.innerHTML = name; 
     tr_0.appendChild(fh);
     res.appendChild(tr_0);
     tr_1.appendChild(document.createElement('th'));
@@ -244,18 +269,26 @@ window.addEventListener('scroll', function() {
 
 document.addEventListener('DOMContentLoaded', async function() {
     if (!teacher_input || !autocomplete_list) return;
+    
     try {
-        var teachers_data = await getTeachersList();
-        if (teachers_data && teachers_data.success && teachers_data.data) {
-            var data = teachers_data.data;
-            if (Array.isArray(data)) teachers_list = data;
-            else if (data && data.teachers && Array.isArray(data.teachers)) teachers_list = data.teachers;
-        }
+        await Promise.all([
+            (async () => {
+                var teachers_data = await getTeachersList();
+                if (teachers_data && teachers_data.success && teachers_data.data) {
+                    var data = teachers_data.data;
+                    if (Array.isArray(data)) teachers_list = data;
+                    else if (data && data.teachers && Array.isArray(data.teachers)) teachers_list = data.teachers;
+                }
+            })(),
+            loadTeacherBindings()
+        ]);
+        
         autocomplete_list.style.top = teacher_input.getBoundingClientRect().bottom + 'px';
         autocomplete_list.style.width = teacher_input.offsetWidth.toString() + 'px';
         teacher_input.addEventListener('input', onTeacherInput);
     } catch (error) {
-        console.error('Ошибка загрузки списка преподавателей:', error);
+        console.error('Ошибка загрузки данных:', error);
         teachers_list = [];
+        teacherBindings = {};
     }
 });

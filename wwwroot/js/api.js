@@ -99,7 +99,58 @@ function getCookie(cname) {
     return null;
 }
 
-// Пользователи
+// ============================================================================
+// ЗАГРУЗКА ПРИВЯЗОК ПРЕПОДАВАТЕЛЕЙ К КАФЕДРАМ (общая функция)
+// ============================================================================
+
+// Кэш привязок: { teacherUid: { departmentId: 1, departmentName: "Кафедра" } }
+let teacherBindingsCache = null;
+let bindingsLoadedAt = null;
+
+async function getTeacherBindings() {
+    // Возвращаем кэш, если он ещё актуален (не старше 10 минут)
+    if (teacherBindingsCache && bindingsLoadedAt && 
+        (Date.now() - bindingsLoadedAt) < 10 * 60 * 1000) {
+        return teacherBindingsCache;
+    }
+    
+    try {
+        const deptsResponse = await getDepartments();
+        if (!deptsResponse.success || !Array.isArray(deptsResponse.data)) {
+            return {};
+        }
+        
+        const bindings = {};
+        for (const dept of deptsResponse.data) {
+            try {
+                const resp = await apiGet('/Database/departments/' + dept.Id + '/teachers');
+                if (resp.success && Array.isArray(resp.data)) {
+                    resp.data.forEach(function(t) {
+                        bindings[t.uid] = {
+                            departmentId: t.departmentId,
+                            departmentName: dept.Name
+                        };
+                    });
+                }
+            } catch (e) {
+                // Игнорируем ошибки загрузки привязок для одной кафедры
+                console.warn('Не удалось загрузить привязки для кафедры ' + dept.Name);
+            }
+        }
+        
+        teacherBindingsCache = bindings;
+        bindingsLoadedAt = Date.now();
+        return bindings;
+        
+    } catch (e) {
+        console.error('Ошибка загрузки привязок преподавателей:', e);
+        return {};
+    }
+}
+
+// ============================================================================
+// ПОЛЬЗОВАТЕЛИ
+// ============================================================================
 async function getUsers() { return await apiGet('/Database/users'); }
 async function createUser(email, password, name, engName, role) {
     const params = new URLSearchParams({ email, password, name, engName, role });
@@ -125,13 +176,14 @@ async function tryAuth(email, password) {
     return await apiGet('/Database/tryauth?email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password));
 }
 
-// Кафедры
+// ============================================================================
+// КАФЕДРЫ
+// ============================================================================
 async function getDepartments() { return await apiGet('/Database/departments'); }
 async function createDepartment(name) { 
     const email = getCookie("Uni-Email");
     const password = getCookie("Uni-Password");
     const url = '/Database/departments/create?name=' + encodeURIComponent(name);
-   
     return await apiGet(url);
 }
 async function updateDepartment(name, newName) {
@@ -144,7 +196,9 @@ async function getUsersByDepartment(departmentId) {
     return await apiGet('/Database/departments/' + departmentId + '/users');
 }
 
-// Корпуса и аудитории
+// ============================================================================
+// КОРПУСА И АУДИТОРИИ
+// ============================================================================
 async function getBuildings() { return await apiGet('/buildings'); }
 async function getRooms(buildingId) {
     return await apiGet('/Rooms/' + buildingId + '/rooms');
@@ -160,7 +214,9 @@ async function getBuildingsWorkload(start, end, buildingIds) {
     return await apiGet('/Buildings/workload/' + start + '/' + end + '?bui_ids=' + ids);
 }
 
-// Преподаватели
+// ============================================================================
+// ПРЕПОДАВАТЕЛИ
+// ============================================================================
 async function getTeachersList() { return await apiGet('/teachers'); }
 async function searchTeachers(query) {
     return await apiGet('/teachers/search?query=' + encodeURIComponent(query));
@@ -169,13 +225,17 @@ async function getTeacherSchedule(teacherUid, start, end) {
     return await apiGet('/teachers/' + encodeURIComponent(teacherUid) + '/schedule/' + encodeURIComponent(start) + '/' + encodeURIComponent(end));
 }
 
-// Расписание
+// ============================================================================
+// РАСПИСАНИЕ
+// ============================================================================
 async function getTeachersFreeSlots(teacherUIDs, start, end) {
     const uids = Array.isArray(teacherUIDs) ? teacherUIDs.join(',') : teacherUIDs;
     return await apiGet('/Schedule/teachers/' + uids + '/' + start + '/' + end);
 }
 
-// iCal
+// ============================================================================
+// ICAL
+// ============================================================================
 async function getAvailableGroups() { return await apiGet('/calendar/groups'); }
 async function exportGroupToIcal(groupName) {
     return await apiGet('/calendar/group/' + encodeURIComponent(groupName));
@@ -191,9 +251,11 @@ async function getTestIcal(simple) {
     return await apiGet(endpoint);
 }
 
-// Экспорт функций
+// ============================================================================
+// ЭКСПОРТ ФУНКЦИЙ
+// ============================================================================
 window.UniAPI = {
-    setAuth, clearAuth, getHeaders,
+    setAuth, clearAuth, getHeaders, getTeacherBindings,
     getUsers, createUser, deleteUser, updateUser, getUserRole, tryAuth,
     getDepartments, createDepartment, updateDepartment, deleteDepartment, getUsersByDepartment,
     getBuildings, getRooms, getRoomWorkload, getBuildingWorkload, getBuildingsWorkload,

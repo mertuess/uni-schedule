@@ -6,19 +6,17 @@
 // │ Описание: Контроллер для работы с расписанием                              │
 // └────────────────────────────────────────────────────────────────────────────┘
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UniSchedule.API.Responses;
 using UniSchedule.Json;
 using UniSchedule.Json.Models;
 using UniSchedule.Services;
 
-/// <summary>
-/// Пространство имен контроллеров api
-/// </summary>
 namespace UniSchedule.API.Controllers;
 
 /// <summary>
-///     Расписание
+/// Расписание
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -28,11 +26,6 @@ public class ScheduleController : ControllerBase
     private readonly OutAPI _o_api;
     private readonly CacheService _cache;
 
-    /// <summary>
-    ///     Конструктор
-    /// </summary>
-    /// <param name="o_api">Экземпляр API</param>
-    /// <param name="jsonParser">"Экземпляр json парсера"</param>
     public ScheduleController(OutAPI o_api, JsonParser jsonParser, CacheService cache)
     {
         _o_api = o_api;
@@ -41,21 +34,20 @@ public class ScheduleController : ControllerBase
     }
 
     /// <summary>
-    ///     Получить пересечение окон у списка преподавателей за период
+    /// Получить пересечение окон у списка преподавателей за период
     /// </summary>
-    /// <param name="UIDs">UID преподавателей через запятую</param>
-    /// <param name="start">Дата от</param>
-    /// <param name="end">Дата по</param>
-    /// <returns>Json список с датами и временем когда все преподаватели свободны</returns>
     [HttpGet("teachers/{UIDs}/{start}/{end}")]
-    [Authorize("operator", "teacher")]
-    public async Task<IActionResult> GetTeachersMassSchedule(
-        string UIDs,
-        string start,
-        string end)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetTeachersMassSchedule(string UIDs, string start, string end)
     {
+        string key = $"schedule:free-slots:{UIDs}:{start}:{end}";
+        if (_cache.TryGet<object>(key, out var cached))
+            return Content(_jsonParser.Serialize(cached), "application/json");
+
         var uidArray = UIDs.Split(',', StringSplitOptions.RemoveEmptyEntries);
         var response = new TeachersScheduleResponse(_o_api, uidArray, new Week(start, end));
-        return Content(_jsonParser.Serialize(await response.GetFreeSlots()), "application/json");
+        var result = await response.GetFreeSlots();
+        _cache.SetSchedule(key, result);
+        return Content(_jsonParser.Serialize(result), "application/json");
     }
 }

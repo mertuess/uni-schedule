@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using UniSchedule.DataBase;
+using UniSchedule.DataBase.Models;
 using UniSchedule.Json;
+using UniSchedule.Services;
 
 namespace UniSchedule.API.Controllers;
 
@@ -23,11 +25,13 @@ public class DatabaseController : ControllerBase
 {
     private readonly DataBaseManager _dbm;
     private readonly JsonParser _jsonParser;
+    private readonly CacheService _cache;
 
-    public DatabaseController(JsonParser jsonParser, DataBaseManager dbm)
+    public DatabaseController(JsonParser jsonParser, DataBaseManager dbm, CacheService cache)
     {
         _jsonParser = jsonParser;
         _dbm = dbm;
+        _cache = cache;
     }
 
     // ==================== ПОЛЬЗОВАТЕЛИ ====================
@@ -95,7 +99,11 @@ public class DatabaseController : ControllerBase
     public async Task<IActionResult> CreateDepartment([FromQuery] string name)
     {
         var res = await _dbm.TryCreateDepartmentAsync(name);
-        if (res) return Ok(new { success = true, message = "Department created successfully" });
+        if (res)
+        {
+            _cache.Invalidate("static:departments"); 
+            return Ok(new { success = true, message = "Department created successfully" });
+        }
         return BadRequest(new { success = false, message = "Failed to create department" });
     }
 
@@ -104,7 +112,11 @@ public class DatabaseController : ControllerBase
     public async Task<IActionResult> UpdateDepartment(string name, [FromQuery] string new_name)
     {
         var res = await _dbm.TryUpdateDepartmentAsync(name, new_name);
-        if (res) return Ok(new { success = true, message = "Department updated successfully" });
+        if (res)
+        {
+            _cache.Invalidate("static:departments"); 
+            return Ok(new { success = true, message = "Department updated successfully" });
+        }
         return BadRequest(new { success = false, message = "Failed to update department" });
     }
 
@@ -113,7 +125,11 @@ public class DatabaseController : ControllerBase
     public async Task<IActionResult> RemoveDepartment(string name)
     {
         var res = await _dbm.TryRemoveDepartmentAsync(name);
-        if (res) return Ok(new { success = true, message = "Department removed successfully" });
+        if (res)
+        {
+            _cache.Invalidate("static:departments"); 
+            return Ok(new { success = true, message = "Department removed successfully" });
+        }
         return BadRequest(new { success = false, message = "Failed to remove department" });
     }
 
@@ -121,7 +137,13 @@ public class DatabaseController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> ShowAllDepartments()
     {
+        if (_cache.TryGet<List<Department>>("static:departments", out var cached))
+        {
+            return Content(_jsonParser.Serialize(cached), "application/json");
+        }
+
         var result = await _dbm.GetAllDepartmentsAsync();
+        _cache.SetStatic("static:departments", result);
         return Content(_jsonParser.Serialize(result), "application/json");
     }
 
@@ -140,12 +162,14 @@ public class DatabaseController : ControllerBase
     [Authorize("operator")]
     public async Task<IActionResult> GetAllTeachersExternal()
     {
-        try
-        {
-            var teachers = await _dbm.GetAllTeachersExternalAsync();
-            return Ok(teachers.Select(t => new { uid = t.UID, name = t.teacher, faculty = t.faculty }));
-        }
-        catch (Exception ex) { return StatusCode(500, new { error = "Ошибка: " + ex.Message }); }
+        if (_cache.TryGet<object>("static:teachers:external", out var cached))
+            return Ok(cached);
+
+        var teachers = await _dbm.GetAllTeachersExternalAsync();
+        var formatted = teachers.Select(t => new { uid = t.UID, name = t.teacher, faculty = t.faculty }).ToList();
+
+        _cache.SetStatic("static:teachers:external", formatted); 
+        return Ok(formatted);
     }
 
     [HttpPost("teachers/{uid}/bind")]
@@ -154,7 +178,11 @@ public class DatabaseController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(uid)) return BadRequest(new { error = "UID обязателен" });
         var success = _dbm.BindTeacher(uid, request.name ?? "", request.departmentId);
-        if (success) return Ok(new { success = true, message = "Привязано" });
+        if (success)
+        {
+            _cache.Invalidate("static:teachers:external"); 
+            return Ok(new { success = true, message = "Привязано" });
+        }
         return BadRequest(new { error = "Ошибка привязки (см. лог сервера)" });
     }
 
@@ -170,8 +198,12 @@ public class DatabaseController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetDepartmentSchedule(int departmentId, [FromQuery] string start, [FromQuery] string end)
     {
-        if (string.IsNullOrWhiteSpace(start) || string.IsNullOrWhiteSpace(end)) return BadRequest(new { error = "start и end обязательны" });
+        string key = $"schedule:dept:{departmentId}:{start}:{end}";
+        if (_cache.TryGet<List<object>>(key, out var cached))
+            return Ok(cached);
+
         var schedule = await _dbm.GetDepartmentScheduleAsync(departmentId, start, end);
+        _cache.SetSchedule(key, schedule);
         return Ok(schedule);
     }
 

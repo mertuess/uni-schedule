@@ -1,24 +1,29 @@
-let filter = [
-    'Id',
-    'Mail',
-    'Name',
-    'Role'
-]
+// ============================================================================
+// ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+// ============================================================================
+let filter = ['Id', 'Mail'];
 let allTeachers = [];
 let allDepartments = [];
 let selectedTeacher = null;
 let currentDeptId = null;
 let currentDeptName = null;
+let searchTimeout = null;  // ← Для дебаунса поиска
 
 // ============================================================================
-// ЗАГРУЗКА ДАННЫХ
+// ЗАГРУЗКА ДАННЫХ (вызывается ОДИН раз при старте)
 // ============================================================================
 async function loadAllData() {
+    if (allTeachers.length > 0) return;  // ← Защита от повторной загрузки
+    
     try {
         const teachersResponse = await apiGet('/Database/teachers/all');
-        if (teachersResponse.success && Array.isArray(teachersResponse.data)) allTeachers = teachersResponse.data;
+        if (teachersResponse.success && Array.isArray(teachersResponse.data)) {
+            allTeachers = teachersResponse.data;
+        }
         const deptsResponse = await getDepartments();
-        if (deptsResponse.success && Array.isArray(deptsResponse.data)) allDepartments = deptsResponse.data;
+        if (deptsResponse.success && Array.isArray(deptsResponse.data)) {
+            allDepartments = deptsResponse.data;
+        }
     } catch (e) { console.error('Ошибка загрузки данных:', e); }
 }
 
@@ -26,10 +31,13 @@ async function loadAllData() {
 // ОТОБРАЖЕНИЕ ПОЛЬЗОВАТЕЛЕЙ
 // ============================================================================
 getUsers().then((result) => {
+    if (!result.success || !result.data) return;
+    
     let arr = result.data;
     let count = document.getElementById('user-count');
     let table = document.getElementById('users-list');
     if (!table) return;
+    
     count.innerHTML = arr.length;
     for (let i = 0; i < arr.length; i++) {
         const u = arr[i];
@@ -46,6 +54,8 @@ getUsers().then((result) => {
 // ОТОБРАЖЕНИЕ КАФЕДР
 // ============================================================================
 getDepartments().then((result) => {
+    if (!result.success || !result.data) return;
+    
     let arr = result.data;
     let table = document.getElementById('departments-list');
     if (!table) return;
@@ -69,7 +79,29 @@ function editUser(id) { localStorage.setItem("user-to-edit", id); window.locatio
 function deleteUserById(email) { if (!confirm('Удалить пользователя ' + email + '?')) return; deleteUser(email).then(() => { alert('Пользователь удален'); window.location.reload(); }); }
 function editDepartment(id, name) { currentDeptId = id; currentDeptName = name; document.getElementById('dept-modal-title').innerHTML = 'Редактировать кафедру'; document.getElementById('dept-name').value = name; document.getElementById('dept-modal').style.display = 'flex'; }
 function deleteDepartmentById(name) { if (!confirm('Удалить кафедру "' + name + '"?')) return; deleteDepartment(name).then(() => { alert('Кафедра удалена'); window.location.reload(); }); }
-function saveDepartment() { const deptName = document.getElementById('dept-name').value.trim(); if (!deptName) { alert('Введите название кафедры'); return; } if (currentDeptName) { updateDepartment(currentDeptName, deptName).then(() => { alert('Кафедра обновлена'); closeDeptModal(); window.location.reload(); }); } else { createDepartment(deptName).then(() => { alert('Кафедра создана'); closeDeptModal(); window.location.reload(); }); } }
+function saveDepartment() { 
+    
+    const deptName = document.getElementById('dept-name').value.trim(); 
+    
+    if (!deptName) { 
+        alert('Введите название кафедры'); 
+        return; 
+    } 
+    
+    if (currentDeptName) { 
+        updateDepartment(currentDeptName, deptName).then(() => { 
+            alert('Кафедра обновлена'); 
+            closeDeptModal(); 
+            window.location.reload(); 
+        }); 
+    } else { 
+        createDepartment(deptName).then((result) => { 
+            alert('Кафедра создана'); 
+            closeDeptModal(); 
+            window.location.reload(); 
+        }); 
+    } 
+}
 function closeDeptModal() { document.getElementById('dept-modal').style.display = 'none'; document.getElementById('dept-name').value = ''; currentDeptId = null; currentDeptName = null; document.getElementById('dept-modal-title').innerHTML = 'Создать кафедру'; }
 
 document.getElementById('createDeptBtn').onclick = function () { currentDeptId = null; currentDeptName = null; document.getElementById('dept-modal-title').innerHTML = 'Создать кафедру'; document.getElementById('dept-name').value = ''; document.getElementById('dept-modal').style.display = 'flex'; };
@@ -77,100 +109,76 @@ document.getElementById('saveDeptBtn').onclick = saveDepartment;
 document.getElementById('closeDeptModal').onclick = closeDeptModal;
 
 // ============================================================================
-// ПОИСК И ПРИВЯЗКА ПРЕПОДАВАТЕЛЕЙ (ИСПРАВЛЕННАЯ ВЕРСИЯ)
+// ПОИСК ПРЕПОДАВАТЕЛЕЙ (с дебаунсом 300мс)
 // ============================================================================
-
 async function searchTeachers() {
-    const query = document.getElementById('teacher-search').value.trim();
-    const resultsDiv = document.getElementById('teacher-results');
+    // ← Дебаунс: ждём 300мс после последнего нажатия
+    if (searchTimeout) clearTimeout(searchTimeout);
     
-    if (query.length < 2) { resultsDiv.style.display = 'none'; return; }
-    
-    if (allTeachers.length === 0) { 
-        resultsDiv.innerHTML = '<div style="padding:10px;color:#666">Загрузка...</div>'; 
-        resultsDiv.style.display = 'block'; 
-        await loadAllData(); 
-    }
-    
-    // Загружаем текущие привязки
-    const bindings = {};
-    for (const dept of allDepartments) {
-        try {
-            const resp = await apiGet('/Database/departments/' + dept.Id + '/teachers');
-            if (resp.success && Array.isArray(resp.data)) {
-                resp.data.forEach(function(t) {
-                    bindings[t.uid] = { departmentId: t.departmentId, departmentName: dept.Name };
-                });
-            }
-        } catch (e) { /* игнорируем */ }
-    }
-    
-    const filtered = allTeachers.filter(function(t) {
-        const name = (t.name || t.teacher || '').toLowerCase();
-        return name.includes(query.toLowerCase());
-    });
-    
-    resultsDiv.innerHTML = '';
-    if (filtered.length === 0) {
-        resultsDiv.innerHTML = '<div style="padding:10px;color:#666">Не найдено</div>';
-    } else {
-        filtered.slice(0, 20).forEach(function(t) {
-            const uid = t.uid || t.UID;
-            const name = t.name || t.teacher || 'Без имени';
-            const faculty = t.faculty || '';
-            const binding = bindings[uid];
-            
-            const item = document.createElement('div');
-            item.className = 'teacher-item';
-            item.style.padding = '10px';
-            item.style.cursor = 'pointer';
-            item.style.borderBottom = '1px solid #eee';
-            item.style.background = binding ? '#f8f9fa' : 'white';
-            
-            const nameStrong = document.createElement('strong');
-            nameStrong.textContent = name;
-            item.appendChild(nameStrong);
-            
-            const statusSpan = document.createElement('span');
-            if (binding) {
-                statusSpan.innerHTML = binding.departmentId === null 
-                    ? ' <small style="color:#6c757d">(не привязан)</small>'
-                    : ` <small style="color:#0066cc">[привязан: ${binding.departmentName}]</small>`;
-            }
-            item.appendChild(statusSpan);
-            
-            if (binding && binding.departmentId !== null) {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.textContent = 'изменить';
-                btn.style.cssText = 'margin-left:8px;padding:2px 6px;font-size:11px;background:#eee;border:1px solid #ccc;border-radius:4px;cursor:pointer;';
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    selectTeacher({ uid: uid, name: name, faculty: faculty, rebind: true });
-                });
-                statusSpan.appendChild(btn);
-            }
-            
-            const br = document.createElement('br');
-            const facultySmall = document.createElement('small');
-            facultySmall.style.color = '#666';
-            facultySmall.textContent = faculty;
-            item.appendChild(br);
-            item.appendChild(facultySmall);
-            
-            item.addEventListener('click', function() { 
-                selectTeacher({ uid: uid, name: name, faculty: faculty, rebind: !!binding }); 
-            });
-            
-            item.onmouseenter = function() { this.style.background = '#f0f0f0'; };
-            item.onmouseleave = function() { this.style.background = binding ? '#f8f9fa' : 'white'; };
-            
-            resultsDiv.appendChild(item);
+    searchTimeout = setTimeout(async function() {
+        const query = document.getElementById('teacher-search').value.trim();
+        const resultsDiv = document.getElementById('teacher-results');
+        
+        if (query.length < 2) { resultsDiv.style.display = 'none'; return; }
+        
+        // Загружаем данные только если ещё не загружены
+        if (allTeachers.length === 0) { 
+            resultsDiv.innerHTML = '<div style="padding:10px;color:#666">Загрузка...</div>'; 
+            resultsDiv.style.display = 'block'; 
+            await loadAllData(); 
+        }
+        
+        // Фильтрация на клиенте (мгновенно)
+        const filtered = allTeachers.filter(function(t) {
+            const name = (t.name || t.teacher || '').toLowerCase();
+            return name.includes(query.toLowerCase());
         });
-    }
-    resultsDiv.style.display = 'block';
+        
+        resultsDiv.innerHTML = '';
+        if (filtered.length === 0) {
+            resultsDiv.innerHTML = '<div style="padding:10px;color:#666">Не найдено</div>';
+        } else {
+            // Загружаем привязки для отображения статуса
+            const bindings = {};
+            for (const dept of allDepartments) {
+                try {
+                    const resp = await apiGet('/Database/departments/' + dept.Id + '/teachers');
+                    if (resp.success && Array.isArray(resp.data)) {
+                        resp.data.forEach(t => bindings[t.uid] = dept.Name);
+                    }
+                } catch (e) {}
+            }
+
+            filtered.slice(0, 30).forEach(function(t) {
+                const uid = t.uid || t.UID;
+                const name = t.name || t.teacher;
+                const isBound = bindings[uid];
+                
+                const item = document.createElement('div');
+                item.className = 'teacher-item';
+                item.style.padding = '10px';
+                item.style.cursor = 'pointer';
+                item.style.borderBottom = '1px solid #eee';
+                item.style.background = isBound ? '#f8f9fa' : 'white';
+                
+                item.innerHTML = `<strong>${name}</strong>` + 
+                    (isBound ? ` <small style="color:#0066cc">[кафедра: ${isBound}]</small>` : '') +
+                    `<br><small style="color:#666">${t.faculty || ''}</small>`;
+                
+                item.onclick = () => selectTeacher({ uid, name, faculty: t.faculty, rebind: !!isBound });
+                item.onmouseenter = () => item.style.background = '#f0f0f0';
+                item.onmouseleave = () => item.style.background = isBound ? '#f8f9fa' : 'white';
+                
+                resultsDiv.appendChild(item);
+            });
+        }
+        resultsDiv.style.display = 'block';
+    }, 300);  // ← Задержка 300мс
 }
 
+// ============================================================================
+// ВЫБОР ПРЕПОДАВАТЕЛЯ
+// ============================================================================
 function selectTeacher(t) {
     selectedTeacher = t;
     document.getElementById('selected-name').textContent = t.name;
@@ -207,7 +215,7 @@ function clearSelection() {
 }
 
 // ============================================================================
-// ФУНКЦИЯ ПРИВЯЗКИ 
+// ПРИВЯЗКА ПРЕПОДАВАТЕЛЯ
 // ============================================================================
 async function bindTeacher() {
     if (!selectedTeacher || !selectedTeacher.uid) { 
@@ -249,4 +257,6 @@ document.addEventListener('click', function(e) {
     if (results && !results.contains(e.target) && e.target !== search) results.style.display = 'none';
 });
 
-document.addEventListener('DOMContentLoaded', function() { loadAllData(); });
+document.addEventListener('DOMContentLoaded', function() { 
+    loadAllData();  // ← Вызывается только один раз
+});

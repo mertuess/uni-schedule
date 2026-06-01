@@ -4,6 +4,7 @@ obj/
 dbg/
 log/
 .idea/
+publish/
 schedule.db
 token.uni.s
 uni-schedule.csproj.user

@@ -1,6 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
+        <DebianPackageId>uni-schedule</DebianPackageId>
+        <DebianVersion>1.1.0</DebianVersion>
+        <DebianMaintainer>turikov.de@mauniver.ru</DebianMaintainer>
+        <Description>WebAPI расширение для отслеживания расписания учебных занятий</Description>
+    </PropertyGroup>
+    
+    <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>

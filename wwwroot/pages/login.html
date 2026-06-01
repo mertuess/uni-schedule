@@ -45,28 +45,28 @@
         <div class="login-container">
             <h2>Вход в систему</h2>
             <div id="login-form">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input id="email" required="" type="email">
-                </div>
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <input id="password" required="" type="password">
-                </div>
-                <button class="login-btn" onclick="login()">Войти</button>
-                <div class="error" id="error-message"></div>
+				<form onsubmit="event.preventDefault(); login();">
+					<div class="form-group">
+						<label for="email">Email</label>
+						<input type="email" id="email" name="email" class="form-control"
+							   placeholder="operator@mauniver.ru" required=""
+							   autocomplete="username">
+						</div>
+					<div class="form-group" style="margin-top: 15px;">
+						<label for="password">Пароль</label>
+						<input type="password" id="password" name="password" class="form-control"
+							   placeholder="Введите пароль" required=""
+							   autocomplete="current-password">
+						</div>
+					<button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+						Войти
+					</button>
+				</form>
+				<div id="error-message" class="alert alert-danger" style="display:none; margin-top: 15px;"></div>
             </div>
-            <h2>Токен внешнего api</h2>
-            <div class="form-group">
-                <label>Токен</label>
-                <input id="o-api-token" required="" type="text">
-            </div>
-            <button class="login-btn" onclick="saveToken()">Сохранить токен</button>
-        </div>
     </div>
 </main>
 
-<script src="../js/cookie.js"></script>
 <script src="../js/api.js"></script>
 <script src="../js/check_login.js"></script>
 <script src="../js/login.js"></script>

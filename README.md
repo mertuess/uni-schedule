@@ -98,12 +98,16 @@
 ```
 sudo dpkg -i uni-schedule_<версия пакета>_<архитектура пакета>.deb
 ```
-4. Скопировать файл токена выданный разработчиком или отвественным лицом в корень программы
+4. Вставить токен в файлы appsettings.json по пути /opt/uni-schedule/
 ```
-sudo cp token.uni.s /opt/uni-schedule/
+sudo nano /opt/uni-schedule/appsettings.json
+...
+  "ApiSettings": {
+    "Token": "<Сюда вставить токен api университета>"
+  },
+...
 ```
-5. Перейти в директорию и запустить программу
+5. Запустить сервис
 ```
-cd /opt/uni-schedule/
-./uni-schedule
+sudo systemctl start uni-schedule
 ```

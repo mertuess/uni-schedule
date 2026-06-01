@@ -2,22 +2,21 @@
 // │ UniSchedule                                                                │
 // │ WebAPI расширение для отслеживания расписания учебных занятий              │
 // ├────────────────────────────────────────────────────────────────────────────┤
-// │ Файл: Roomscontroller.cs                                                   │
+// │ Файл: RoomsController.cs                                                   │
 // │ Описание: Контроллер для работы с аудиториями                              │
 // └────────────────────────────────────────────────────────────────────────────┘
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UniSchedule.API.Responses;
 using UniSchedule.Json;
 using UniSchedule.Json.Models;
+using UniSchedule.Services;
 
-/// <summary>
-/// Пространство имен контроллеров api
-/// </summary>
 namespace UniSchedule.API.Controllers;
 
 /// <summary>
-///     Аудитории
+/// Аудитории
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -25,33 +24,47 @@ public class RoomsController : ControllerBase
 {
     private readonly JsonParser _jsonParser;
     private readonly OutAPI _o_api;
+    private readonly CacheService _cache;
 
-    /// <summary>
-    ///     Конструктор
-    /// </summary>
-    /// <param name="o_api">Экземпляр внешнего API</param>
-    /// <param name="jsonParser">"Экземпляр json парсера"</param>
-    public RoomsController(OutAPI o_api, JsonParser jsonParser)
+    public RoomsController(OutAPI o_api, JsonParser jsonParser, CacheService cache)
     {
         _o_api = o_api;
         _jsonParser = jsonParser;
+        _cache = cache;
     }
 
     /// <summary>
-    ///     Получить загруженность аудитори за определенный период
+    /// Получить аудитории корпуса (с кэшированием)
     /// </summary>
-    /// <param name="room_id">ID Аудитории</param>
-    /// <param name="start">Дата от</param>
-    /// <param name="end">Дата по</param>
-    /// <returns>Cформированный json с загруженностью аудиории</returns>
-    [HttpGet("{room_id}/workload/{start}/{end}")]
-    [Authorize("operator", "teacher")]
-    public async Task<IActionResult> GetRoomWorkload(
-        int room_id,
-        string start,
-        string end)
+    [HttpGet("{bui_id}/rooms")]
+    [AllowAnonymous]  
+    public async Task<IActionResult> GetRooms(int bui_id)
     {
+        string key = $"static:rooms:{bui_id}";
+
+        if (_cache.TryGet<List<Room>>(key, out var cached))
+            return Ok(cached);
+
+        var rooms = await _o_api.SendRequest<Room>($"/buildings/{bui_id}/rooms", "rooms");
+        _cache.SetStatic(key, rooms);
+
+        return Ok(rooms);
+    }
+
+    /// <summary>
+    /// Получить загруженность аудитории за определенный период
+    /// </summary>
+    [HttpGet("{room_id}/workload/{start}/{end}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetRoomWorkload(int room_id, string start, string end)
+    {
+        string key = $"schedule:room:{room_id}:{start}:{end}";
+        if (_cache.TryGet<object>(key, out var cached))
+            return Content(_jsonParser.Serialize(cached), "application/json");
+
         var response = new RoomWorkloadResponse(_o_api, room_id, new Week(start, end));
-        return Content(_jsonParser.Serialize(await response.GetRoomWorkload()), "application/json");
+        var result = await response.GetRoomWorkload();
+        _cache.SetSchedule(key, result);
+        return Content(_jsonParser.Serialize(result), "application/json");
     }
 }

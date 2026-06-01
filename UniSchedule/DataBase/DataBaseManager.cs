@@ -1,5 +1,7 @@
 ﻿using SQLite;
+using UniSchedule.API;
 using UniSchedule.DataBase.Models;
+using UniSchedule.Json.Models;
 using UniSchedule.System;
 
 namespace UniSchedule.DataBase;
@@ -10,11 +12,13 @@ public class DataBaseManager
     private readonly Debug _dbg;
     private readonly string _dbPath;
     private readonly Localization _loc;
+    private readonly OutAPI _outApi;
 
-    public DataBaseManager(IConfiguration configuration, Debug dbg, Localization loc)
+    public DataBaseManager(IConfiguration configuration, Debug dbg, Localization loc, OutAPI outApi )
     {
         _dbg = dbg;
         _loc = loc;
+        _outApi = outApi;
         _dbPath = configuration.GetConnectionString("DefaultConnection") ??
                   throw new Exception("Database path not found!");
         var exist = File.Exists(_dbPath);
@@ -27,6 +31,9 @@ public class DataBaseManager
             _dbg.Log(string.Format(_loc.Text["db_created"], _dbPath));
             createOpeartor();
         }
+
+        _db.CreateTable<TeacherBinding>();
+        _dbg.Log("Таблица TeacherBindings проверена/создана");
 
         _dbg.Log(string.Format(_loc.Text["db_connected"], _dbPath));
         _dbg.Log(string.Format(_loc.Text["db_stat"], GetAllUsers().Count, GetAllDepartments().Count));
@@ -244,4 +251,169 @@ public class DataBaseManager
         _dbg.Log(_loc.Text["db_op_created"]);
         _dbg.Warning(string.Format(_loc.Text["db_op_info"], "operator@mauniver.ru", pass));
     }
-}
+
+    /// <summary>
+    /// Инициализация таблицы TeacherBindings
+    /// </summary>
+    public void EnsureTeacherBindingsTable()
+    {
+        try
+        {
+            _db.CreateTable<TeacherBinding>();
+            _dbg.Log("Таблица TeacherBindings готова");
+        }
+        catch (Exception ex)
+        {
+            _dbg.Error("Ошибка при создании таблицы TeacherBindings: " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Модель привязки преподавателя к кафедре
+    /// </summary>
+    [Table("TeacherBindings")]
+    public class TeacherBinding
+    {
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+
+        [Unique]
+        public string UniversityUid { get; set; } = string.Empty;
+
+        public string Name { get; set; } = string.Empty;
+
+        [Indexed]
+        public int? DepartmentId { get; set; }
+    }
+
+    /// <summary>
+    /// Получить всех преподавателей из внешнего API
+    /// </summary>
+    public async Task<List<ExternalTeacher>> GetAllTeachersExternalAsync()
+    {
+        try
+        {
+            return await _outApi.SendRequest<ExternalTeacher>("/teachers", "teachers");
+        }
+        catch (Exception ex)
+        {
+            _dbg.Error("Ошибка получения списка преподавателей: " + ex.Message);
+            return new List<ExternalTeacher>();
+        }
+    }
+
+    /// <summary>
+    /// Модель преподавателя из внешнего API
+    /// </summary>
+    public class ExternalTeacher
+    {
+        public string UID { get; set; } = string.Empty;
+        public string teacher { get; set; } = string.Empty;
+        public string faculty { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Привязать преподавателя к кафедре (или отвязать, если departmentId = null)
+    /// </summary>
+    public bool BindTeacher(string universityUid, string name, int? departmentId)
+    {
+        try
+        {
+            var binding = _db.Table<TeacherBinding>().FirstOrDefault(x => x.UniversityUid == universityUid);
+
+            if (binding == null)
+            {
+                binding = new TeacherBinding
+                {
+                    UniversityUid = universityUid,
+                    Name = name,
+                    DepartmentId = departmentId
+                };
+                _db.Insert(binding);
+                _dbg.Log($"Создана привязка: {name} на кафедре {departmentId}");
+            }
+            else
+            {
+                binding.Name = name;
+                binding.DepartmentId = departmentId;
+                _db.Update(binding);
+                _dbg.Log($"Обновлена привязка: {name} на кафедре {departmentId}");
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _dbg.Error($"Ошибка привязки {universityUid}: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Получить преподавателей, привязанных к кафедре
+    /// </summary>
+    public List<TeacherBinding> GetTeachersByDepartment(int departmentId)
+    {
+        return _db.Table<TeacherBinding>().Where(x => x.DepartmentId == departmentId).ToList();
+    }
+
+    /// <summary>
+    /// Получить расписание кафедры: агрегировать расписания всех привязанных преподавателей
+    /// </summary>
+    public async Task<List<AggregatedScheduleItem>> GetDepartmentScheduleAsync(int departmentId, string start, string end)
+    {
+        var bindings = GetTeachersByDepartment(departmentId);
+        var result = new List<AggregatedScheduleItem>();
+
+        foreach (var binding in bindings)
+        {
+            try
+            {
+                var schedule = await _outApi.SendRequest<TeacherSchedule>(
+                    $"/teachers/{binding.UniversityUid}/schedule/{start}/{end}",
+                    "schedule");
+
+                if (schedule != null)
+                {
+                    foreach (var item in schedule)
+                    {
+                        result.Add(new AggregatedScheduleItem
+                        {
+                            Date = item.date,
+                            Slot = item.slot,
+                            DayOfWeek = item.day_of_week,
+                            Type = item.type,
+                            Disciplines = item.disciplines,
+                            Room = item.room,
+                            TeacherName = binding.Name,
+                            TeacherUid = binding.UniversityUid,
+                            DepartmentId = departmentId
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _dbg.Warning($"Не удалось получить расписание для {binding.Name}: {ex.Message}");
+            }
+        }
+
+        return result.OrderBy(x => x.Date).ThenBy(x => x.Slot).ToList();
+    }
+
+    /// <summary>
+    /// Агрегированный элемент расписания кафедры
+    /// </summary>
+    public class AggregatedScheduleItem
+    {
+        public string Date { get; set; } = string.Empty;
+        public string Slot { get; set; } = string.Empty;
+        public string DayOfWeek { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public string Disciplines { get; set; } = string.Empty;
+        public string Room { get; set; } = string.Empty;
+        public string TeacherName { get; set; } = string.Empty;
+        public string TeacherUid { get; set; } = string.Empty;
+        public int DepartmentId { get; set; }
+    }
+
+};

@@ -42,10 +42,12 @@ function updateAutocomplete(teachers) {
         item.className = 'autocomplete-item';
         
         var uid = t.UID || t.uid || t.id || t.teacher_id;
-        var binding = teacherBindings[uid];
-        var bindingBadge = binding 
-            ? `<span class="binding-badge" title="Кафедра: ${binding.departmentName}">${binding.departmentName}</span>` 
-            : '';
+        var bindingList = teacherBindings[uid];
+        var bindingBadge = '';
+        if (bindingList && bindingList.length > 0) {
+            var deptNames = bindingList.map(b => b.departmentName).join(', ');
+            bindingBadge = `<span class="binding-badge" title="Кафедры: ${deptNames}">${deptNames}</span>`;
+        }
         
         item.innerHTML = `<span class="teacher-name">${t.teacher || t.name || ''}</span>${bindingBadge}`;
         item.addEventListener('click', function() { addTeacher(t); });
@@ -98,10 +100,13 @@ function updateSelected() {
         var tag = document.createElement('div');
         tag.className = 'selected-teacher-tag';
         
-        var binding = teacherBindings[teacherId];
-        var bindingBadge = binding 
-            ? `<span class="binding-badge-small" title="Кафедра: ${binding.departmentName}"> ${binding.departmentName}</span>` 
-            : '';
+        var bindingList = teacherBindings[teacherId];
+        var bindingBadge = '';
+        
+        if (bindingList && bindingList.length > 0) {
+            var deptNames = bindingList.map(b => b.departmentName).join(', ');
+            bindingBadge = `<span class="binding-badge-small" title="Кафедры: ${deptNames}"> ${deptNames}</span>`;
+        }
         
         tag.innerHTML = `<span class="selected-teacher-name">${teacher.teacher}</span>${bindingBadge}<button type="button" data-id="${teacherId}">×</button>`;
         var btn = tag.querySelector('button');
@@ -212,8 +217,12 @@ function generateTables(sch) {
 
         for (var teacher in groupedByTeacher) {
             var uid = selected_teachers.find(t => t.teacher === teacher)?.UID;
-            var binding = uid ? teacherBindings[uid] : null;
-            var bindingBadge = binding ? ` <span class="binding-badge-table"> ${binding.departmentName}</span>` : '';
+            var bindingList = uid ? teacherBindings[uid] : null;
+            var bindingBadge = '';
+            if (bindingList && bindingList.length > 0) {
+                var deptNames = bindingList.map(b => b.departmentName).join(', ');
+                bindingBadge = ` <span class="binding-badge-table" title="Кафедры: ${deptNames}">${deptNames}</span>`;
+            }
             
             table.appendChild(getTableRow(teacher + bindingBadge, groupedByTeacher[teacher], date));
         }

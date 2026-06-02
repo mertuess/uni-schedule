@@ -1,3 +1,7 @@
+// ┌────────────────────────────────────────────────────────────────────┐
+// │ UniSchedule - Расписание преподавателей                            │
+// └────────────────────────────────────────────────────────────────────┘
+
 const autocomplete_list = document.getElementById('teacher-autocomplete-list');
 const selected_list = document.getElementById('selected-teachers-list');
 const teacher_input = document.getElementById('teacher-ids');
@@ -10,6 +14,16 @@ let selected_teachers = [];
 let free_slots = {};
 let teacherBindings = {};
 
+// Форматирование даты с днём недели
+function formatDateWithWeekday(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' });
+    const weekdayCapitalized = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+    return `${dateStr} (${weekdayCapitalized})`;
+}
+
+// Загрузка привязок преподавателей к кафедрам
 async function loadTeacherBindings() {
     try {
         teacherBindings = await getTeacherBindings();
@@ -19,6 +33,7 @@ async function loadTeacherBindings() {
     }
 }
 
+// Поиск преподавателей
 function search(name_part) {
     if (!Array.isArray(teachers_list)) return [];
     var _lower = name_part.toLowerCase().trim();
@@ -30,12 +45,11 @@ function search(name_part) {
     }).slice(0, 10);
 }
 
+// Обновление списка автодополнения
 function updateAutocomplete(teachers) {
     if (!autocomplete_list) return;
-    if (teacher_input && teacher_input.value === '') {
-        hideAutocomplete();
-        return;
-    }
+    if (teacher_input && teacher_input.value === '') { hideAutocomplete(); return; }
+    
     autocomplete_list.innerHTML = '';
     teachers.forEach(function(t) {
         var item = document.createElement('div');
@@ -55,15 +69,15 @@ function updateAutocomplete(teachers) {
     });
 }
 
+// Показать/скрыть список (только класс, позиционирование через CSS!)
 function showAutocomplete() {
     if (autocomplete_list) autocomplete_list.classList.add('show');
 }
 function hideAutocomplete() {
-    setTimeout(function() {
-        if (autocomplete_list) autocomplete_list.classList.remove('show');
-    }, 200);
+    setTimeout(function() { if (autocomplete_list) autocomplete_list.classList.remove('show'); }, 200);
 }
 
+// Добавить преподавателя в выбранные
 function addTeacher(t) {
     var uid = t.UID || t.uid || t.id || t.teacher_id;
     var name = t.teacher || t.name || t.fullName || '';
@@ -78,6 +92,7 @@ function addTeacher(t) {
     hideAutocomplete();
 }
 
+// Удалить преподавателя из выбранных
 function removeTeacher(teacherId) {
     selected_teachers = selected_teachers.filter(function(t) { 
         return t.UID !== teacherId && t.teacher_id !== teacherId; 
@@ -85,6 +100,7 @@ function removeTeacher(teacherId) {
     updateSelected();
 }
 
+// Обработчик ввода
 function onTeacherInput(e) {
     var searchText = e.target.value;
     var filtered = search(searchText);
@@ -92,6 +108,7 @@ function onTeacherInput(e) {
     showAutocomplete();
 }
 
+// Обновление списка выбранных
 function updateSelected() {
     if (!selected_list) return;
     selected_list.innerHTML = '';
@@ -102,10 +119,9 @@ function updateSelected() {
         
         var bindingList = teacherBindings[teacherId];
         var bindingBadge = '';
-        
         if (bindingList && bindingList.length > 0) {
             var deptNames = bindingList.map(b => b.departmentName).join(', ');
-            bindingBadge = `<span class="binding-badge-small" title="Кафедры: ${deptNames}"> ${deptNames}</span>`;
+            bindingBadge = `<span class="binding-badge-small" title="Кафедры: ${deptNames}">${deptNames}</span>`;
         }
         
         tag.innerHTML = `<span class="selected-teacher-name">${teacher.teacher}</span>${bindingBadge}<button type="button" data-id="${teacherId}">×</button>`;
@@ -115,6 +131,7 @@ function updateSelected() {
     });
 }
 
+// Поиск расписания
 function teachersSchedulesSearch() {
     if (!selected_teachers || selected_teachers.length === 0) {
         if (results_obj) results_obj.innerHTML = '<div class="error">Пожалуйста, выберите хотя бы одного преподавателя</div>';
@@ -127,12 +144,15 @@ function teachersSchedulesSearch() {
         return;
     }
 
+    // Индикатор загрузки
+    if (results_obj) {
+        results_obj.innerHTML = '<div style="text-align:center; padding:40px; color:#666;"><div style="font-size:48px; margin-bottom:10px;"></div><div>Загрузка расписания...</div></div>';
+    }
+
     getSchedules().then(function(res) {
         if (res && Object.keys(res).length > 0) {
             generateTables(res);
-            if (typeof window.activateExport === 'function') {
-                window.activateExport(res, 'Расписание преподавателей');
-            }
+            if (typeof window.activateExport === 'function') window.activateExport(res, 'Расписание преподавателей');
         } else {
             if (results_obj) results_obj.innerHTML = '<div class="info">Нет данных для отображения</div>';
         }
@@ -142,6 +162,7 @@ function teachersSchedulesSearch() {
     });
 }
 
+// Получение расписаний
 async function getSchedules() {
     var uids = [];
     selected_teachers.forEach(function(t) { if (t && t.UID) uids.push(t.UID); });
@@ -153,21 +174,15 @@ async function getSchedules() {
 
     try {
         var freeSlotsResponse = await getTeachersFreeSlots(uids, start, end);
-        if (freeSlotsResponse && freeSlotsResponse.success && freeSlotsResponse.data) {
-            free_slots = freeSlotsResponse.data;
-        }
+        if (freeSlotsResponse && freeSlotsResponse.success && freeSlotsResponse.data) free_slots = freeSlotsResponse.data;
 
         var promises = selected_teachers.map(async function(t) {
             if (!t || !t.UID) return [];
             var scheduleResponse = await getTeacherSchedule(t.UID, start, end);
             if (scheduleResponse && scheduleResponse.success && scheduleResponse.data) {
                 var scheduleData = scheduleResponse.data;
-                if (scheduleData && scheduleData.timetable && Array.isArray(scheduleData.timetable)) {
-                    return scheduleData.timetable;
-                }
-                if (scheduleData && scheduleData.schedule && Array.isArray(scheduleData.schedule)) {
-                    return scheduleData.schedule;
-                }
+                if (scheduleData && scheduleData.timetable && Array.isArray(scheduleData.timetable)) return scheduleData.timetable;
+                if (scheduleData && scheduleData.schedule && Array.isArray(scheduleData.schedule)) return scheduleData.schedule;
                 if (Array.isArray(scheduleData)) return scheduleData;
                 if (scheduleData && typeof scheduleData === 'object') return [scheduleData];
             }
@@ -194,6 +209,7 @@ async function getSchedules() {
     }
 }
 
+// Генерация таблиц
 function generateTables(sch) {
     if (!results_obj) return;
     results_obj.innerHTML = '';
@@ -202,39 +218,99 @@ function generateTables(sch) {
         return;
     }
 
-    for (var date in sch) {
-        var table = getTableTemplate(date);
-        var dayItems = sch[date];
-        if (!Array.isArray(dayItems)) continue;
+    var isMobile = window.innerWidth <= 768;
 
-        var groupedByTeacher = {};
-        dayItems.forEach(function(item) {
-            if (!item || !item.teacher) return;
-            var teacher = item.teacher;
-            if (!groupedByTeacher[teacher]) groupedByTeacher[teacher] = [];
-            groupedByTeacher[teacher].push(item);
-        });
+    if (isMobile) {
+        // КАРТОЧНЫЙ ВИД ДЛЯ МОБИЛЬНЫХ
+        for (var date in sch) {
+            var dayItems = sch[date];
+            if (!Array.isArray(dayItems)) continue;
 
-        for (var teacher in groupedByTeacher) {
-            var uid = selected_teachers.find(t => t.teacher === teacher)?.UID;
-            var bindingList = uid ? teacherBindings[uid] : null;
-            var bindingBadge = '';
-            if (bindingList && bindingList.length > 0) {
-                var deptNames = bindingList.map(b => b.departmentName).join(', ');
-                bindingBadge = ` <span class="binding-badge-table" title="Кафедры: ${deptNames}">${deptNames}</span>`;
+            var groupedByTeacher = {};
+            dayItems.forEach(function(item) {
+                if (!item || !item.teacher) return;
+                var teacher = item.teacher;
+                if (!groupedByTeacher[teacher]) groupedByTeacher[teacher] = [];
+                groupedByTeacher[teacher].push(item);
+            });
+
+            var card = document.createElement('div');
+            card.className = 'schedule-card';
+            
+            var cardHeader = document.createElement('div');
+            cardHeader.className = 'schedule-card-header';
+            cardHeader.textContent = formatDateWithWeekday(date);
+            card.appendChild(cardHeader);
+
+            for (var teacher in groupedByTeacher) {
+                var teacherDiv = document.createElement('div');
+                teacherDiv.className = 'schedule-card-teacher';
+                
+                var teacherNameDiv = document.createElement('div');
+                teacherNameDiv.className = 'schedule-card-teacher-name';
+                teacherNameDiv.textContent = teacher;
+                teacherDiv.appendChild(teacherNameDiv);
+                
+                var slotsDiv = document.createElement('div');
+                slotsDiv.className = 'schedule-card-slots';
+                
+                groupedByTeacher[teacher].forEach(function(item) {
+                    var slotDiv = document.createElement('div');
+                    slotDiv.className = 'schedule-card-slot';
+                   
+                    if (free_slots && free_slots[date] && Array.isArray(free_slots[date]) && free_slots[date].includes(item.slot)) {
+                        slotDiv.classList.add('free');
+                    }
+                    
+                    var timeDiv = document.createElement('div');
+                    timeDiv.className = 'schedule-card-slot-time';
+                    timeDiv.textContent = item.slot;
+                    slotDiv.appendChild(timeDiv);
+                    
+                    var subjectDiv = document.createElement('div');
+                    subjectDiv.className = 'schedule-card-slot-subject';
+                    subjectDiv.textContent = item.disciplines || '—';
+                    slotDiv.appendChild(subjectDiv);
+                    
+                    slotsDiv.appendChild(slotDiv);
+                });
+                
+                teacherDiv.appendChild(slotsDiv);
+                card.appendChild(teacherDiv);
             }
             
-            table.appendChild(getTableRow(teacher + bindingBadge, groupedByTeacher[teacher], date));
+            results_obj.appendChild(card);
+            results_obj.appendChild(document.createElement('br'));
         }
-        results_obj.appendChild(table);
-        results_obj.appendChild(document.createElement('br'));
+    } else {
+        // ОБЫЧНЫЙ ТАБЛИЧНЫЙ ВИД ДЛЯ ДЕСКТОПА
+        for (var date in sch) {
+            var table = getTableTemplate(formatDateWithWeekday(date));
+            var dayItems = sch[date];
+            if (!Array.isArray(dayItems)) continue;
+
+            var groupedByTeacher = {};
+            dayItems.forEach(function(item) {
+                if (!item || !item.teacher) return;
+                var teacher = item.teacher;
+                if (!groupedByTeacher[teacher]) groupedByTeacher[teacher] = [];
+                groupedByTeacher[teacher].push(item);
+            });
+
+            for (var teacher in groupedByTeacher) {
+                table.appendChild(getTableRow(teacher, groupedByTeacher[teacher], date));
+            }
+            results_obj.appendChild(table);
+            results_obj.appendChild(document.createElement('br'));
+        }
     }
 }
 
+// Строка таблицы
 function getTableRow(head, slots, date) {
     var final_row = document.createElement('tr');
     var nd = document.createElement('td');
-    nd.innerHTML = head; 
+    nd.innerHTML = head;
     final_row.appendChild(nd);
 
     ALL_SLOTS.forEach(function(slot) {
@@ -242,14 +318,13 @@ function getTableRow(head, slots, date) {
         if (free_slots && free_slots[date] && Array.isArray(free_slots[date]) && free_slots[date].includes(slot)) {
             d.classList.add('free');
         }
-        slots.forEach(function(s) {
-            if (s && s.slot === slot) d.textContent = s.disciplines || '';
-        });
+        slots.forEach(function(s) { if (s && s.slot === slot) d.textContent = s.disciplines || ''; });
         final_row.appendChild(d);
     });
     return final_row;
 }
 
+// Шаблон таблицы
 function getTableTemplate(name) {
     var res = document.createElement('table');
     res.style.tableLayout = 'fixed';
@@ -257,25 +332,16 @@ function getTableTemplate(name) {
     var tr_1 = document.createElement('tr');
     var fh = document.createElement('th');
     fh.colSpan = 8;
-    fh.innerHTML = name; 
+    fh.innerHTML = name;
     tr_0.appendChild(fh);
     res.appendChild(tr_0);
     tr_1.appendChild(document.createElement('th'));
-    ALL_SLOTS.forEach(function(sl) {
-        var sh = document.createElement('th');
-        sh.textContent = sl;
-        tr_1.appendChild(sh);
-    });
+    ALL_SLOTS.forEach(function(sl) { var sh = document.createElement('th'); sh.textContent = sl; tr_1.appendChild(sh); });
     res.appendChild(tr_1);
     return res;
 }
 
-window.addEventListener('scroll', function() {
-    if (autocomplete_list && teacher_input) {
-        autocomplete_list.style.top = teacher_input.getBoundingClientRect().bottom + 'px';
-    }
-});
-
+// Инициализация
 document.addEventListener('DOMContentLoaded', async function() {
     if (!teacher_input || !autocomplete_list) return;
     
@@ -292,8 +358,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             loadTeacherBindings()
         ]);
         
-        autocomplete_list.style.top = teacher_input.getBoundingClientRect().bottom + 'px';
-        autocomplete_list.style.width = teacher_input.offsetWidth.toString() + 'px';
         teacher_input.addEventListener('input', onTeacherInput);
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);

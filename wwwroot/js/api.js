@@ -108,7 +108,6 @@ let teacherBindingsCache = null;
 let bindingsLoadedAt = null;
 
 async function getTeacherBindings() {
-    // Возвращаем кэш, если он ещё актуален (не старше 10 минут)
     if (teacherBindingsCache && bindingsLoadedAt && 
         (Date.now() - bindingsLoadedAt) < 10 * 60 * 1000) {
         return teacherBindingsCache;
@@ -126,14 +125,17 @@ async function getTeacherBindings() {
                 const resp = await apiGet('/Database/departments/' + dept.Id + '/teachers');
                 if (resp.success && Array.isArray(resp.data)) {
                     resp.data.forEach(function(t) {
-                        bindings[t.uid] = {
+                        const uid = t.uid;
+                        if (!bindings[uid]) {
+                            bindings[uid] = []; 
+                        }
+                        bindings[uid].push({
                             departmentId: t.departmentId,
                             departmentName: dept.Name
-                        };
+                        });
                     });
                 }
             } catch (e) {
-                // Игнорируем ошибки загрузки привязок для одной кафедры
                 console.warn('Не удалось загрузить привязки для кафедры ' + dept.Name);
             }
         }

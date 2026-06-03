@@ -186,6 +186,24 @@ public class DatabaseController : ControllerBase
         return BadRequest(new { error = "Ошибка привязки (см. лог сервера)" });
     }
 
+    [HttpDelete("teachers/{uid}/unbind")]
+    [Authorize("operator")]
+    public IActionResult UnbindTeacher(string uid, [FromQuery] int departmentId)
+    {
+        if (string.IsNullOrWhiteSpace(uid))
+            return BadRequest(new { error = "UID обязателен" });
+
+        if (departmentId <= 0)
+            return BadRequest(new { error = "ID кафедры обязателен" });
+
+        var success = _dbm.UnbindTeacher(uid, departmentId);
+
+        if (success)
+            return Ok(new { success = true, message = "Привязка удалена" });
+
+        return NotFound(new { error = "Привязка не найдена" });
+    }
+
     [HttpGet("departments/{departmentId}/teachers")]
     [AllowAnonymous]
     public IActionResult GetTeachersByDepartment(int departmentId)

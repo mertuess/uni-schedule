@@ -112,7 +112,6 @@ document.getElementById('closeDeptModal').onclick = closeDeptModal;
 // ПОИСК ПРЕПОДАВАТЕЛЕЙ (с дебаунсом 300мс)
 // ============================================================================
 async function searchTeachers() {
-    // ← Дебаунс: ждём 300мс после последнего нажатия
     if (searchTimeout) clearTimeout(searchTimeout);
     
     searchTimeout = setTimeout(async function() {
@@ -138,13 +137,20 @@ async function searchTeachers() {
         if (filtered.length === 0) {
             resultsDiv.innerHTML = '<div style="padding:10px;color:#666">Не найдено</div>';
         } else {
-            // Загружаем привязки для отображения статуса
+            // ← ИСПРАВЛЕНО: bindings теперь хранит МАССИВ кафедр для каждого UID
             const bindings = {};
+            
             for (const dept of allDepartments) {
                 try {
                     const resp = await apiGet('/Database/departments/' + dept.Id + '/teachers');
                     if (resp.success && Array.isArray(resp.data)) {
-                        resp.data.forEach(t => bindings[t.uid] = dept.Name);
+                        resp.data.forEach(function(t) {
+                            const uid = t.uid;
+                            if (!bindings[uid]) {
+                                bindings[uid] = []; 
+                            }
+                            bindings[uid].push(dept.Name); 
+                        });
                     }
                 } catch (e) {}
             }
@@ -152,28 +158,30 @@ async function searchTeachers() {
             filtered.slice(0, 30).forEach(function(t) {
                 const uid = t.uid || t.UID;
                 const name = t.name || t.teacher;
-                const isBound = bindings[uid];
+                const deptList = bindings[uid];
+                
+                 const deptText = deptList && deptList.length > 0 
+                    ? `<small style="color:#0066cc">[кафедра: ${deptList.join(', ')}]</small>` 
+                    : '';
                 
                 const item = document.createElement('div');
                 item.className = 'teacher-item';
                 item.style.padding = '10px';
                 item.style.cursor = 'pointer';
                 item.style.borderBottom = '1px solid #eee';
-                item.style.background = isBound ? '#f8f9fa' : 'white';
+                item.style.background = deptList && deptList.length > 0 ? '#f8f9fa' : 'white';
                 
-                item.innerHTML = `<strong>${name}</strong>` + 
-                    (isBound ? ` <small style="color:#0066cc">[кафедра: ${isBound}]</small>` : '') +
-                    `<br><small style="color:#666">${t.faculty || ''}</small>`;
+                item.innerHTML = `<strong>${name}</strong> ${deptText}<br><small style="color:#666">${t.faculty || ''}</small>`;
                 
-                item.onclick = () => selectTeacher({ uid, name, faculty: t.faculty, rebind: !!isBound });
+                item.onclick = () => selectTeacher({ uid, name, faculty: t.faculty, rebind: !!(deptList && deptList.length > 0) });
                 item.onmouseenter = () => item.style.background = '#f0f0f0';
-                item.onmouseleave = () => item.style.background = isBound ? '#f8f9fa' : 'white';
+                item.onmouseleave = () => item.style.background = (deptList && deptList.length > 0) ? '#f8f9fa' : 'white';
                 
                 resultsDiv.appendChild(item);
             });
         }
         resultsDiv.style.display = 'block';
-    }, 300);  // ← Задержка 300мс
+    }, 300);
 }
 
 // ============================================================================
@@ -197,7 +205,10 @@ function selectTeacher(t) {
     
     document.getElementById('department-select-block').style.display = 'block';
     document.getElementById('btn-bind').disabled = false;
+    document.getElementById('btn-bind').textContent = 'Привязать к кафедре';
     
+    loadTeacherBindingsDisplay(t.uid);
+
     const msg = document.getElementById('bind-msg');
     if (t.rebind) {
         msg.innerHTML = '<span style="color:#0066cc">Режим изменения привязки. Выберите новую кафедру и нажмите "Привязать".</span>';
@@ -212,6 +223,43 @@ function clearSelection() {
     document.getElementById('department-select-block').style.display = 'none';
     document.getElementById('btn-bind').disabled = true;
     document.getElementById('bind-msg').innerHTML = '';
+}
+
+async function loadTeacherBindingsDisplay(uid) {
+    const bindingsContainer = document.getElementById('current-bindings-list');
+    if (!bindingsContainer) return; 
+  
+    
+    const allDepts = allDepartments; 
+    let html = '<div style="margin-top:10px; font-size:13px; color:#666;">Уже привязан к:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:5px;">';
+    
+    let hasBindings = false;
+
+    for (const dept of allDepts) {
+        try {
+            const resp = await apiGet('/Database/departments/' + dept.Id + '/teachers');
+            if (resp.success && Array.isArray(resp.data)) {
+                const isBound = resp.data.some(t => t.uid === uid);
+                if (isBound) {
+                    hasBindings = true;
+                    html += `<span class="binding-tag" style="background:#e3f2fd; color:#0066cc; padding:2px 8px; border-radius:12px; font-size:12px; display:inline-flex; align-items:center; gap:4px;">
+                        ${dept.Name} 
+                        <span style="cursor:pointer; color:#c81414; font-weight:bold;" onclick="unbindTeacher('${uid}', ${dept.Id})">×</span>
+                    </span>`;
+                }
+            }
+        } catch(e) {}
+    }
+    
+    html += '</div>';
+    
+    let container = document.getElementById('current-bindings-list');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'current-bindings-list';
+        document.getElementById('department-select-block').after(container);
+    }
+    container.innerHTML = hasBindings ? html : '<div style="margin-top:10px; font-size:13px; color:#999;">Нет активных привязок</div>';
 }
 
 // ============================================================================
@@ -247,6 +295,36 @@ async function bindTeacher() {
         msg.innerHTML = '<span style="color:#dc3545">Ошибка: ' + e.message + '</span>'; 
     }
 }
+
+async function unbindTeacher(uid, deptId) {
+    const dept = allDepartments.find(d => d.Id === deptId);
+    const deptName = dept ? dept.Name : 'этой кафедре';
+    
+    if (!confirm(`Убрать привязку к кафедре "${deptName}"?`)) return;
+    
+    try {
+        const response = await fetch(`/api/Database/teachers/${encodeURIComponent(uid)}/unbind?departmentId=${deptId}`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            if (selectedTeacher) {
+                await loadTeacherBindingsDisplay(selectedTeacher.uid);
+            }
+            await loadAllData();
+        } else {
+            alert('Не удалось удалить привязку: ' + (result.error || 'Неизвестная ошибка'));
+        }
+    } catch (e) {
+        console.error('Ошибка удаления привязки:', e);
+        alert('Ошибка: ' + e.message);
+    }
+}
+
+
 
 // ============================================================================
 // ИНИЦИАЛИЗАЦИЯ

@@ -33,7 +33,6 @@ public class DataBaseManager
         }
 
         _db.CreateTable<TeacherBinding>();
-        _dbg.Log("Таблица TeacherBindings проверена/создана");
 
         _dbg.Log(string.Format(_loc.Text["db_connected"], _dbPath));
         _dbg.Log(string.Format(_loc.Text["db_stat"], GetAllUsers().Count, GetAllDepartments().Count));
@@ -277,13 +276,39 @@ public class DataBaseManager
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        [Unique]
         public string UniversityUid { get; set; } = string.Empty;
 
         public string Name { get; set; } = string.Empty;
 
         [Indexed]
         public int? DepartmentId { get; set; }
+    }
+
+    /// <summary>
+    /// Удалить привязку преподавателя к конкретной кафедре
+    /// </summary>
+    public bool UnbindTeacher(string universityUid, int departmentId)
+    {
+        try
+        {
+            var binding = _db.Table<TeacherBinding>()
+                .FirstOrDefault(x => x.UniversityUid == universityUid && x.DepartmentId == departmentId);
+
+            if (binding != null)
+            {
+                _db.Delete(binding);
+                _dbg.Log($"Удалена привязка: {binding.Name} от кафедры {departmentId}");
+                return true;
+            }
+
+            _dbg.Warning($"Привязка не найдена: {universityUid} к кафедре {departmentId}");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _dbg.Error($"Ошибка удаления привязки {universityUid}: {ex.Message}");
+            return false;
+        }
     }
 
     /// <summary>
@@ -319,24 +344,39 @@ public class DataBaseManager
     {
         try
         {
-            var binding = _db.Table<TeacherBinding>().FirstOrDefault(x => x.UniversityUid == universityUid);
-
-            if (binding == null)
+            // Если departmentId = null — удаляем ВСЕ привязки этого преподавателя
+            if (departmentId == null)
             {
-                binding = new TeacherBinding
+                var allBindings = _db.Table<TeacherBinding>()
+                    .Where(x => x.UniversityUid == universityUid).ToList();
+
+                foreach (var item in allBindings)  // ← Переименовали binding → item
+                {
+                    _db.Delete(item);
+                    _dbg.Log($"Удалена привязка: {item.Name} от кафедры {item.DepartmentId}");
+                }
+                return true;
+            }
+
+            // Иначе ищем конкретную привязку
+            var existingBinding = _db.Table<TeacherBinding>()  // ← Переименовали binding → existingBinding
+                .FirstOrDefault(x => x.UniversityUid == universityUid && x.DepartmentId == departmentId);
+
+            if (existingBinding == null)
+            {
+                existingBinding = new TeacherBinding
                 {
                     UniversityUid = universityUid,
                     Name = name,
                     DepartmentId = departmentId
                 };
-                _db.Insert(binding);
+                _db.Insert(existingBinding);
                 _dbg.Log($"Создана привязка: {name} на кафедре {departmentId}");
             }
             else
             {
-                binding.Name = name;
-                binding.DepartmentId = departmentId;
-                _db.Update(binding);
+                existingBinding.Name = name;
+                _db.Update(existingBinding);
                 _dbg.Log($"Обновлена привязка: {name} на кафедре {departmentId}");
             }
             return true;

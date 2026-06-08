@@ -95,7 +95,7 @@ h2 { font-size: 32px; margin: 20px 0; border-bottom: 2px solid var(--blue); padd
 .filter-item { flex: 1; min-width: 180px; }
 .filter-item label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 13px; color: var(--blue-dark); }
 
-/* УНИВЕРСАЛЬНЫЕ СТИЛИ ДЛЯ ВСЕХ ПОЛЕЙ (исправляет пункты 2, 3, 4) */
+/* Поля ввода и селекты */
 input[type="text"],
 input[type="password"],
 input[type="email"],
@@ -131,36 +131,40 @@ select {
 }
 
 /* ───────────────────────────────────────────────────────────────────── */
-/* Поиск преподавателей (исправляет пункт 1) */
+/* Поиск преподавателей (автодополнение) */
 /* ───────────────────────────────────────────────────────────────────── */
-.teacher-search-container,
-.form-group { position: relative; } /* Родитель для абсолютного позиционирования */
+.form-group { position: relative; } /* ← КРИТИЧНО: для абсолютного позиционирования списка */
 
 .autocomplete-list {
     position: absolute;
-    top: calc(100% + 6px); /* Отступ снизу */
+    top: calc(100% + 4px); /* ← Сразу под полем ввода + отступ 4px */
     left: 0;
     right: 0;
-    width: 100%;
     background: var(--white);
-    border: 1px solid #ddd;
+    border: 1px solid #0b5bd3;
     border-radius: 8px;
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
     display: none;
     z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    box-shadow: 0 8px 24px rgba(11,91,211,.15);
 }
 .autocomplete-list.show { display: block; }
+
 .autocomplete-item {
-    padding: 8px 12px;
+    padding: 10px 15px;
     cursor: pointer;
     border-bottom: 1px solid #f0f0f0;
     display: flex;
     align-items: center;
     gap: 6px;
+    transition: background .2s, padding-left .2s;
 }
-.autocomplete-item:hover { background: #e3f2fd; }
+.autocomplete-item:hover {
+    background: #e3f2fd;
+    padding-left: 20px;
+}
+.autocomplete-item:last-child { border-bottom: none; border-radius: 0 0 8px 8px; }
 
 /* Выбранные преподаватели */
 .selected-teachers { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
@@ -221,3 +225,168 @@ td.free { background: #62a0ea; }
 .binding-badge:hover, .binding-badge-small:hover { background: #bbdefb; cursor: default; }
 
 .hide { display: none; }
+
+/* ───────────────────────────────────────────────────────────────────── */
+/* МОБИЛЬНАЯ ВЕРСТКА */
+/* ───────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    /* Шапка и навигация */
+    header .container { 
+        flex-direction: column; 
+        gap: 15px; 
+        padding: 10px;
+    }
+    header img { 
+        width: 150px; 
+    }
+    nav ul { 
+        flex-wrap: wrap; 
+        justify-content: center; 
+        gap: 8px;
+    }
+    nav a { 
+        padding: 6px 12px; 
+        font-size: 13px;
+    }
+
+    /* Контент */
+    .container { padding: 0 10px; }
+    .main-content { padding: 15px; margin: 15px 0; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+
+    /* Таблицы - горизонтальный скролл */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 10px -15px;
+        padding: 0 15px;
+    }
+    table { 
+        min-width: 600px;
+        font-size: 13px;
+    }
+    th, td { padding: 8px; }
+
+    /* Формы */
+    .filter-row-dynamic { flex-direction: column; gap: 10px; }
+    .filter-item { min-width: 100%; }
+    .search-type { flex-direction: column; }
+    .search-btn, .btn { 
+        width: 100%; 
+        margin-bottom: 10px;
+    }
+    
+    /* Убираем зум при вводе на iOS */
+    input, select, textarea { font-size: 16px !important; }
+    
+    /* Автодополнение */
+    .autocomplete-list { width: 100% !important; max-height: 200px; }
+    
+    /* Бейджи */
+    .binding-badge { 
+        font-size: 10px; 
+        padding: 2px 4px; 
+        display: block;
+        margin: 2px 0;
+    }
+    
+    /* Кнопки действий */
+    .action-buttons { flex-direction: column; gap: 5px; }
+    .btn-small { padding: 8px 12px; font-size: 13px; }
+
+    /* КАРТОЧНЫЙ ВИД РАСПИСАНИЯ */
+    .schedule-card {
+        display: block;
+        background: var(--white);
+        border-radius: 12px;
+        margin: 15px 0;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+    
+    .schedule-card-header {
+        background: var(--blue);
+        color: var(--white);
+        padding: 15px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    .schedule-card-teacher {
+        border-bottom: 1px solid #eee;
+        padding: 15px;
+    }
+    
+    .schedule-card-teacher:last-child {
+        border-bottom: none;
+    }
+    
+    .schedule-card-teacher-name {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 12px;
+        color: var(--text);
+    }
+    
+    .schedule-card-slots {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .schedule-card-slot {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px;
+        background: var(--bg);
+        border-radius: 8px;
+        border-left: 4px solid var(--blue);
+    }
+    
+    .schedule-card-slot.free {
+        background: #e3f2fd;
+        border-left-color: #62a0ea;
+    }
+    
+    .schedule-card-slot-time {
+        font-weight: 600;
+        font-size: 12px;
+        color: var(--blue-dark);
+        min-width: 90px;
+        flex-shrink: 0;
+    }
+    
+    .schedule-card-slot-subject {
+        font-size: 13px;
+        line-height: 1.4;
+        color: var(--text);
+    }
+    
+    /* Скрываем обычные таблицы на мобильных */
+   /* #results table { display: none !important;}
+}
+
+/* Для десктопа скрываем карточки */
+@media (min-width: 769px) {
+    .schedule-card {
+        display: none !important;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+    h1 { font-size: 24px; }
+    h2 { font-size: 18px; }
+    nav a { font-size: 12px; padding: 5px 8px; }
+    .main-content { padding: 10px; }
+    .btn { padding: 8px 16px; font-size: 13px; }
+    
+    .schedule-card-header { font-size: 14px; padding: 12px; }
+    .schedule-card-teacher { padding: 12px; }
+    .schedule-card-teacher-name { font-size: 13px; }
+    .schedule-card-slot-time { font-size: 11px; min-width: 80px; }
+    .schedule-card-slot-subject { font-size: 12px; }
+}

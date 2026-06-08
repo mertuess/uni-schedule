@@ -11,6 +11,15 @@ let buildings = [];
 let rooms = [];
 let selected_buildings = [];
 
+// Форматирование даты с днём недели
+function formatDateWithWeekday(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' });
+    const weekdayCapitalized = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+    return `${dateStr} (${weekdayCapitalized})`;
+}
+
 function extractData(response, primaryField, secondaryField) {
     if (!response?.success || !response.data) return [];
     let data = response.data;
@@ -137,6 +146,8 @@ async function showRoomWorkload() {
         return;
     }
 
+    results.innerHTML = '<div style="text-align:center; padding:40px; color:#666;"><div style="font-size:48px; margin-bottom:10px;"></div><div>Загрузка данных...</div></div>';
+
     results.innerHTML = '<div class="loading">Загрузка данных...</div>';
     try {
         var response = await getRoomWorkload(roomId, start, end);
@@ -156,12 +167,12 @@ async function showRoomWorkload() {
 
         for (var i = 0; i < dates.length; i++) {
             var date = dates[i];
-            var table = getTableTemplate(getField(wl, 'room', 'Room', 'Аудитория'));
+            var table = getTableTemplate(`${getField(wl, 'room', 'Room', 'Аудитория')} — ${formatDateWithWeekday(date)}`);
             var row = getTableRow(getField(wl, 'room', 'Room', ''), wl.workload[date]);
             table.appendChild(row);
             results.appendChild(table);
             results.appendChild(document.createElement('br'));
-        }
+}
         var roomName = rooms_obj && rooms_obj.options[rooms_obj.selectedIndex] ? rooms_obj.options[rooms_obj.selectedIndex].textContent : 'Аудитория';
         activateRoomExport(wl, roomName);
     } catch (error) {
@@ -180,6 +191,8 @@ async function showBuildingWorkload() {
         results.innerHTML = '<div class="error">Пожалуйста, выберите корпус и даты</div>';
         return;
     }
+
+    results.innerHTML = '<div style="text-align:center; padding:40px; color:#666;"><div style="font-size:48px; margin-bottom:10px;"></div><div>Загрузка данных...</div></div>';
 
     results.innerHTML = '<div class="loading">Загрузка данных...</div>';
     try {
@@ -204,7 +217,7 @@ async function showBuildingWorkload() {
 
         for (var j = 0; j < sortedDates.length; j++) {
             var date = sortedDates[j];
-            var table = getTableTemplate('Корпус');
+            var table = getTableTemplate(`Корпус — ${formatDateWithWeekday(date)}`);
             for (var k = 0; k < wl.workload.length; k++) {
                 var room = wl.workload[k];
                 if (room.workload[date]) {

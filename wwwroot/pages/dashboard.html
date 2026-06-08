@@ -111,9 +111,11 @@
 						<div id="department-select-block" style="display: none; margin-bottom: 15px;">
 							<label>Кафедра:</label>
 							<select id="bind-dept" class="form-control" style="width: 100%;">
-								<option value="">-- Не привязан --</option>
+								<option value="">Выберите кафедру для привязки</option>
 							</select>
 						</div>
+
+						<div id="current-bindings-list" style="margin-top: 10px;"></div>
 
 						<button type="button" class="btn btn-primary" id="btn-bind" onclick="bindTeacher()" disabled="">Привязать</button>
 						<div id="bind-msg" style="margin-top: 10px;"></div>

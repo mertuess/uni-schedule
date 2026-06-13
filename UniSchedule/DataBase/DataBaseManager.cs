@@ -437,7 +437,10 @@ public class DataBaseManager
             }
         }
 
-        return result.OrderBy(x => x.Date).ThenBy(x => x.Slot).ToList();
+        return result
+         .OrderBy(x => DateTime.Parse(x.Date))
+         .ThenBy(x => x.Slot)
+         .ToList();
     }
 
     /// <summary>

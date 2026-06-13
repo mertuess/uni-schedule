@@ -18,45 +18,34 @@ public class AuthenticationMiddleware
     public async Task InvokeAsync(HttpContext context, DataBaseManager db)
     {
         var path = context.Request.Path.Value?.ToLowerInvariant() ?? "";
-        var method = context.Request.Method.ToUpperInvariant();
 
-        // ПУБЛИЧНЫЕ ПУТИ (доступны всем без авторизации) 
-        var isPublicPath = false;
-
-        if (method == "GET")
-        {
-            // Статика и главные страницы
-            if (path == "/" || path == "" || path == "/index.html" ||
-                path == "/login.html" || path == "/pages/login.html" ||
-                path.StartsWith("/js/") || path.StartsWith("/css/") ||
-                path.StartsWith("/images/") || path.StartsWith("/swagger") ||
-                path.StartsWith("/openapi"))
-            {
-                isPublicPath = true;
-            }
-
-            // Публичные API эндпоинты
-            if (path.StartsWith("/api/database/tryauth") ||
-                path.StartsWith("/api/buildings") ||
-                path.StartsWith("/api/rooms") ||
-                path.StartsWith("/api/teachers") ||
-                path.StartsWith("/api/schedule") ||
-                path.StartsWith("/api/calendar") ||
-                path == "/api/database/departments" ||
-                (path.StartsWith("/api/database/departments/") &&
-                 (path.EndsWith("/teachers") || path.EndsWith("/schedule"))))
-            {
-                isPublicPath = true;
-            }
-        }
-
-        if (isPublicPath)
+        if (path.IndexOf('.') > 0)  
         {
             await _next(context);
             return;
         }
 
-        // === ВСЕ ОСТАЛЬНЫЕ ЗАПРОСЫ ТРЕБУЮТ АВТОРИЗАЦИИ ===
+        if (path == "/" || path == "" || path == "/index.html" ||
+            path == "/pages/login.html" || path == "/login.html")
+        {
+            await _next(context);
+            return;
+        }
+
+        if (path.StartsWith("/api/database/tryauth") ||
+            path.StartsWith("/api/buildings") ||
+            path.StartsWith("/api/rooms") ||
+            path.StartsWith("/api/teachers") ||
+            path.StartsWith("/api/schedule") ||
+            path.StartsWith("/api/calendar") ||
+            path == "/api/database/departments" ||
+            (path.StartsWith("/api/database/departments/") &&
+             (path.EndsWith("/teachers") || path.EndsWith("/schedule"))))
+        {
+            await _next(context);
+            return;
+        }
+
         var hasEmail = context.Request.Headers.TryGetValue("Uni-Email", out var emailHeader);
         var hasPassword = context.Request.Headers.TryGetValue("Uni-Password", out var passwordHeader);
 

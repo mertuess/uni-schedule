@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 
-	<head>
-		<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Преподаватель-кафедра - МАУ</title>
-				<link rel="stylesheet" href="../css/style.css">
-					<link rel="shortcut icon" href="../resources/images/favicon.ico" type="image/x-icon">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Преподаватель-кафедра - МАУ</title>
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../resources/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
 </head>
 
 	<body>
@@ -30,80 +30,80 @@
 							<a href="dashboard.html" id="d-btn">Панель оператора</a>
 						</li>
 						<li>
-							<a href="teachers-deportament.html" class="active" id="t-d-btn">Преподаватель-кафедра</a>
+							<a href="/pages/teachers-deportament.html" class="active" id="t-d-btn">Преподаватель-кафедра</a>
 						</li>
 						<li>
-							<a href="login.html" id="auth-link">Вход</a>
+							<a href="/pages/login.html">Вход</a>
 						</li>
 					</ul>
 				</nav>
 			</div>
 		</header>
 
-		<main>
-			<div class="container">
-				<div class="main-content">
-					<h1>Назначение преподавателей на кафедры</h1>
+<main>
+    <div class="container">
+        <div class="main-content">
+            <h1>Назначение преподавателей на кафедры</h1>
 
-					<div class="info-block">
-						<p>Назначьте преподавателя на кафедру или просмотрите существующие связи</p>
-						<p id="auth-status" style="color: var(--blue); margin-top: 10px;"></p>
-					</div>
+            <div class="info-block">
+                <p>Назначьте преподавателя на кафедру или просмотрите существующие связи</p>
+                <p id="auth-status" style="color: var(--blue); margin-top: 10px;"></p>
+            </div>
 
-					<div id="unauthorized-message" style="display: none; text-align: center; padding: 40px;">
-						<p>Для доступа к этой странице необходимо авторизоваться</p>
-						<button class="btn" onclick="window.location.href='login.html'">Войти</button>
-					</div>
+            <div id="unauthorized-message" style="display: none; text-align: center; padding: 40px;">
+                <p>Для доступа к этой странице необходимо авторизоваться</p>
+                <button class="btn" onclick="window.location.href='login.html'">Войти</button>
+            </div>
 
-					<div id="authorized-content" style="display: none;">
-						<div class="search-form">
-							<div class="filter-row-dynamic">
-								<div class="filter-item">
-									<label>Преподаватель</label>
-									<select id="teacher-select">
-										<option value="">Загрузка...</option>
-									</select>
-								</div>
-								<div class="filter-item">
-									<label>Кафедра</label>
-									<select id="department-select">
-										<option value="">Загрузка...</option>
-									</select>
-								</div>
-								<div class="filter-item" style="flex: 0.5;">
-									<label>&nbsp;</label>
-									<button class="btn" id="assign-btn" style="width: 100%;">Назначить</button>
-								</div>
-							</div>
-						</div>
+            <div id="authorized-content" style="display: none;">
+                <div class="search-form">
+                    <div class="filter-row-dynamic">
+                        <div class="filter-item">
+                            <label>Преподаватель</label>
+                            <select id="teacher-select">
+                                <option value="">Загрузка...</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>Кафедра</label>
+                            <select id="department-select">
+                                <option value="">Загрузка...</option>
+                            </select>
+                        </div>
+                        <div class="filter-item" style="flex: 0.5;">
+                            <label>&nbsp;</label>
+                            <button class="btn" id="assign-btn" style="width: 100%;">Назначить</button>
+                        </div>
+                    </div>
+                </div>
 
-						<h2>Список назначений</h2>
-						<div class="table-container">
-							<table>
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Преподаватель</th>
-										<th>Email</th>
-										<th>Кафедра</th>
-										<th>Действия</th>
-									</tr>
-								</thead>
-								<tbody id="tdr-list">
-									<tr>
-										<td colspan="5">Загрузка...</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
+                <h2>Список назначений</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Преподаватель</th>
+                            <th>Email</th>
+                            <th>Кафедра</th>
+                            <th>Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tdr-list">
+                        <tr>
+                            <td colspan="5">Загрузка...</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-						<div id="message" class="message-box" style="display: none;"></div>
-					</div>
-				</div>
-			</div>
-		</main>
+                <div class="message-box" id="message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</main>
 
-		<script src="../js/api.js"></script>
-	</body>
+<script src="../js/api.js"></script>
+</body>
 
 </html>

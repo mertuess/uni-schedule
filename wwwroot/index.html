@@ -21,46 +21,83 @@
                     <a class="active" href="index.html">Главная</a>
                 </li>
                 <li>
-                    <a href="pages/teachers-schedule.html" id="t-btn">Преподаватели</a>
+                    <a href="/pages/teachers-schedule.html" id="t-btn">Преподаватели</a>
                 </li>
                 <li>
-                    <a href="pages/department-schedule.html" id="dep-btn">Кафедры</a>
+                    <a href="/pages/department-schedule.html" id="dep-btn">Кафедры</a>
                 </li>
                 <li>
-                    <a href="pages/rooms-workload.html" id="r-btn">Аудитории</a>
+                    <a href="/pages/rooms-workload.html" id="r-btn">Аудитории</a>
                 </li>
                 <li>
-                    <a href="pages/dashboard.html" id="d-btn">Панель оператора</a>
+                    <a href="/pages/dashboard.html" id="d-btn">Панель оператора</a>
                 </li>
                 <li>
-                    <a href="pages/login.html" id="auth-link">Вход</a>
+                    <a href="/pages/login.html" id="auth-link">Вход</a>
                 </li>
             </ul>
         </nav>
     </div>
 </header>
 
-<main>
-    <div class="container">
-        <div class="main-content">
-            <h1>UniSchedule</h1>
+	<main>
+		<div class="container">
+			<div class="main-content">
+				<h1>UniSchedule</h1>
+				<p style="text-align: center; color: var(--blue-dark); margin: -15px 0 25px; font-size: 18px; font-weight: 300;">
+					расписание с новой стороны
+				</p>
 
-            <div class="info-block">
-                <p>
-                    <strong id="current-date"></strong>
-                </p>
-                <p>
-                    Микросервис, который из БД получает данные из основной системы расписания вуза и предоставляет
-                    представление
-                    расписания по преподавателям, кафедрам, институтам и корпусам
-                </p>
-            </div>
-        </div>
-    </div>
-</main>
+				<div class="info-block">
+					<p>
+						<strong id="current-date"></strong>
+					</p>
+					<p>
+						Микросервис, который из БД получает данные из основной системы расписания вуза и предоставляет
+						представление расписания по преподавателям, кафедрам, институтам и корпусам
+					</p>
+				</div>
 
-<script src="../js/api.js"></script>
-<script src="../js/check_login.js"></script>
+				<div class="cards-grid">
+					<div class="feature-card">
+						<div class="card-image">
+							<img src="resources/images/teachers.png" alt="Преподаватели">
+                    </div>
+						<h3 class="card-title">Преподаватели</h3>
+						<p class="card-desc">
+							Найдите свободные окна преподавателей и просмотрите их расписание. Удобный поиск по ФИО.
+						</p>
+						<a class="btn" href="pages/teachers-schedule.html">Открыть</a>
+					</div>
+
+					<div class="feature-card">
+						<div class="card-image">
+							<img src="resources/images/university.png" alt="Кафедры">
+                    </div>
+						<h3 class="card-title">Кафедры</h3>
+						<p class="card-desc">
+							Просматривайте расписание занятий кафедры. Отслеживайте нагрузку с удобным интерфейсом.
+						</p>
+						<a class="btn" href="pages/department-schedule.html">Открыть</a>
+					</div>
+
+					<div class="feature-card">
+						<div class="card-image">
+							<img src="resources/images/audience.jpg" alt="Аудитории">
+                    </div>
+						<h3 class="card-title">Аудитории</h3>
+						<p class="card-desc">
+							Проверьте занятость аудиторий и корпусов. Найдите свободное помещение для мероприятий.
+						</p>
+						<a class="btn" href="pages/rooms-workload.html">Открыть</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script src="js/api.js"></script>
+	<script src="js/check_login.js"></script>
 </body>
-
 </html>
+

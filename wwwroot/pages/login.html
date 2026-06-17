@@ -21,16 +21,16 @@
                     <a href="../index.html">Главная</a>
                 </li>
                 <li>
-                    <a href="pages/teachers-schedule.html" id="t-btn">Преподаватели</a>
+                    <a href="teachers-schedule.html" id="t-btn">Преподаватели</a>
                 </li>
                 <li>
                     <a href="department-schedule.html" id="dep-btn">Кафедры</a>
                 </li>
                 <li>
-                    <a href="pages/rooms-workload.html" id="r-btn">Аудитории</a>
+                    <a href="rooms-workload.html" id="r-btn">Аудитории</a>
                 </li>
                 <li>
-                    <a href="pages/dashboard.html" id="d-btn">Панель оператора</a>
+                    <a href="dashboard.html" id="d-btn">Панель оператора</a>
                 </li>
                 <li>
                     <a class="active" href="login.html">Вход</a>
@@ -45,26 +45,26 @@
         <div class="login-container">
             <h2>Вход в систему</h2>
             <div id="login-form">
-				<form onsubmit="event.preventDefault(); login();">
-					<div class="form-group">
-						<label for="email">Email</label>
-						<input type="email" id="email" name="email" class="form-control"
-							   placeholder="operator@mauniver.ru" required=""
-							   autocomplete="username">
-						</div>
-					<div class="form-group" style="margin-top: 15px;">
-						<label for="password">Пароль</label>
-						<input type="password" id="password" name="password" class="form-control"
-							   placeholder="Введите пароль" required=""
-							   autocomplete="current-password">
-						</div>
-					<button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
-						Войти
-					</button>
-				</form>
-				<div id="error-message" class="alert alert-danger" style="display:none; margin-top: 15px;"></div>
+                <form onsubmit="event.preventDefault(); login();">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input autocomplete="username" class="form-control" id="email" name="email"
+                               placeholder="operator@mauniver.ru" required=""
+                               type="email">
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label for="password">Пароль</label>
+                        <input autocomplete="current-password" class="form-control" id="password" name="password"
+                               placeholder="Введите пароль" required=""
+                               type="password">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" type="submit">
+                        Войти
+                    </button>
+                </form>
+                <div class="alert alert-danger" id="error-message" style="display:none; margin-top: 15px;"></div>
             </div>
-    </div>
+        </div>
 </main>
 
 <script src="../js/api.js"></script>

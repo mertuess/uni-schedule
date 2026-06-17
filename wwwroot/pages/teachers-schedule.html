@@ -21,7 +21,7 @@
                     <a href="../index.html">Главная</a>
                 </li>
                 <li>
-                    <a class="active" href="teachers-schedule.html">Преподаватели</a>
+                    <a class="active" href="/pages/teachers-schedule.html">Преподаватели</a>
                 </li>
                 <li>
                     <a href="department-schedule.html" id="dep-btn">Кафедры</a>
@@ -32,9 +32,9 @@
                 <li>
                     <a href="dashboard.html" id="d-btn">Панель оператора</a>
                 </li>
-                <li>
-                    <a href="login.html" id="auth-link">Вход</a>
-                </li>
+				<li>
+					<a href="/pages/login.html">Вход</a>
+				</li>
             </ul>
         </nav>
     </div>
@@ -43,7 +43,7 @@
 <main>
     <div class="container">
         <div class="main-content">
-            <h1>Свободные окна преподавателей</h1>
+            <h1>Расписание преподавателей</h1>
 
             <div class="info-block">
                 <p>Выберите преподавателей из списка</p>
@@ -66,7 +66,9 @@
                     <input id="end-date" type="date">
                 </div>
                 <button class="btn" id="search-slots" onclick="teachersSchedulesSearch()">Найти</button>
-                <button class="btn" id="export-ical" onclick="exportToIcal()" disabled style="display:none; margin-left:10px; background:#28a745;"> Скачать .ics</button>
+                <button class="btn" disabled id="export-ical" onclick="exportToIcal()"
+                        style="display:none; margin-left:10px; background:#28a745;"> Скачать .ics
+                </button>
             </div>
 
             <div id="results">
@@ -80,6 +82,29 @@
 <script src="../js/check_login.js"></script>
 <script src="../js/teachers.js"></script>
 <script src="../js/ical-export.js"></script>
+
+<script>
+    function formatDate(firstday) {
+        var curr = new Date;
+        if (firstday){
+            var date = new Date(curr.setDate(curr.getDate() - curr.getDay()+1));
+        }
+        else{
+            var date = new Date(curr.setDate(curr.getDate() - curr.getDay()+7));
+        }
+
+//  let date = new Date();
+        let day = String(date.getDate()).padStart(2, '0');
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let year = date.getFullYear();
+
+        return `${year}-${month}-${day}`;
+    }
+
+    document.querySelector('#start-date').value = formatDate(true);
+    document.querySelector('#end-date').value = formatDate(false);
+</script>
+
 </body>
 
 </html>

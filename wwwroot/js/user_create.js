@@ -21,7 +21,7 @@ function submit() {
     }
 
     createUser(emailValue, passwordValue, 'Оператор', 'Operator', 'operator')
-        .then(function(result) {
+        .then(function (result) {
             if (result.success) {
                 alert('Оператор успешно создан');
                 window.location.href = './dashboard.html';
@@ -33,7 +33,7 @@ function submit() {
                 }
             }
         })
-        .catch(function(error) {
+        .catch(function (error) {
             if (msgBox) {
                 msgBox.textContent = 'Ошибка сети: ' + error.message;
                 msgBox.className = 'message-box error';

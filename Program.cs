@@ -11,22 +11,19 @@ using UniSchedule;
 using UniSchedule.API;
 using UniSchedule.DataBase;
 using UniSchedule.Json;
-using UniSchedule.System;
 using UniSchedule.Services;
+using UniSchedule.System;
 
 var builder = WebApplication.CreateBuilder(args); // Создаем builder для настройки webapi
 
 // Задаем прослушивание адреса сервера
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(5000);
-});
+builder.WebHost.ConfigureKestrel(options => { options.ListenAnyIP(5000); });
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.SetIsOriginAllowed(_ => true)  // Разрешить любые источники
+        policy.SetIsOriginAllowed(_ => true) // Разрешить любые источники
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -42,13 +39,13 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<SwaggerHeaderFilter>(); // Добавляем фильтр для заголовков
 });
 
-// Регистрируем сервисы в режиме singleton, то есть один экземплр на все приложение
+// Регистрируем сервисы в режиме singleton, то есть один экземпляр на все приложение
 builder.Services.AddSingleton<Localization>(); // для текста и локализации
-builder.Services.AddSingleton<Debug>(); // для логгирования
+builder.Services.AddSingleton<Debug>(); // для логирования
 builder.Services.AddSingleton<OutAPI>(); // для работы с внешним api
 builder.Services.AddSingleton<DataBaseManager>(); // для работы с базой данных внутри нашего api
 builder.Services.AddSingleton<JsonParser>(); // для обработки json строк
-builder.Services.AddSingleton<Debug>();
+builder.Services.AddSingleton<Debug>(); // для вывода debug информации
 builder.Services.AddSingleton<CacheService>(); // для кэширования данных
 
 builder.Services.AddHostedService<InitializationService>(); // Инициализируем БД
@@ -65,11 +62,10 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.MapOpenApi(); // Оставляем OpenAPI для релизной версии
-
 app.UseHttpsRedirection(); // Используем редирект на https с http
-app.UseStaticFiles(); // Позволяем использовать js, css и прочие ресурсы верстки
-app.MapControllers(); // Подключаем контроллеры запросов
 
+app.UseStaticFiles(); // Позволяем использовать js, css и прочие ресурсы верстки
 app.UseMiddleware<AuthenticationMiddleware>(); // Добавляем проверку авторизации в каждом запросе
+app.MapControllers(); // Подключаем контроллеры запросов
 
 app.Run(); // Запускаем приложение

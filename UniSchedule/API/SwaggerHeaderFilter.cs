@@ -11,10 +11,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 public class SwaggerHeaderFilter : IOperationFilter
 {
-  /// <summary>
-  ///     Применение фильтра, добавление двух параметров в окна запросов
-  /// </summary>
-  public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    /// <summary>
+    ///     Применение фильтра, добавление двух параметров в окна запросов
+    /// </summary>
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         if (operation.Parameters == null)
             operation.Parameters = new List<OpenApiParameter>() as IList<IOpenApiParameter> ??

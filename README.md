@@ -92,13 +92,17 @@
     - *Инструкция к развертке проекта*
 
 ## Инструкция к развертке на сервере
+
 1. Скачать последний релиз-пакет
 2. Загрузить его на удаленный сервер на ядре linux правильной архитектуры
 3. Установить пакет
+
 ```
 sudo dpkg -i uni-schedule_<версия пакета>_<архитектура пакета>.deb
 ```
+
 4. Вставить токен в файлы appsettings.json по пути /opt/uni-schedule/
+
 ```
 sudo nano /opt/uni-schedule/appsettings.json
 ...
@@ -107,7 +111,9 @@ sudo nano /opt/uni-schedule/appsettings.json
   },
 ...
 ```
+
 5. Запустить сервис
+
 ```
 sudo systemctl start uni-schedule
 ```

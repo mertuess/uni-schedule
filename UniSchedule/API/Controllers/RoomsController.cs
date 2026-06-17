@@ -16,15 +16,15 @@ using UniSchedule.Services;
 namespace UniSchedule.API.Controllers;
 
 /// <summary>
-/// Аудитории
+///     Аудитории
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class RoomsController : ControllerBase
 {
+    private readonly CacheService _cache;
     private readonly JsonParser _jsonParser;
     private readonly OutAPI _o_api;
-    private readonly CacheService _cache;
 
     public RoomsController(OutAPI o_api, JsonParser jsonParser, CacheService cache)
     {
@@ -34,13 +34,13 @@ public class RoomsController : ControllerBase
     }
 
     /// <summary>
-    /// Получить аудитории корпуса (с кэшированием)
+    ///     Получить аудитории корпуса (с кэшированием)
     /// </summary>
     [HttpGet("{bui_id}/rooms")]
-    [AllowAnonymous]  
+    [AllowAnonymous]
     public async Task<IActionResult> GetRooms(int bui_id)
     {
-        string key = $"static:rooms:{bui_id}";
+        var key = $"static:rooms:{bui_id}";
 
         if (_cache.TryGet<List<Room>>(key, out var cached))
             return Ok(cached);
@@ -52,13 +52,13 @@ public class RoomsController : ControllerBase
     }
 
     /// <summary>
-    /// Получить загруженность аудитории за определенный период
+    ///     Получить загруженность аудитории за определенный период
     /// </summary>
     [HttpGet("{room_id}/workload/{start}/{end}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetRoomWorkload(int room_id, string start, string end)
     {
-        string key = $"schedule:room:{room_id}:{start}:{end}";
+        var key = $"schedule:room:{room_id}:{start}:{end}";
         if (_cache.TryGet<object>(key, out var cached))
             return Content(_jsonParser.Serialize(cached), "application/json");
 

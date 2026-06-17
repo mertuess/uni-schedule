@@ -8,7 +8,6 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using UniSchedule.DataBase;
 using UniSchedule.DataBase.Models;
 using UniSchedule.Json;
@@ -17,15 +16,15 @@ using UniSchedule.Services;
 namespace UniSchedule.API.Controllers;
 
 /// <summary>
-/// Контроллер базы данных
+///     Контроллер базы данных
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class DatabaseController : ControllerBase
 {
+    private readonly CacheService _cache;
     private readonly DataBaseManager _dbm;
     private readonly JsonParser _jsonParser;
-    private readonly CacheService _cache;
 
     public DatabaseController(JsonParser jsonParser, DataBaseManager dbm, CacheService cache)
     {
@@ -38,7 +37,8 @@ public class DatabaseController : ControllerBase
 
     [HttpGet("users/create")]
     [Authorize("operator")]
-    public async Task<IActionResult> CreateUser([FromQuery] string email, [FromQuery] string password, [FromQuery] string name, [FromQuery] string engName, [FromQuery] string role)
+    public async Task<IActionResult> CreateUser([FromQuery] string email, [FromQuery] string password,
+        [FromQuery] string name, [FromQuery] string engName, [FromQuery] string role)
     {
         var forcedRole = "operator";
         var res = await _dbm.TryCreateUserAsync(email, password, name, engName, forcedRole);
@@ -65,9 +65,12 @@ public class DatabaseController : ControllerBase
 
     [HttpGet("users/{email}/update")]
     [Authorize("operator")]
-    public async Task<IActionResult> UpdateUser(string email, [FromQuery] string? new_email, [FromQuery] string? new_password, [FromQuery] string? new_name, [FromQuery] string? new_engName, [FromQuery] string? new_role, [FromQuery] int? department)
+    public async Task<IActionResult> UpdateUser(string email, [FromQuery] string? new_email,
+        [FromQuery] string? new_password, [FromQuery] string? new_name, [FromQuery] string? new_engName,
+        [FromQuery] string? new_role, [FromQuery] int? department)
     {
-        var res = await _dbm.TryUpdateUserAsync(email, new_email, new_password, new_name, new_engName, null, department);
+        var res = await _dbm.TryUpdateUserAsync(email, new_email, new_password, new_name, new_engName, null,
+            department);
         if (res) return Ok(new { success = true, message = "User updated successfully" });
         return BadRequest(new { success = false, message = "Failed to update user" });
     }
@@ -101,9 +104,10 @@ public class DatabaseController : ControllerBase
         var res = await _dbm.TryCreateDepartmentAsync(name);
         if (res)
         {
-            _cache.Invalidate("static:departments"); 
+            _cache.Invalidate("static:departments");
             return Ok(new { success = true, message = "Department created successfully" });
         }
+
         return BadRequest(new { success = false, message = "Failed to create department" });
     }
 
@@ -114,9 +118,10 @@ public class DatabaseController : ControllerBase
         var res = await _dbm.TryUpdateDepartmentAsync(name, new_name);
         if (res)
         {
-            _cache.Invalidate("static:departments"); 
+            _cache.Invalidate("static:departments");
             return Ok(new { success = true, message = "Department updated successfully" });
         }
+
         return BadRequest(new { success = false, message = "Failed to update department" });
     }
 
@@ -127,9 +132,10 @@ public class DatabaseController : ControllerBase
         var res = await _dbm.TryRemoveDepartmentAsync(name);
         if (res)
         {
-            _cache.Invalidate("static:departments"); 
+            _cache.Invalidate("static:departments");
             return Ok(new { success = true, message = "Department removed successfully" });
         }
+
         return BadRequest(new { success = false, message = "Failed to remove department" });
     }
 
@@ -138,9 +144,7 @@ public class DatabaseController : ControllerBase
     public async Task<IActionResult> ShowAllDepartments()
     {
         if (_cache.TryGet<List<Department>>("static:departments", out var cached))
-        {
             return Content(_jsonParser.Serialize(cached), "application/json");
-        }
 
         var result = await _dbm.GetAllDepartmentsAsync();
         _cache.SetStatic("static:departments", result);
@@ -166,9 +170,9 @@ public class DatabaseController : ControllerBase
             return Ok(cached);
 
         var teachers = await _dbm.GetAllTeachersExternalAsync();
-        var formatted = teachers.Select(t => new { uid = t.UID, name = t.teacher, faculty = t.faculty }).ToList();
+        var formatted = teachers.Select(t => new { uid = t.UID, name = t.teacher, t.faculty }).ToList();
 
-        _cache.SetStatic("static:teachers:external", formatted); 
+        _cache.SetStatic("static:teachers:external", formatted);
         return Ok(formatted);
     }
 
@@ -180,9 +184,10 @@ public class DatabaseController : ControllerBase
         var success = _dbm.BindTeacher(uid, request.name ?? "", request.departmentId);
         if (success)
         {
-            _cache.Invalidate("static:teachers:external"); 
+            _cache.Invalidate("static:teachers:external");
             return Ok(new { success = true, message = "Привязано" });
         }
+
         return BadRequest(new { error = "Ошибка привязки (см. лог сервера)" });
     }
 
@@ -214,9 +219,10 @@ public class DatabaseController : ControllerBase
 
     [HttpGet("departments/{departmentId}/schedule")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetDepartmentSchedule(int departmentId, [FromQuery] string start, [FromQuery] string end)
+    public async Task<IActionResult> GetDepartmentSchedule(int departmentId, [FromQuery] string start,
+        [FromQuery] string end)
     {
-        string key = $"schedule:dept:{departmentId}:{start}:{end}";
+        var key = $"schedule:dept:{departmentId}:{start}:{end}";
         if (_cache.TryGet<List<object>>(key, out var cached))
             return Ok(cached);
 

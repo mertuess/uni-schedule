@@ -15,7 +15,7 @@ let selected_buildings = [];
 function formatDateWithWeekday(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
-    const weekday = date.toLocaleDateString('ru-RU', { weekday: 'long' });
+    const weekday = date.toLocaleDateString('ru-RU', {weekday: 'long'});
     const weekdayCapitalized = weekday.charAt(0).toUpperCase() + weekday.slice(1);
     return `${dateStr} (${weekdayCapitalized})`;
 }
@@ -42,7 +42,7 @@ function getField(obj, primary, secondary, fallback) {
 function updateBuildings() {
     if (!buildings_obj) return;
     buildings_obj.innerHTML = '<option value="">-- Выберите корпус --</option>';
-    buildings.forEach(function(x) {
+    buildings.forEach(function (x) {
         const id = getField(x, 'Id', 'bui_id', null);
         const name = getField(x, 'Name', 'building', 'Корпус ' + id);
         if (!id) return;
@@ -56,7 +56,7 @@ function updateBuildings() {
 function updateRooms() {
     if (!rooms_obj) return;
     rooms_obj.innerHTML = '<option value="">-- Выберите аудиторию --</option>';
-    rooms.forEach(function(x) {
+    rooms.forEach(function (x) {
         const id = getField(x, 'Id', 'room_id', null);
         const name = getField(x, 'Name', 'room', 'Аудитория ' + id);
         if (!id) return;
@@ -70,32 +70,46 @@ function updateRooms() {
 function search(name_part) {
     if (!Array.isArray(buildings)) return [];
     var _lower = name_part.toLowerCase().trim();
-    return buildings.filter(function(t) {
+    return buildings.filter(function (t) {
         return t && getField(t, 'Name', 'building', '') && getField(t, 'Name', 'building', '').toLowerCase().includes(_lower) &&
-            !selected_buildings.some(function(sel) { return getField(sel, 'Id', 'bui_id') === getField(t, 'Id', 'bui_id'); });
+            !selected_buildings.some(function (sel) {
+                return getField(sel, 'Id', 'bui_id') === getField(t, 'Id', 'bui_id');
+            });
     }).slice(0, 10);
 }
 
 function updateAutocomplete(items) {
     if (!autocomplete_list) return;
-    if (buildings_input && buildings_input.value == '') { hideAutocomplete(); return; }
+    if (buildings_input && buildings_input.value == '') {
+        hideAutocomplete();
+        return;
+    }
     autocomplete_list.innerHTML = '';
-    items.forEach(function(t) {
+    items.forEach(function (t) {
         var item = document.createElement('div');
         item.className = 'autocomplete-item';
         item.textContent = getField(t, 'Name', 'building', '');
-        item.addEventListener('click', function() { addTeacher(t); });
+        item.addEventListener('click', function () {
+            addTeacher(t);
+        });
         autocomplete_list.appendChild(item);
     });
 }
 
-function showAutocomplete() { if (autocomplete_list) autocomplete_list.classList.add('show'); }
+function showAutocomplete() {
+    if (autocomplete_list) autocomplete_list.classList.add('show');
+}
+
 function hideAutocomplete() {
-    setTimeout(function() { if (autocomplete_list) autocomplete_list.classList.remove('show'); }, 200);
+    setTimeout(function () {
+        if (autocomplete_list) autocomplete_list.classList.remove('show');
+    }, 200);
 }
 
 function addTeacher(t) {
-    if (selected_buildings.some(function(teacher) { return getField(teacher, 'Id', 'bui_id') === getField(t, 'Id', 'bui_id'); })) return;
+    if (selected_buildings.some(function (teacher) {
+        return getField(teacher, 'Id', 'bui_id') === getField(t, 'Id', 'bui_id');
+    })) return;
     selected_buildings.push(t);
     updateSelected();
     if (buildings_input) buildings_input.value = '';
@@ -103,7 +117,9 @@ function addTeacher(t) {
 }
 
 function removeTeacher(building_id) {
-    selected_buildings = selected_buildings.filter(function(t) { return getField(t, 'Id', 'bui_id') !== building_id; });
+    selected_buildings = selected_buildings.filter(function (t) {
+        return getField(t, 'Id', 'bui_id') !== building_id;
+    });
     updateSelected();
 }
 
@@ -117,12 +133,14 @@ function onBuildingsInput(e) {
 function updateSelected() {
     if (!selected_list) return;
     selected_list.innerHTML = '';
-    selected_buildings.forEach(function(teacher) {
+    selected_buildings.forEach(function (teacher) {
         var tag = document.createElement('div');
         tag.className = 'selected-teacher-tag';
         tag.innerHTML = getField(teacher, 'Name', 'building', '') + '<button type="button" data-id="' + getField(teacher, 'Id', 'bui_id') + '">×</button>';
         var btn = tag.querySelector('button');
-        if (btn) btn.addEventListener('click', function() { removeTeacher(getField(teacher, 'Id', 'bui_id')); });
+        if (btn) btn.addEventListener('click', function () {
+            removeTeacher(getField(teacher, 'Id', 'bui_id'));
+        });
         selected_list.appendChild(tag);
     });
 }
@@ -152,18 +170,21 @@ async function showRoomWorkload() {
     try {
         var response = await getRoomWorkload(roomId, start, end);
         var wl = extractWorkload(response);
-        
+
         if (!wl || !wl.workload) {
             results.innerHTML = '<div class="error">Ошибка: ' + (response && response.error ? response.error : 'Нет данных') + '</div>';
             return;
         }
-        
+
         var pt = getPercentTable([wl]);
         results.innerHTML = '';
         results.appendChild(pt);
 
         var dates = Object.keys(wl.workload).sort();
-        if (dates.length === 0) { results.innerHTML = 'Нет данных о загруженности'; return; }
+        if (dates.length === 0) {
+            results.innerHTML = 'Нет данных о загруженности';
+            return;
+        }
 
         for (var i = 0; i < dates.length; i++) {
             var date = dates[i];
@@ -172,7 +193,7 @@ async function showRoomWorkload() {
             table.appendChild(row);
             results.appendChild(table);
             results.appendChild(document.createElement('br'));
-}
+        }
         var roomName = rooms_obj && rooms_obj.options[rooms_obj.selectedIndex] ? rooms_obj.options[rooms_obj.selectedIndex].textContent : 'Аудитория';
         activateRoomExport(wl, roomName);
     } catch (error) {
@@ -198,12 +219,12 @@ async function showBuildingWorkload() {
     try {
         var response = await getBuildingWorkload(buildingId, start, end);
         var wl = extractWorkload(response);
-        
+
         if (!wl || !wl.workload) {
             results.innerHTML = '<div class="error">Ошибка: ' + (response && response.error ? response.error : 'Нет данных') + '</div>';
             return;
         }
-        
+
         var pt = getPercentTable(wl.workload);
         results.innerHTML = '';
         results.appendChild(pt);
@@ -242,7 +263,11 @@ function getEmptyTableRow(room) {
     var fd = document.createElement('td');
     fd.textContent = room;
     r.appendChild(fd);
-    for (var i = 1; i <= 7; i++) { var d = document.createElement('td'); d.textContent = '—'; r.appendChild(d); }
+    for (var i = 1; i <= 7; i++) {
+        var d = document.createElement('td');
+        d.textContent = '—';
+        r.appendChild(d);
+    }
     return r;
 }
 
@@ -272,7 +297,11 @@ function getTableTemplate(name) {
     res.appendChild(tr_0);
     var wl_td = document.createElement('th');
     tr_1.appendChild(wl_td);
-    ALL_SLOTS.forEach(function(sl) { var sh = document.createElement('th'); sh.textContent = sl; tr_1.appendChild(sh); });
+    ALL_SLOTS.forEach(function (sl) {
+        var sh = document.createElement('th');
+        sh.textContent = sl;
+        tr_1.appendChild(sh);
+    });
     res.appendChild(tr_1);
     return res;
 }
@@ -302,7 +331,7 @@ function getPercentTable(wl_arr) {
 
 // Обработчик изменения корпуса
 if (buildings_obj) {
-    buildings_obj.addEventListener("change", async function(event) {
+    buildings_obj.addEventListener("change", async function (event) {
         var selectedBuiId = event.target.value;
         if (!selectedBuiId) return;
         try {
@@ -311,20 +340,22 @@ if (buildings_obj) {
                 rooms = extractData(roomsResponse, 'rooms', 'rooms');
                 updateRooms();
             }
-        } catch (error) { console.error('Ошибка загрузки аудиторий:', error); }
+        } catch (error) {
+            console.error('Ошибка загрузки аудиторий:', error);
+        }
     });
 }
 
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     // Инициализируем только то, что нужно
     if (!buildings_obj || !rooms_obj) return;
-    
+
     try {
         var buildingsResponse = await getBuildings();
         if (buildingsResponse && buildingsResponse.success && buildingsResponse.data) {
             buildings = extractData(buildingsResponse, 'buildings', 'buildings');
         }
-        
+
         // Загружаем аудитории для первого корпуса, если есть
         if (buildings.length > 0) {
             const firstBuildingId = getField(buildings[0], 'Id', 'bui_id', null);
@@ -335,10 +366,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             }
         }
-        
+
         updateBuildings();
         updateRooms();
-        
+
         // Оставляем обработчики для совместимости, но они не активны
         if (autocomplete_list && buildings_input) {
             autocomplete_list.style.top = buildings_input.getBoundingClientRect().bottom + 'px';
@@ -347,11 +378,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     } catch (error) {
         console.error('Ошибка загрузки корпусов:', error);
-        buildings = []; rooms = [];
+        buildings = [];
+        rooms = [];
     }
 });
 
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', function () {
     if (autocomplete_list && buildings_input) {
         autocomplete_list.style.top = buildings_input.getBoundingClientRect().bottom + 'px';
     }
@@ -361,13 +393,13 @@ window.addEventListener('scroll', function() {
 function convertWorkloadToEvents(workloadData, roomName, date) {
     var events = [];
     var slotMapping = {
-        '09:00 - 10:35': { start: '09:00', end: '10:35', num: 1 },
-        '10:45 - 12:20': { start: '10:45', end: '12:20', num: 2 },
-        '12:40 - 14:15': { start: '12:40', end: '14:15', num: 3 },
-        '14:45 - 16:20': { start: '14:45', end: '16:20', num: 4 },
-        '16:30 - 18:05': { start: '16:30', end: '18:05', num: 5 },
-        '18:15 - 19:50': { start: '18:15', end: '19:50', num: 6 },
-        '20:00 - 21:35': { start: '20:00', end: '21:35', num: 7 }
+        '09:00 - 10:35': {start: '09:00', end: '10:35', num: 1},
+        '10:45 - 12:20': {start: '10:45', end: '12:20', num: 2},
+        '12:40 - 14:15': {start: '12:40', end: '14:15', num: 3},
+        '14:45 - 16:20': {start: '14:45', end: '16:20', num: 4},
+        '16:30 - 18:05': {start: '16:30', end: '18:05', num: 5},
+        '18:15 - 19:50': {start: '18:15', end: '19:50', num: 6},
+        '20:00 - 21:35': {start: '20:00', end: '21:35', num: 7}
     };
     if (workloadData && workloadData.workload && workloadData.workload[date]) {
         var dateWorkload = workloadData.workload[date];
@@ -403,7 +435,7 @@ function activateRoomExport(workloadData, roomName) {
     }
 }
 
-window.exportRoomToIcal = function() {
+window.exportRoomToIcal = function () {
     var events = [];
     if (window.lastWorkloadData && window.lastWorkloadData.workload) {
         for (var date in window.lastWorkloadData.workload) {
@@ -411,7 +443,10 @@ window.exportRoomToIcal = function() {
             events.push.apply(events, dateEvents);
         }
     }
-    if (events.length === 0) { alert('Нет данных для экспорта'); return; }
+    if (events.length === 0) {
+        alert('Нет данных для экспорта');
+        return;
+    }
 
     var ical = 'BEGIN:VCALENDAR\r\n';
     ical += 'VERSION:2.0\r\n';
@@ -420,7 +455,7 @@ window.exportRoomToIcal = function() {
     ical += 'X-WR-CALNAME:Загруженность ' + window.lastWorkloadRoom + '\r\n';
     ical += 'X-WR-TIMEZONE:Europe/Moscow\r\n';
 
-    events.forEach(function(event) {
+    events.forEach(function (event) {
         var dateClean = event.date.replace(/-/g, '');
         var startTimeClean = event.startTime.replace(/:/g, '');
         var endTimeClean = event.endTime.replace(/:/g, '');
@@ -444,7 +479,7 @@ window.exportRoomToIcal = function() {
     });
     ical += 'END:VCALENDAR\r\n';
 
-    var blob = new Blob([ical], { type: 'text/calendar; charset=utf-8' });
+    var blob = new Blob([ical], {type: 'text/calendar; charset=utf-8'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;

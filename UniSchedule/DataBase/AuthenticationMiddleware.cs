@@ -1,4 +1,3 @@
-using UniSchedule;
 using UniSchedule.DataBase;
 using UniSchedule.System;
 
@@ -31,9 +30,7 @@ public class AuthenticationMiddleware
                 path.StartsWith("/js/") || path.StartsWith("/css/") ||
                 path.StartsWith("/images/") || path.StartsWith("/swagger") ||
                 path.StartsWith("/openapi"))
-            {
                 isPublicPath = true;
-            }
 
             // Публичные API эндпоинты
             if (path.StartsWith("/api/database/tryauth") ||
@@ -45,9 +42,7 @@ public class AuthenticationMiddleware
                 path == "/api/database/departments" ||
                 (path.StartsWith("/api/database/departments/") &&
                  (path.EndsWith("/teachers") || path.EndsWith("/schedule"))))
-            {
                 isPublicPath = true;
-            }
         }
 
         if (isPublicPath)

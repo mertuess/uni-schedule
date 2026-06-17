@@ -11,20 +11,20 @@ if (authEmail && authPassword) {
 
         }
     });
-    
+
     if (l_btn) {
         l_btn.innerHTML = 'Выход';
-        l_btn.onclick = function(e) {
+        l_btn.onclick = function (e) {
             if (e) e.preventDefault();
             clearAuth();
             window.location.href = '';
         };
         l_btn.href = '#';
     }
-    
+
 } else {
     if (d_btn) d_btn.style.display = 'none';
-    
+
     if (l_btn) {
         l_btn.innerHTML = 'Вход';
         l_btn.href = './pages/login.html';

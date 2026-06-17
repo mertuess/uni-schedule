@@ -12,16 +12,16 @@ using UniSchedule.System;
 namespace UniSchedule.API;
 
 /// <summary>
-/// Класс для работы с внешним API
+///     Класс для работы с внешним API
 /// </summary>
 public class OutAPI
 {
     private static readonly HttpClient sharedClient = new();
+    private readonly IConfiguration _configuration;
     private readonly Debug _dbg;
     private readonly JsonParser _jsonParser;
     private readonly Localization _loc;
     private readonly string url;
-    private readonly IConfiguration _configuration;
 
     public OutAPI(IConfiguration configuration, JsonParser jsonParser, Debug dbg, Localization loc)
     {
@@ -39,7 +39,7 @@ public class OutAPI
     }
 
     /// <summary>
-    /// Отправляет запрос на внешний api и возвращает список моделей
+    ///     Отправляет запрос на внешний api и возвращает список моделей
     /// </summary>
     public async Task<List<T>> SendRequest<T>(string path, string item)
     {
@@ -47,7 +47,7 @@ public class OutAPI
     }
 
     /// <summary>
-    /// Выполняет GET-запрос и возвращает сырой JSON-ответ
+    ///     Выполняет GET-запрос и возвращает сырой JSON-ответ
     /// </summary>
     public async Task<string> GetRawAsync(string path)
     {

@@ -6,6 +6,7 @@
 // │ Описание: Контроллер для работы с преподавателями                          │
 // └────────────────────────────────────────────────────────────────────────────┘
 
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using UniSchedule.Json;
 using UniSchedule.Json.Models;
@@ -15,16 +16,16 @@ using UniSchedule.System;
 namespace UniSchedule.API.Controllers;
 
 /// <summary>
-/// Контроллер для работы с преподавателями
+///     Контроллер для работы с преподавателями
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class TeachersController : ControllerBase
 {
-    private readonly OutAPI _o_api;
-    private readonly JsonParser _jsonParser;
     private readonly CacheService _cache;
     private readonly Debug _dbg;
+    private readonly JsonParser _jsonParser;
+    private readonly OutAPI _o_api;
 
     public TeachersController(OutAPI o_api, JsonParser jsonParser, CacheService cache, Debug dbg)
     {
@@ -35,7 +36,7 @@ public class TeachersController : ControllerBase
     }
 
     /// <summary>
-    /// Получить список преподавателей (с кэшированием)
+    ///     Получить список преподавателей (с кэшированием)
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetTeachers()
@@ -52,7 +53,7 @@ public class TeachersController : ControllerBase
     }
 
     /// <summary>
-    /// Поиск преподавателя по имени
+    ///     Поиск преподавателя по имени
     /// </summary>
     [HttpGet("search")]
     public async Task<IActionResult> SearchTeachers([FromQuery] string query)
@@ -62,15 +63,15 @@ public class TeachersController : ControllerBase
     }
 
     /// <summary>
-    /// Получить расписание преподавателя в диапазоне дат
-    /// Параметры передаются в пути: /api/Teachers/{uid}/schedule/{start}/{end}
+    ///     Получить расписание преподавателя в диапазоне дат
+    ///     Параметры передаются в пути: /api/Teachers/{uid}/schedule/{start}/{end}
     /// </summary>
     [HttpGet("{uid}/schedule/{start}/{end}")]
     public async Task<IActionResult> GetTeacherSchedule(string uid, string start, string end)
     {
         try
         {
-            string cacheKey = "schedule:teacher:" + uid + ":" + start + ":" + end;
+            var cacheKey = "schedule:teacher:" + uid + ":" + start + ":" + end;
 
             // Пробуем вернуть из кэша
             if (_cache.TryGet<List<TeacherSchedule>>(cacheKey, out var cached))
@@ -81,36 +82,30 @@ public class TeachersController : ControllerBase
 
             // Парсинг через global::System.Text.Json для обхода конфликта имён
             List<TeacherSchedule> schedule = null;
-            var options = new global::System.Text.Json.JsonSerializerOptions
+            var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
 
-            using var doc = global::System.Text.Json.JsonDocument.Parse(rawJson);
+            using var doc = JsonDocument.Parse(rawJson);
             var root = doc.RootElement;
 
-            if (root.ValueKind == global::System.Text.Json.JsonValueKind.Array)
+            if (root.ValueKind == JsonValueKind.Array)
             {
                 // Прямой массив: [{...}, {...}]
-                schedule = global::System.Text.Json.JsonSerializer.Deserialize<List<TeacherSchedule>>(rawJson, options);
+                schedule = JsonSerializer.Deserialize<List<TeacherSchedule>>(rawJson, options);
             }
-            else if (root.ValueKind == global::System.Text.Json.JsonValueKind.Object)
+            else if (root.ValueKind == JsonValueKind.Object)
             {
                 // Обёртка с полем "timetable" (формат МАУ API)
                 if (root.TryGetProperty("timetable", out var propTimetable))
-                {
-                    schedule = global::System.Text.Json.JsonSerializer.Deserialize<List<TeacherSchedule>>(propTimetable.GetRawText(), options);
-                }
+                    schedule = JsonSerializer.Deserialize<List<TeacherSchedule>>(propTimetable.GetRawText(), options);
                 // Обёртка с полем "schedule"
                 else if (root.TryGetProperty("schedule", out var propSchedule))
-                {
-                    schedule = global::System.Text.Json.JsonSerializer.Deserialize<List<TeacherSchedule>>(propSchedule.GetRawText(), options);
-                }
+                    schedule = JsonSerializer.Deserialize<List<TeacherSchedule>>(propSchedule.GetRawText(), options);
                 // Обёртка с полем "data"
                 else if (root.TryGetProperty("data", out var propData))
-                {
-                    schedule = global::System.Text.Json.JsonSerializer.Deserialize<List<TeacherSchedule>>(propData.GetRawText(), options);
-                }
+                    schedule = JsonSerializer.Deserialize<List<TeacherSchedule>>(propData.GetRawText(), options);
             }
 
             if (schedule == null)

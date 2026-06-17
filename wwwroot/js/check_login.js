@@ -11,17 +11,17 @@ if (authEmail && authPassword) {
 
         }
     });
-    
+
     if (l_btn) {
         l_btn.innerHTML = 'Выход';
-        l_btn.onclick = function(e) {
+        l_btn.onclick = function (e) {
             if (e) e.preventDefault();
             clearAuth();
             window.location.href = '/index.html'; 
         };
         l_btn.href = '#';
     }
-    
+
 } else {
     if (d_btn && d_btn.parentElement) {
     d_btn.parentElement.style.display = 'none'; 

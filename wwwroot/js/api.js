@@ -3,7 +3,7 @@
 // │ Все запросы идут только на наш бэкенд через /api/*                         │
 // └────────────────────────────────────────────────────────────────────────────┘
 
-const API_BASE = '/api';
+const API_BASE = '/timetable/api';
 
 const ALL_SLOTS = [
     "09:00 - 10:35",
@@ -31,10 +31,10 @@ try {
 }
 
 function getHeaders() {
-    const headers = { 'Content-Type': 'application/json' };
+    const headers = {'Content-Type': 'application/json'};
     const email = getCookie("Uni-Email");
     const password = getCookie("Uni-Password");
-    
+
     if (email && password) {
         headers['Uni-Email'] = email;
         headers['Uni-Password'] = password;
@@ -46,7 +46,7 @@ async function apiGet(endpoint) {
     try {
         const response = await fetch(API_BASE + endpoint, {
             method: 'GET',
-            headers: getHeaders()  
+            headers: getHeaders()
         });
 
         if (response.status === 401)
@@ -57,11 +57,11 @@ async function apiGet(endpoint) {
             throw new Error('Ошибка ' + response.status);
 
         const data = await response.json();
-        return { success: true, data: data };
-        
+        return {success: true, data: data};
+
     } catch (error) {
         console.error('API Error:', error);
-        return { success: false, error: error.message };
+        return {success: false, error: error.message};
     }
 }
 
@@ -108,26 +108,26 @@ let teacherBindingsCache = null;
 let bindingsLoadedAt = null;
 
 async function getTeacherBindings() {
-    if (teacherBindingsCache && bindingsLoadedAt && 
+    if (teacherBindingsCache && bindingsLoadedAt &&
         (Date.now() - bindingsLoadedAt) < 10 * 60 * 1000) {
         return teacherBindingsCache;
     }
-    
+
     try {
         const deptsResponse = await getDepartments();
         if (!deptsResponse.success || !Array.isArray(deptsResponse.data)) {
             return {};
         }
-        
+
         const bindings = {};
         for (const dept of deptsResponse.data) {
             try {
                 const resp = await apiGet('/Database/departments/' + dept.Id + '/teachers');
                 if (resp.success && Array.isArray(resp.data)) {
-                    resp.data.forEach(function(t) {
+                    resp.data.forEach(function (t) {
                         const uid = t.uid;
                         if (!bindings[uid]) {
-                            bindings[uid] = []; 
+                            bindings[uid] = [];
                         }
                         bindings[uid].push({
                             departmentId: t.departmentId,
@@ -139,11 +139,11 @@ async function getTeacherBindings() {
                 console.warn('Не удалось загрузить привязки для кафедры ' + dept.Name);
             }
         }
-        
+
         teacherBindingsCache = bindings;
         bindingsLoadedAt = Date.now();
         return bindings;
-        
+
     } catch (e) {
         console.error('Ошибка загрузки привязок преподавателей:', e);
         return {};
@@ -153,14 +153,19 @@ async function getTeacherBindings() {
 // ============================================================================
 // ПОЛЬЗОВАТЕЛИ
 // ============================================================================
-async function getUsers() { return await apiGet('/Database/users'); }
+async function getUsers() {
+    return await apiGet('/Database/users');
+}
+
 async function createUser(email, password, name, engName, role) {
-    const params = new URLSearchParams({ email, password, name, engName, role });
+    const params = new URLSearchParams({email, password, name, engName, role});
     return await apiGet('/Database/users/create?' + params);
 }
+
 async function deleteUser(email) {
     return await apiGet('/Database/users/' + encodeURIComponent(email) + '/remove');
 }
+
 async function updateUser(email, newEmail, newPassword, newName, newEngName, newRole, department) {
     const params = new URLSearchParams();
     if (newEmail) params.append('new_email', newEmail);
@@ -171,9 +176,11 @@ async function updateUser(email, newEmail, newPassword, newName, newEngName, new
     if (department !== null && department !== undefined) params.append('department', department);
     return await apiGet('/Database/users/' + encodeURIComponent(email) + '/update?' + params);
 }
+
 async function getUserRole(email) {
     return await apiGet('/Database/users/' + encodeURIComponent(email) + '/role');
 }
+
 async function tryAuth(email, password) {
     return await apiGet('/Database/tryauth?email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password));
 }
@@ -181,19 +188,25 @@ async function tryAuth(email, password) {
 // ============================================================================
 // КАФЕДРЫ
 // ============================================================================
-async function getDepartments() { return await apiGet('/Database/departments'); }
-async function createDepartment(name) { 
+async function getDepartments() {
+    return await apiGet('/Database/departments');
+}
+
+async function createDepartment(name) {
     const email = getCookie("Uni-Email");
     const password = getCookie("Uni-Password");
     const url = '/Database/departments/create?name=' + encodeURIComponent(name);
     return await apiGet(url);
 }
+
 async function updateDepartment(name, newName) {
     return await apiGet('/Database/departments/' + encodeURIComponent(name) + '/update?new_name=' + encodeURIComponent(newName));
 }
+
 async function deleteDepartment(name) {
     return await apiGet('/Database/departments/' + encodeURIComponent(name) + '/remove');
 }
+
 async function getUsersByDepartment(departmentId) {
     return await apiGet('/Database/departments/' + departmentId + '/users');
 }
@@ -201,16 +214,22 @@ async function getUsersByDepartment(departmentId) {
 // ============================================================================
 // КОРПУСА И АУДИТОРИИ
 // ============================================================================
-async function getBuildings() { return await apiGet('/buildings'); }
+async function getBuildings() {
+    return await apiGet('/buildings');
+}
+
 async function getRooms(buildingId) {
     return await apiGet('/Rooms/' + buildingId + '/rooms');
 }
+
 async function getRoomWorkload(roomId, start, end) {
     return await apiGet('/Rooms/' + roomId + '/workload/' + start + '/' + end);
 }
+
 async function getBuildingWorkload(buildingId, start, end) {
     return await apiGet('/Buildings/' + buildingId + '/workload/' + start + '/' + end);
 }
+
 async function getBuildingsWorkload(start, end, buildingIds) {
     const ids = Array.isArray(buildingIds) ? buildingIds.join(',') : buildingIds;
     return await apiGet('/Buildings/workload/' + start + '/' + end + '?bui_ids=' + ids);
@@ -219,10 +238,14 @@ async function getBuildingsWorkload(start, end, buildingIds) {
 // ============================================================================
 // ПРЕПОДАВАТЕЛИ
 // ============================================================================
-async function getTeachersList() { return await apiGet('/teachers'); }
+async function getTeachersList() {
+    return await apiGet('/teachers');
+}
+
 async function searchTeachers(query) {
     return await apiGet('/teachers/search?query=' + encodeURIComponent(query));
 }
+
 async function getTeacherSchedule(teacherUid, start, end) {
     return await apiGet('/teachers/' + encodeURIComponent(teacherUid) + '/schedule/' + encodeURIComponent(start) + '/' + encodeURIComponent(end));
 }
@@ -238,16 +261,22 @@ async function getTeachersFreeSlots(teacherUIDs, start, end) {
 // ============================================================================
 // ICAL
 // ============================================================================
-async function getAvailableGroups() { return await apiGet('/calendar/groups'); }
+async function getAvailableGroups() {
+    return await apiGet('/calendar/groups');
+}
+
 async function exportGroupToIcal(groupName) {
     return await apiGet('/calendar/group/' + encodeURIComponent(groupName));
 }
+
 async function exportTeacherToIcal(teacherName) {
     return await apiGet('/calendar/teacher/' + encodeURIComponent(teacherName));
 }
+
 async function getGroupSubscriptionUrl(groupName) {
     return await apiGet('/calendar/subscribe/group/' + encodeURIComponent(groupName));
 }
+
 async function getTestIcal(simple) {
     const endpoint = simple ? '/calendar/test/simple' : '/calendar/test/download';
     return await apiGet(endpoint);

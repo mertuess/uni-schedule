@@ -29,6 +29,5 @@ public class User
     public int? DepartmentId { get; set; }
 
     // Внешний UID преподавателя из БД университета
-    [Column("UniversityUid")]
-    public string UniversityUid { get; set; } = string.Empty;
+    [Column("UniversityUid")] public string UniversityUid { get; set; } = string.Empty;
 }

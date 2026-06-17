@@ -1,6 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
+        <DebianPackageId>uni-schedule</DebianPackageId>
+        <DebianVersion>1.1.0</DebianVersion>
+        <DebianMaintainer>turikov.de@mauniver.ru</DebianMaintainer>
+        <Description>WebAPI расширение для отслеживания расписания учебных занятий</Description>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -9,13 +16,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Ical.Net" Version="5.2.1" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-        <PackageReference Include="SQLite" Version="3.13.0" />
-        <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
-        <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
+        <PackageReference Include="Ical.Net" Version="5.2.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
+        <PackageReference Include="SQLite" Version="3.13.0"/>
+        <PackageReference Include="sqlite-net-pcl" Version="1.9.172"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7"/>
+        <PackageReference Include="System.Data.SQLite" Version="2.0.3"/>
     </ItemGroup>
 
 </Project>

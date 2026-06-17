@@ -43,37 +43,39 @@
 <main>
     <div class="container">
         <div class="main-content">
-            <h1>Занятость аудитории</h1>
-                <div class="form-group">
-                    <select id="buildings">
-						<option value="">Загрузка... </option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <select id="rooms">
-						<option value="">Сначала выбать корпус </option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Дата начала</label>
-                    <input id="start-date" type="date">
-                </div>
-                <div class="form-group">
-                    <label>Дата окончания</label>
-                    <input id="end-date" type="date">
-                </div>
-                <button class="btn" id="search-room-workload" onclick="showRoomWorkload()">Показать по аудитории
-                </button>
-                <button class="btn" id="search-build-workload" onclick="showBuildingWorkload()">Показать по корпусу
-                </button>
-                <button class="btn hide" id="search-builds-workload" onclick="showBuildingsWorkload()">Показать по
-                    корпусам
-                </button>
-                <button class="btn" id="export-ical" onclick="exportRoomToIcal()" disabled style="display:none; margin-left:10px; background:#28a745;"> Скачать .ics</button>
+            <h1>Статистика загруженности аудиторий</h1>
+            <div class="form-group">
+                <select id="buildings">
+                    <option value="">Загрузка...</option>
+                </select>
             </div>
-
-            <div id="results"></div>
+            <div class="form-group">
+                <select id="rooms">
+                    <option value="">Сначала выбать корпус</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Дата начала</label>
+                <input id="start-date" type="date">
+            </div>
+            <div class="form-group">
+                <label>Дата окончания</label>
+                <input id="end-date" type="date">
+            </div>
+            <button class="btn" id="search-room-workload" onclick="showRoomWorkload()">Показать по аудитории
+            </button>
+            <button class="btn" id="search-build-workload" onclick="showBuildingWorkload()">Показать по корпусу
+            </button>
+            <button class="btn hide" id="search-builds-workload" onclick="showBuildingsWorkload()">Показать по
+                корпусам
+            </button>
+            <button class="btn" disabled id="export-ical" onclick="exportRoomToIcal()"
+                    style="display:none; margin-left:10px; background:#28a745;"> Скачать .ics
+            </button>
         </div>
+
+        <div id="results"></div>
+    </div>
     </div>
 </main>
 
@@ -81,6 +83,29 @@
 <script src="../js/check_login.js"></script>
 <script src="../js/room.js"></script>
 <script src="../js/ical-export.js"></script>
+
+<script>
+    function formatDate(firstday) {
+        var curr = new Date;
+        if (firstday){
+            var date = new Date(curr.setDate(curr.getDate() - curr.getDay()+1));
+        }
+        else{
+            var date = new Date(curr.setDate(curr.getDate() - curr.getDay()+7));
+        }
+
+//  let date = new Date();
+        let day = String(date.getDate()).padStart(2, '0');
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let year = date.getFullYear();
+
+        return `${year}-${month}-${day}`;
+    }
+
+    document.querySelector('#start-date').value = formatDate(true);
+    document.querySelector('#end-date').value = formatDate(false);
+</script>
+
 </body>
 
 </html>

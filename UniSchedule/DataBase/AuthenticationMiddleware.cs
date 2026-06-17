@@ -1,4 +1,3 @@
-using UniSchedule;
 using UniSchedule.DataBase;
 using UniSchedule.System;
 

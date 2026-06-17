@@ -16,15 +16,15 @@ using UniSchedule.Services;
 namespace UniSchedule.API.Controllers;
 
 /// <summary>
-/// Расписание
+///     Расписание
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ScheduleController : ControllerBase
 {
+    private readonly CacheService _cache;
     private readonly JsonParser _jsonParser;
     private readonly OutAPI _o_api;
-    private readonly CacheService _cache;
 
     public ScheduleController(OutAPI o_api, JsonParser jsonParser, CacheService cache)
     {
@@ -34,13 +34,13 @@ public class ScheduleController : ControllerBase
     }
 
     /// <summary>
-    /// Получить пересечение окон у списка преподавателей за период
+    ///     Получить пересечение окон у списка преподавателей за период
     /// </summary>
     [HttpGet("teachers/{UIDs}/{start}/{end}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetTeachersMassSchedule(string UIDs, string start, string end)
     {
-        string key = $"schedule:free-slots:{UIDs}:{start}:{end}";
+        var key = $"schedule:free-slots:{UIDs}:{start}:{end}";
         if (_cache.TryGet<object>(key, out var cached))
             return Content(_jsonParser.Serialize(cached), "application/json");
 

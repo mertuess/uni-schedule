@@ -14,7 +14,7 @@ public class DataBaseManager
     private readonly Localization _loc;
     private readonly OutAPI _outApi;
 
-    public DataBaseManager(IConfiguration configuration, Debug dbg, Localization loc, OutAPI outApi )
+    public DataBaseManager(IConfiguration configuration, Debug dbg, Localization loc, OutAPI outApi)
     {
         _dbg = dbg;
         _loc = loc;
@@ -252,7 +252,7 @@ public class DataBaseManager
     }
 
     /// <summary>
-    /// Инициализация таблицы TeacherBindings
+    ///     Инициализация таблицы TeacherBindings
     /// </summary>
     public void EnsureTeacherBindingsTable()
     {
@@ -268,24 +268,7 @@ public class DataBaseManager
     }
 
     /// <summary>
-    /// Модель привязки преподавателя к кафедре
-    /// </summary>
-    [Table("TeacherBindings")]
-    public class TeacherBinding
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-
-        public string UniversityUid { get; set; } = string.Empty;
-
-        public string Name { get; set; } = string.Empty;
-
-        [Indexed]
-        public int? DepartmentId { get; set; }
-    }
-
-    /// <summary>
-    /// Удалить привязку преподавателя к конкретной кафедре
+    ///     Удалить привязку преподавателя к конкретной кафедре
     /// </summary>
     public bool UnbindTeacher(string universityUid, int departmentId)
     {
@@ -312,7 +295,7 @@ public class DataBaseManager
     }
 
     /// <summary>
-    /// Получить всех преподавателей из внешнего API
+    ///     Получить всех преподавателей из внешнего API
     /// </summary>
     public async Task<List<ExternalTeacher>> GetAllTeachersExternalAsync()
     {
@@ -328,17 +311,7 @@ public class DataBaseManager
     }
 
     /// <summary>
-    /// Модель преподавателя из внешнего API
-    /// </summary>
-    public class ExternalTeacher
-    {
-        public string UID { get; set; } = string.Empty;
-        public string teacher { get; set; } = string.Empty;
-        public string faculty { get; set; } = string.Empty;
-    }
-
-    /// <summary>
-    /// Привязать преподавателя к кафедре (или отвязать, если departmentId = null)
+    ///     Привязать преподавателя к кафедре (или отвязать, если departmentId = null)
     /// </summary>
     public bool BindTeacher(string universityUid, string name, int? departmentId)
     {
@@ -350,16 +323,17 @@ public class DataBaseManager
                 var allBindings = _db.Table<TeacherBinding>()
                     .Where(x => x.UniversityUid == universityUid).ToList();
 
-                foreach (var item in allBindings)  // ← Переименовали binding → item
+                foreach (var item in allBindings) // ← Переименовали binding → item
                 {
                     _db.Delete(item);
                     _dbg.Log($"Удалена привязка: {item.Name} от кафедры {item.DepartmentId}");
                 }
+
                 return true;
             }
 
             // Иначе ищем конкретную привязку
-            var existingBinding = _db.Table<TeacherBinding>()  // ← Переименовали binding → existingBinding
+            var existingBinding = _db.Table<TeacherBinding>() // ← Переименовали binding → existingBinding
                 .FirstOrDefault(x => x.UniversityUid == universityUid && x.DepartmentId == departmentId);
 
             if (existingBinding == null)
@@ -379,6 +353,7 @@ public class DataBaseManager
                 _db.Update(existingBinding);
                 _dbg.Log($"Обновлена привязка: {name} на кафедре {departmentId}");
             }
+
             return true;
         }
         catch (Exception ex)
@@ -389,7 +364,7 @@ public class DataBaseManager
     }
 
     /// <summary>
-    /// Получить преподавателей, привязанных к кафедре
+    ///     Получить преподавателей, привязанных к кафедре
     /// </summary>
     public List<TeacherBinding> GetTeachersByDepartment(int departmentId)
     {
@@ -397,15 +372,15 @@ public class DataBaseManager
     }
 
     /// <summary>
-    /// Получить расписание кафедры: агрегировать расписания всех привязанных преподавателей
+    ///     Получить расписание кафедры: агрегировать расписания всех привязанных преподавателей
     /// </summary>
-    public async Task<List<AggregatedScheduleItem>> GetDepartmentScheduleAsync(int departmentId, string start, string end)
+    public async Task<List<AggregatedScheduleItem>> GetDepartmentScheduleAsync(int departmentId, string start,
+        string end)
     {
         var bindings = GetTeachersByDepartment(departmentId);
         var result = new List<AggregatedScheduleItem>();
 
         foreach (var binding in bindings)
-        {
             try
             {
                 var schedule = await _outApi.SendRequest<TeacherSchedule>(
@@ -413,9 +388,7 @@ public class DataBaseManager
                     "schedule");
 
                 if (schedule != null)
-                {
                     foreach (var item in schedule)
-                    {
                         result.Add(new AggregatedScheduleItem
                         {
                             Date = item.date,
@@ -428,14 +401,11 @@ public class DataBaseManager
                             TeacherUid = binding.UniversityUid,
                             DepartmentId = departmentId
                         });
-                    }
-                }
             }
             catch (Exception ex)
             {
                 _dbg.Warning($"Не удалось получить расписание для {binding.Name}: {ex.Message}");
             }
-        }
 
         return result
          .OrderBy(x => DateTime.Parse(x.Date))
@@ -444,7 +414,32 @@ public class DataBaseManager
     }
 
     /// <summary>
-    /// Агрегированный элемент расписания кафедры
+    ///     Модель привязки преподавателя к кафедре
+    /// </summary>
+    [Table("TeacherBindings")]
+    public class TeacherBinding
+    {
+        [PrimaryKey] [AutoIncrement] public int Id { get; set; }
+
+        public string UniversityUid { get; set; } = string.Empty;
+
+        public string Name { get; set; } = string.Empty;
+
+        [Indexed] public int? DepartmentId { get; set; }
+    }
+
+    /// <summary>
+    ///     Модель преподавателя из внешнего API
+    /// </summary>
+    public class ExternalTeacher
+    {
+        public string UID { get; set; } = string.Empty;
+        public string teacher { get; set; } = string.Empty;
+        public string faculty { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    ///     Агрегированный элемент расписания кафедры
     /// </summary>
     public class AggregatedScheduleItem
     {
@@ -458,5 +453,4 @@ public class DataBaseManager
         public string TeacherUid { get; set; } = string.Empty;
         public int DepartmentId { get; set; }
     }
-
-};
+}

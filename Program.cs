@@ -62,11 +62,10 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.MapOpenApi(); // Оставляем OpenAPI для релизной версии
-
 app.UseHttpsRedirection(); // Используем редирект на https с http
-app.UseStaticFiles(); // Позволяем использовать js, css и прочие ресурсы верстки
-app.MapControllers(); // Подключаем контроллеры запросов
 
+app.UseStaticFiles(); // Позволяем использовать js, css и прочие ресурсы верстки
 app.UseMiddleware<AuthenticationMiddleware>(); // Добавляем проверку авторизации в каждом запросе
+app.MapControllers(); // Подключаем контроллеры запросов
 
 app.Run(); // Запускаем приложение

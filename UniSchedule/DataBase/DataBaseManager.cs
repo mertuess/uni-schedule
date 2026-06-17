@@ -407,7 +407,10 @@ public class DataBaseManager
                 _dbg.Warning($"Не удалось получить расписание для {binding.Name}: {ex.Message}");
             }
 
-        return result.OrderBy(x => x.Date).ThenBy(x => x.Slot).ToList();
+        return result
+         .OrderBy(x => DateTime.Parse(x.Date))
+         .ThenBy(x => x.Slot)
+         .ToList();
     }
 
     /// <summary>
